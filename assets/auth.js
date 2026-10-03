@@ -15,12 +15,12 @@ function showLogin(t){
   $('authWait').hidden=true;$('pwForm').hidden=true;$('loginForm').hidden=false;
   var f='';try{f=sessionStorage.getItem(FLASH)||'';sessionStorage.removeItem(FLASH);}catch(e){}
   msg('loginMsg',t||f);
-  theme('#3f7d64');
+  theme('#FFF8E7');
 }
 function showSetPw(){
   document.body.classList.add('auth-out');
   $('authWait').hidden=true;$('loginForm').hidden=true;$('pwForm').hidden=false;
-  msg('pwMsg','');theme('#3f7d64');
+  msg('pwMsg','');theme('#FFF8E7');
   setTimeout(function(){$('npw').focus();},50);
 }
 function showApp(){

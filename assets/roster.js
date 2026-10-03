@@ -5,9 +5,9 @@
 var TH_MON=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
 var TH_WD=['อา','จ','อ','พ','พฤ','ศ','ส'];
 var TH_WDL=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
-var VIEWS={driver:{theme:'#EE4D2D'},
-  fleet:{sheet:'Dayoff Fleet',title:'กะ Fleet',theme:'#3f7d64'},
-  ops:{sheet:'Dayoff Ops',title:'กะ Ops',theme:'#3f7d64'}};
+var VIEWS={driver:{theme:'#FFE15D'},
+  fleet:{sheet:'Dayoff Fleet',title:'กะ Fleet',theme:'#4D77FF'},
+  ops:{sheet:'Dayoff Ops',title:'กะ Ops',theme:'#A388EE'}};
 var RS={};
 ['fleet','ops'].forEach(function(v){RS[v]={v:v,res:null,people:[],date:'',filter:'all',func:'',q:'',open:{},seq:0,loading:false};});
 var view='driver';
