@@ -1,0 +1,11 @@
+# never commit real data, screenshots with names, or secrets
+*.xlsx
+*.csv
+*.json
+*.png
+*.jpg
+SYNC_SECRET*
+.env*
+test/
+node_modules/
+.DS_Store
