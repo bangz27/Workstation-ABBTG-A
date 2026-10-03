@@ -8,7 +8,7 @@ function $(id){return document.getElementById(id);}
 var GRP={fleet:'Fleet',ops:'Ops'};
 var L={rows:[],loaded:false,loading:false,err:'',admin:false,perm:{known:false,email:'',admin:false,view:false,add:false,edit:false,del:false},editId:null,date:'',grp:'all',type:'',formOpen:false,busy:false,msg:'',msgOk:false,
   form:{grp:'fleet',person:null,type:'sick',start:'',end:'',note:'',q:''}};
-var PM={rows:[],admins:[],loaded:false,loading:false,err:'',msg:'',msgOk:false,busy:'',edit:{},draft:{email:'',v:true,a:false,e:false,d:false}};
+var PM={rows:[],admins:[],loaded:false,loading:false,err:'',msg:'',msgOk:false,busy:'',edit:{},link:null,draft:{email:'',v:true,a:false,e:false,d:false}};
 window.SPX_LEAVE={rows:L.rows,init:init,show:show,rosterLoaded:rosterLoaded,state:L,perms:PM,canView:function(){return L.perm.view;}};
 
 function esc(s){return U().esc(s);}
@@ -156,6 +156,10 @@ document.addEventListener('click',function(e){
   if(a==='reload')return load();
   if(a==='form'){L.formOpen=!L.formOpen;if(!L.formOpen)resetForm();else if(L.perm.admin)loadPerms();L.msg='';render();return;}
   if(a==='padd')return permAdd();
+  if(a==='pinvite')return permInvite();
+  if(a==='pcopy')return copyLink();
+  if(a==='pclose'){PM.link=null;render();return;}
+  if(b.hasAttribute('data-pinv'))return permInviteRow(b.getAttribute('data-pinv'));
   if(a==='preload'){PM.loaded=false;return loadPerms();}
   if(b.hasAttribute('data-psave'))return permSave(b.getAttribute('data-psave'));
   if(b.hasAttribute('data-pdel'))return permDel(b.getAttribute('data-pdel'));
@@ -250,16 +254,24 @@ function permHTML(){
   PM.rows.forEach(function(r){
     var f=PM.edit[r.email]||flagsOf(r),dirty=!!PM.edit[r.email],busy=PM.busy===r.email;
     var none=!f.v&&!f.a&&!f.e&&!f.d;
-    h.push('<div class="prm'+(dirty?' dirty':'')+'" data-em="'+esc(r.email)+'"><div class="pem"><b>'+esc(r.email)+'</b><span class="pbd'+(r.has_account?' ok':'')+'">'+(r.has_account?'มีบัญชีแล้ว':'ยังไม่มีบัญชี')+'</span></div>'+
+    var acc=r.account||(r.has_account?'active':'none');
+    h.push('<div class="prm'+(dirty?' dirty':'')+'" data-em="'+esc(r.email)+'" data-acc="'+acc+'"><div class="pem"><b>'+esc(r.email)+'</b><span class="pbd acc-'+acc+'">'+esc(ACC[acc]||acc)+'</span></div>'+
       checks(f,r.email)+
       '<div class="pact">'+(none?'<span class="pnone">ไม่มีสิทธิ์</span>':'')+
+        (acc!=='active'?'<button type="button" class="pinv" data-pinv="'+esc(r.email)+'"'+(busy?' disabled':'')+'>'+(acc==='none'?'✉️ ส่งคำเชิญ':'✉️ ส่งอีกครั้ง')+'</button>':'')+
         '<button type="button" class="psave" data-psave="'+esc(r.email)+'"'+(dirty&&!busy?'':' disabled')+'>'+(busy?'กำลังบันทึก…':'บันทึก')+'</button>'+
         '<button type="button" class="ldel" data-pdel="'+esc(r.email)+'"'+(busy?' disabled':'')+'>ลบ</button></div></div>');
   });
   if(PM.loaded&&!PM.rows.length)h.push('<div class="lhint">ยังไม่ได้ให้สิทธิ์ใคร — เพิ่มอีเมลด้านล่าง</div>');
   var dft=PM.draft;
   h.push('<div class="padd"><label class="fk" for="pEmail">เพิ่มอีเมล</label><input type="email" id="pEmail" inputmode="email" autocapitalize="off" spellcheck="false" autocomplete="off" placeholder="name@example.com" value="'+esc(dft.email)+'">'+
-    checks(dft,'')+'<button type="button" class="abtn" data-a="padd"'+(PM.busy==='+'?' disabled':'')+'>'+(PM.busy==='+'?'กำลังบันทึก…':'+ เพิ่ม / บันทึกสิทธิ์')+'</button></div>');
+    checks(dft,'')+'<div class="pbtns"><button type="button" class="abtn" data-a="padd"'+(PM.busy?' disabled':'')+'>'+(PM.busy==='+'?'กำลังบันทึก…':'+ บันทึกสิทธิ์')+'</button>'+
+    '<button type="button" class="abtn pinvbtn" data-a="pinvite"'+(PM.busy?' disabled':'')+'>'+(PM.busy==='✉'?'กำลังส่ง…':'✉️ ส่งคำเชิญ')+'</button></div>'+
+    '<p class="phint sm">ส่งคำเชิญ = บันทึกสิทธิ์ + ส่งอีเมลให้ตั้งรหัสผ่าน · ถ้าส่งอีเมลไม่ได้ ระบบจะสร้างลิงก์เชิญให้คัดลอกไปส่งทาง LINE</p></div>');
+  if(PM.link)h.push('<div class="plink" id="pLink"><b>🔗 ลิงก์เชิญสำหรับ '+esc(PM.link.email)+'</b>'+
+    '<input type="text" id="pLinkUrl" readonly value="'+esc(PM.link.url)+'" aria-label="ลิงก์เชิญ">'+
+    '<div class="pbtns"><button type="button" class="abtn" data-a="pcopy">คัดลอกลิงก์</button><button type="button" class="abtn pclose" data-a="pclose">ปิด</button></div>'+
+    '<p class="phint sm">⚠️ ลิงก์นี้ใช้เข้าระบบในชื่อ '+esc(PM.link.email)+' ได้ — ส่งให้เจ้าของอีเมลเท่านั้น ใช้ได้ครั้งเดียวและหมดอายุภายใน 24 ชม.</p></div>');
   h.push('<div class="amsg'+(PM.msgOk?' ok':'')+'" id="pMsg" role="alert">'+esc(PM.msg)+'</div></section>');
   return h.join('');
 }
@@ -277,6 +289,33 @@ function permAdd(){
   if(!EM_RE.test(em)){PM.msg='กรุณากรอกอีเมลให้ถูกต้อง';PM.msgOk=false;render();return;}
   var f={v:PM.draft.v,a:PM.draft.a,e:PM.draft.e,d:PM.draft.d};
   permUpsert(em,f,'+').then(function(){PM.draft={email:'',v:true,a:false,e:false,d:false};render();},function(){});
+}
+var ACC={none:'ยังไม่มีบัญชี',invited:'เชิญแล้ว · รอตั้งรหัสผ่าน',unconfirmed:'ยังไม่ยืนยันอีเมล',active:'มีบัญชีแล้ว'};
+function invite(email,f,key){
+  PM.busy=key;PM.msg='';PM.link=null;render();
+  return api.inviteUser(email,f).then(function(res){
+    PM.busy='';PM.msg=res.message||'เรียบร้อย';PM.msgOk=true;
+    if(res.status==='link'&&res.link)PM.link={email:res.email,url:res.link,redirectOk:res.redirect_ok};
+    if(res.perm){var i=-1;PM.rows.forEach(function(r,j){if(r.email===res.perm.email)i=j;});if(i>=0)PM.rows[i]=res.perm;else PM.rows.push(res.perm);PM.rows.sort(function(a,b){return a.email<b.email?-1:1;});delete PM.edit[res.perm.email];}
+    window.__SPX_LAST_INVITE={status:res.status,email:res.email,reason:res.reason||'',redirect_ok:res.redirect_ok,hasLink:!!res.link};
+    PM.loaded=false;PM.loading=false;loadPerms();   // refresh account status
+    render();return res;
+  },function(e){PM.busy='';PM.msg=e.message||String(e);PM.msgOk=false;window.__SPX_LAST_INVITE={error:PM.msg};render();throw e;});
+}
+function permInvite(){
+  var em=String(PM.draft.email||'').trim().toLowerCase();
+  if(!EM_RE.test(em)){PM.msg='กรุณากรอกอีเมลให้ถูกต้อง';PM.msgOk=false;render();return;}
+  invite(em,{v:PM.draft.v,a:PM.draft.a,e:PM.draft.e,d:PM.draft.d},'✉').then(function(){PM.draft={email:'',v:true,a:false,e:false,d:false};render();},function(){});
+}
+function permInviteRow(email){
+  var r=PM.rows.filter(function(x){return x.email===email;})[0];if(!r)return;
+  invite(email,PM.edit[email]||flagsOf(r),email).catch(function(){});
+}
+function copyLink(){
+  var i=$('pLinkUrl');if(!i)return;
+  var done=function(){PM.msg='คัดลอกลิงก์แล้ว — วางส่งให้ '+PM.link.email+' ทาง LINE';PM.msgOk=true;render();};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(i.value).then(done,function(){i.select();});
+  else{i.select();try{document.execCommand('copy');done();}catch(e){}}
 }
 function permDel(email){
   if(!window.confirm('ลบสิทธิ์การลาของ '+email+'?\n(บัญชีนี้จะดู/แก้ไขข้อมูลการลาไม่ได้อีก)'))return;

@@ -52,6 +52,18 @@ window.SPX_API={
   listLeavePerms:function(){return call('list_leave_perms');},
   upsertLeavePerm:function(email,f){return call('upsert_leave_perm',{p_email:email,p_view:!!f.v,p_add:!!f.a,p_edit:!!f.e,p_delete:!!f.d});},
   deleteLeavePerm:function(email){return call('delete_leave_perm',{p_email:email});},
+  /* admin: save permissions + invite (Edge Function invite-user; the service key stays on the server) */
+  inviteUser:function(email,f){
+    return sb.functions.invoke('invite-user',{body:{email:email,view:!!f.v,add:!!f.a,edit:!!f.e,delete:!!f.d}}).then(function(r){
+      if(!r.error)return r.data;
+      var ctx=r.error.context;
+      var p=ctx&&typeof ctx.json==='function'?ctx.json().catch(function(){return null;}):Promise.resolve(null);
+      return p.then(function(j){
+        if(ctx&&ctx.status===401&&window.SPX_AUTH&&!(j&&j.error))window.SPX_AUTH.expired();
+        throw new Error(j&&j.error?j.error:thErr(r.error));
+      });
+    },function(e){throw new Error(thErr(e));});
+  },
   listLeaves:function(){return q(sb.from('leave_records').select(LV_COLS).order('start_date',{ascending:true}).order('id',{ascending:true}).limit(5000));},
   addLeave:function(row){return q(sb.from('leave_records').insert(row).select(LV_COLS).single());},
   updateLeave:function(id,row){return q(sb.from('leave_records').update(row).eq('id',id).select(LV_COLS)).then(function(d){
