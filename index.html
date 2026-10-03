@@ -6,13 +6,19 @@
 <meta name="theme-color" content="#FFF8E7">
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://bkmvwgoldyrzmgvmeskp.supabase.co wss://bkmvwgoldyrzmgvmeskp.supabase.co; base-uri 'none'; form-action 'self'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://bkmvwgoldyrzmgvmeskp.supabase.co wss://bkmvwgoldyrzmgvmeskp.supabase.co; base-uri 'none'; form-action 'self'; object-src 'none'; worker-src 'self'; manifest-src 'self'">
 <title>ABBTG-A Dashboard</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ABBTG-A">
+<meta name="application-name" content="ABBTG-A">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='26' height='26' rx='5' fill='%23000' transform='translate(2 2)'/%3E%3Crect x='2' y='2' width='26' height='26' rx='5' fill='%23FFE15D' stroke='%23000' stroke-width='3'/%3E%3Ctext x='15' y='21' font-size='15' font-family='Arial' font-weight='900' fill='%23000' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=20261003leave1">
+<link rel="stylesheet" href="assets/style.css?v=20261003pwa1">
 </head>
 <body class="v-driver auth-out">
 <div id="auth" class="auth" role="main">
@@ -159,10 +165,11 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" integrity="sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok" crossorigin="anonymous"></script>
 <script src="assets/config.js?v=20261003"></script>
-<script src="assets/api.js?v=20261003leave1"></script>
+<script src="assets/api.js?v=20261003pwa1"></script>
 <script src="assets/driver.js?v=20261003"></script>
-<script src="assets/roster.js?v=20261003leave1"></script>
-<script src="assets/leave.js?v=20261003leave1"></script>
+<script src="assets/roster.js?v=20261003pwa1"></script>
+<script src="assets/leave.js?v=20261003pwa1"></script>
 <script src="assets/auth.js?v=20261003neo1"></script>
+<script src="assets/pwa.js?v=20261003pwa1"></script>
 </body>
 </html>

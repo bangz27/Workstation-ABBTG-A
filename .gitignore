@@ -9,3 +9,7 @@ SYNC_SECRET*
 test/
 node_modules/
 .DS_Store
+
+# PWA icons are public assets (exception to *.png above)
+!icons/
+!icons/*.png

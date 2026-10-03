@@ -477,3 +477,14 @@ body.v-leave header{background:var(--lvh)}
 #lfoot{text-align:center;font-size:12px;font-weight:600;padding:10px 14px 24px}
 .lvline .lnone{font-size:12px;font-weight:700}
 .lvline.none .lt{background:#fff;color:#000;border:var(--bd2);padding:1px 6px}
+/* leave edit (admin) */
+.lact{margin-left:auto;display:flex;gap:6px}
+.lact .ldel{margin-left:0}
+.ledit{border:var(--bd2);background:var(--blu2);border-radius:999px;padding:2px 11px;font-size:12.5px;font-weight:800;cursor:pointer;box-shadow:var(--sh2)}
+.ledit.on{background:var(--yel);outline:2px solid #000;outline-offset:1px}
+.ledit:active{transform:translate(2px,2px);box-shadow:none}
+.lpanel.editing{background:#FFFBEA}
+.lpanel h2 small{font-size:12px;font-weight:600}
+.lbtns{display:flex;gap:8px}
+.lbtns .abtn{flex:1}
+.lbtns .lcancel{flex:0 0 auto;width:auto;padding:12px 16px;background:#fff}

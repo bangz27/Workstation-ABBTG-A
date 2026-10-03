@@ -5,7 +5,7 @@
 var api=window.SPX_API,V=function(){return window.SPX_VIEW;},U=function(){return window.SPX_VIEW.util;};
 function $(id){return document.getElementById(id);}
 var GRP={fleet:'Fleet',ops:'Ops'};
-var L={rows:[],loaded:false,loading:false,err:'',admin:false,date:'',grp:'all',type:'',formOpen:false,busy:false,msg:'',msgOk:false,
+var L={rows:[],loaded:false,loading:false,err:'',admin:false,editId:null,date:'',grp:'all',type:'',formOpen:false,busy:false,msg:'',msgOk:false,
   form:{grp:'fleet',person:null,type:'sick',start:'',end:'',note:'',q:''}};
 window.SPX_LEAVE={rows:L.rows,init:init,show:show,rosterLoaded:rosterLoaded,state:L};
 
@@ -88,12 +88,13 @@ function rowHTML(r,p,rd,showRange){
     '<div class="l2">'+esc(GRP[r.staff_type])+(id?' · ID '+esc(id):'')+(fn?' · '+esc(fn):'')+'</div>'+
     '<div class="l3"><span class="rng">'+esc(U().dShort(r.start_date))+(n>1?' – '+esc(U().dShort(r.end_date)):'')+' · '+n+' วัน</span>'+
       (rd?'<span class="rdn">ตรงวันหยุด RD · ไม่นับ</span>':'')+
-      (L.admin?'<button type="button" class="ldel" data-del="'+r.id+'" aria-label="ลบการลา">ลบ</button>':'')+'</div>'+
+      (L.admin?'<span class="lact"><button type="button" class="ledit'+(L.editId===r.id?' on':'')+'" data-edit="'+r.id+'" aria-label="แก้ไขการลา">แก้ไข</button><button type="button" class="ldel" data-del="'+r.id+'" aria-label="ลบการลา">ลบ</button></span>':'')+'</div>'+
     (r.note?'<div class="l4">📝 '+esc(r.note)+'</div>':'')+'</div>';
 }
 function formHTML(){
   var f=L.form,s=roster(f.grp);
-  return '<form class="lpanel" id="lForm" novalidate><h2>⚙ ตั้งค่าการลา</h2>'+
+  var ed=L.editId!=null;
+  return '<form class="lpanel'+(ed?' editing':'')+'" id="lForm" novalidate><h2>'+(ed?'✏️ แก้ไขการลา <small>#'+L.editId+'</small>':'⚙ ตั้งค่าการลา')+'</h2>'+
     '<div class="fl"><span class="fk">กลุ่ม</span><div class="lseg">'+['fleet','ops'].map(function(g){return '<button type="button" data-fg="'+g+'" class="'+(f.grp===g?'on':'')+'">กะ '+GRP[g]+'</button>';}).join('')+'</div></div>'+
     '<div class="fl"><span class="fk">พนักงาน</span>'+
       (f.person?'<div class="lpick"><div><b>'+esc(f.person.name)+'</b><small>'+(f.person.id?'ID '+esc(f.person.id)+' · ':'')+esc(f.person.func||'')+'</small></div><button type="button" class="tbtn" data-a="unpick">เปลี่ยน</button></div>':
@@ -101,7 +102,8 @@ function formHTML(){
     '<div class="fl"><span class="fk">ประเภท</span><div class="ltypes">'+types().map(function(t){return '<button type="button" data-ft="'+t.key+'" class="lvs lv-'+t.key+(f.type===t.key?' on':'')+'">'+esc(t.label)+'</button>';}).join('')+'</div></div>'+
     '<div class="fl two"><label><span class="fk">วันที่เริ่ม</span><input type="date" id="lStart" value="'+f.start+'" required></label><label><span class="fk">ถึงวันที่</span><input type="date" id="lEnd" value="'+f.end+'" required></label></div>'+
     '<div class="fl"><label><span class="fk">หมายเหตุ (ไม่บังคับ)</span><input type="text" id="lNote" maxlength="500" value="'+esc(f.note)+'" placeholder="'+(f.type==='other'?'เช่น ลาคลอด / ลาบวช / อบรม':'เช่น มีใบรับรองแพทย์')+'"></label></div>'+
-    '<button type="submit" class="abtn" id="lSave"'+(L.busy?' disabled':'')+'>'+(L.busy?'กำลังบันทึก…':'บันทึกการลา')+'</button>'+
+    '<div class="lbtns"><button type="submit" class="abtn" id="lSave"'+(L.busy?' disabled':'')+'>'+(L.busy?'กำลังบันทึก…':ed?'บันทึกการแก้ไข':'บันทึกการลา')+'</button>'+
+      (ed?'<button type="button" class="abtn lcancel" id="lCancel" data-a="cancelEdit"'+(L.busy?' disabled':'')+'>ยกเลิก</button>':'')+'</div>'+
     '<div class="amsg'+(L.msgOk?' ok':'')+'" id="lMsg" role="alert">'+esc(L.msg)+'</div></form>';
 }
 function resHTML(){
@@ -125,7 +127,7 @@ document.addEventListener('click',function(e){
   if(a==='next')return setDate(addDays(L.date,1));
   if(a==='today')return setDate(today());
   if(a==='reload')return load();
-  if(a==='form'){L.formOpen=!L.formOpen;L.msg='';render();return;}
+  if(a==='form'){L.formOpen=!L.formOpen;if(!L.formOpen)resetForm();L.msg='';render();return;}
   if(a==='unpick'){L.form.person=null;render();var q=$('lq');if(q)q.focus();return;}
   if(b.hasAttribute('data-g')){L.grp=b.getAttribute('data-g');render();return;}
   if(b.hasAttribute('data-t')){var t=b.getAttribute('data-t');L.type=(L.type===t?'':t);render();return;}
@@ -133,6 +135,8 @@ document.addEventListener('click',function(e){
   if(b.hasAttribute('data-ft')){L.form.type=b.getAttribute('data-ft');syncForm();render();return;}
   if(b.hasAttribute('data-pk')){var s=roster(L.form.grp),k=b.getAttribute('data-pk');L.form.person=s&&s.people.filter(function(p){return p.key===k;})[0]||null;L.msg='';syncForm();render();return;}
   if(b.hasAttribute('data-del'))return del(+b.getAttribute('data-del'));
+  if(b.hasAttribute('data-edit'))return startEdit(+b.getAttribute('data-edit'));
+  if(a==='cancelEdit'){resetForm();L.msg='';render();return;}
 });
 function syncForm(){var f=L.form,x;if((x=$('lStart')))f.start=x.value;if((x=$('lEnd')))f.end=x.value;if((x=$('lNote')))f.note=x.value;}
 document.addEventListener('input',function(e){
@@ -153,18 +157,35 @@ document.addEventListener('submit',function(e){
   else if(days(f.start,f.end)>367)err='ช่วงลายาวเกิน 1 ปี';
   if(err){L.msg=err;L.msgOk=false;render();return;}
   L.busy=true;L.msg='';render();
+  if(L.editId!=null){var eid=L.editId;
+    api.updateLeave(eid,{staff_type:f.grp,person_id:f.person.key,person_name:f.person.name,leave_type:f.type,start_date:f.start,end_date:f.end,note:f.note.trim()}).then(function(row){
+      L.busy=false;var i=-1;L.rows.forEach(function(r,j){if(r.id===eid)i=j;});if(i>=0)L.rows[i]=row;else L.rows.push(row);sortRows();
+      L.msg='แก้ไขแล้ว: '+row.person_name+' · '+tOf(row.leave_type).label+' '+U().dShort(row.start_date)+(row.end_date!==row.start_date?' – '+U().dShort(row.end_date):'');L.msgOk=true;
+      resetForm();V().leavesChanged();render();
+    },function(e2){L.busy=false;L.msg=e2.message||String(e2);L.msgOk=false;render();});
+    return;
+  }
   api.addLeave({staff_type:f.grp,person_id:f.person.key,person_name:f.person.name,leave_type:f.type,start_date:f.start,end_date:f.end,note:f.note.trim()}).then(function(row){
-    L.busy=false;L.rows.push(row);L.rows.sort(function(a,b){return a.start_date<b.start_date?-1:a.start_date>b.start_date?1:a.id-b.id;});
+    L.busy=false;L.rows.push(row);sortRows();
     L.msg='บันทึกแล้ว: '+row.person_name+' · '+tOf(row.leave_type).label+' '+U().dShort(row.start_date)+(row.end_date!==row.start_date?' – '+U().dShort(row.end_date):'');L.msgOk=true;
     f.person=null;f.q='';f.note='';
     V().leavesChanged();render();
   },function(e2){L.busy=false;L.msg=e2.message||String(e2);L.msgOk=false;render();});
 });
+function sortRows(){L.rows.sort(function(a,b){return a.start_date<b.start_date?-1:a.start_date>b.start_date?1:a.id-b.id;});}
+function resetForm(){var f=L.form;L.editId=null;f.person=null;f.q='';f.note='';f.type='sick';f.start=f.end=today();}
+function startEdit(id){
+  var r=L.rows.filter(function(x){return x.id===id;})[0];if(!r||!L.admin)return;
+  var p=findPerson(r.staff_type,r.person_id,r.person_name)||{key:r.person_id,id:'',name:r.person_name||r.person_id,func:'',empId:''};
+  L.editId=id;L.formOpen=true;L.msg='';
+  L.form={grp:r.staff_type,person:p,type:r.leave_type,start:r.start_date,end:r.end_date,note:r.note||'',q:''};
+  render();var fm=$('lForm');if(fm)fm.scrollIntoView({block:'start'});
+}
 function del(id){
   var r=L.rows.filter(function(x){return x.id===id;})[0];if(!r)return;
   if(!window.confirm('ลบการลาของ '+r.person_name+' ('+tOf(r.leave_type).label+' '+U().dShort(r.start_date)+(r.end_date!==r.start_date?' – '+U().dShort(r.end_date):'')+')?'))return;
   api.deleteLeave(id).then(function(){
-    var i=L.rows.indexOf(r);if(i>=0)L.rows.splice(i,1);L.msg='';V().leavesChanged();render();
+    var i=L.rows.indexOf(r);if(i>=0)L.rows.splice(i,1);if(L.editId===id)resetForm();L.msg='';V().leavesChanged();render();
   },function(e){window.alert(e.message||String(e));});
 }
 })();

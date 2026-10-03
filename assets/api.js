@@ -49,6 +49,8 @@ window.SPX_API={
   isAdmin:function(){return sb.rpc('is_admin').then(function(r){return !r.error&&r.data===true;},function(){return false;});},
   listLeaves:function(){return q(sb.from('leave_records').select(LV_COLS).order('start_date',{ascending:true}).order('id',{ascending:true}).limit(5000));},
   addLeave:function(row){return q(sb.from('leave_records').insert(row).select(LV_COLS).single());},
+  updateLeave:function(id,row){return q(sb.from('leave_records').update(row).eq('id',id).select(LV_COLS)).then(function(d){
+    if(!d||!d.length)throw new Error('ไม่มีสิทธิ์แก้ไข หรือรายการถูกลบไปแล้ว');return d[0];});},
   deleteLeave:function(id){return q(sb.from('leave_records').delete().eq('id',id).select('id')).then(function(d){
     if(!d||!d.length)throw new Error('ไม่มีสิทธิ์ลบ หรือรายการถูกลบไปแล้ว');return d;});}
 };
