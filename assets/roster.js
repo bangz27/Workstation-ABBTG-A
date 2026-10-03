@@ -228,7 +228,7 @@ function extraCards(st,i){
     '<span class="tk">หยุด (RD)<small>'+(dis?'ไม่มีข้อมูลวันถัดไป':esc(dShort(nd)))+'</small></span>'+
     '<b class="tv">'+n+'<small>'+(dis?'ไม่มีข้อมูล':'คน')+'</small></b>'+
     (dis?'':'<span class="tx">'+(on?'✕ ปิด':'ดูรายชื่อ ›')+'</span>')+'</div>';
-  if(LEAVE_UI){   // compact: only the types that have people today (full 5 cards are in the การลา tab)
+  if(LEAVE_UI&&window.SPX_LEAVE&&window.SPX_LEAVE.canView()){   // compact: only the types that have people today; hidden without การลา view permission
     var ltot=0,lp=LEAVE_TYPES.filter(function(x){ltot+=lc[x.key];return lc[x.key]>0||st.filter==='lv:'+x.key;});
     h+='<div class="lvline'+(ltot?'':' none')+'"><span class="lt">ลา/ขาด '+ltot+' คน</span>'+lp.map(function(x){var f='lv:'+x.key;
       return '<button type="button" class="lvs lv-'+x.key+(st.filter===f?' on':'')+'" data-f="'+f+'" aria-label="'+esc(x.label)+' '+lc[x.key]+' คน">'+esc(x.label)+' <b>'+lc[x.key]+'</b></button>';}).join('')+
@@ -509,7 +509,7 @@ function detHTML(st,p,i,dates){
     '<div class="stat">ทั้งช่วง '+r0.d+' '+TH_MON[r0.m]+' – '+r1.d+' '+TH_MON[r1.m]+': ทำงาน <span class="w">'+nw+'</span> วัน · หยุด <span class="o">'+no+'</span> วัน'+(nl?' · ลา <span class="l">'+nl+'</span> วัน':'')+'</div>'+
     (upc.length?'<div class="upc">วันหยุดตั้งแต่ '+esc(dShort(dates[i]))+': '+esc(upc.join(', '))+'</div>':'<div class="upc none">ไม่มีวันหยุดตั้งแต่ '+esc(dShort(dates[i]))+' จนจบตาราง</div>')+raw+
     '<div class="cal">'+cal.join('')+'</div>'+
-    '<div class="legend"><span><i style="background:var(--sgl);border:1px solid var(--sgln)"></i>ทำงาน (เวลาเข้า-ออก)</span><span><i style="background:var(--srbg)"></i>หยุด RD</span>'+(LEAVE_UI?'<span><i class="lg-lv"></i>ลา/ขาดงาน</span>':'')+'<span>แตะวันที่เพื่อดูทั้งทีม</span></div>';
+    '<div class="legend"><span><i style="background:var(--sgl);border:1px solid var(--sgln)"></i>ทำงาน (เวลาเข้า-ออก)</span><span><i style="background:var(--srbg)"></i>หยุด RD</span>'+(LEAVE_UI&&window.SPX_LEAVE&&window.SPX_LEAVE.canView()?'<span><i class="lg-lv"></i>ลา/ขาดงาน</span>':'')+'<span>แตะวันที่เพื่อดูทั้งทีม</span></div>';
 }
 
 /* ---------- events ---------- */

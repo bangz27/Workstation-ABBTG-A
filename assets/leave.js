@@ -1,13 +1,15 @@
-/* การลา tab: leave cards for a date, current/upcoming leave list, admin-only ตั้งค่าการลา (add / delete).
-   Data: public.leave_records (read: signed-in users; write: admins only via RLS). */
+/* การลา tab: leave cards for a date, current/upcoming leave list, add / edit / delete per account permission,
+   admin-only ⚙ ตั้งค่า → จัดการสิทธิ์ (who can ดู / เพิ่ม / แก้ไข / ลบ, by e-mail).
+   Data: public.leave_records (RLS: admin or private.leave_permissions flags; add/edit/delete imply view). */
 (function(){
 "use strict";
 var api=window.SPX_API,V=function(){return window.SPX_VIEW;},U=function(){return window.SPX_VIEW.util;};
 function $(id){return document.getElementById(id);}
 var GRP={fleet:'Fleet',ops:'Ops'};
-var L={rows:[],loaded:false,loading:false,err:'',admin:false,editId:null,date:'',grp:'all',type:'',formOpen:false,busy:false,msg:'',msgOk:false,
+var L={rows:[],loaded:false,loading:false,err:'',admin:false,perm:{known:false,email:'',admin:false,view:false,add:false,edit:false,del:false},editId:null,date:'',grp:'all',type:'',formOpen:false,busy:false,msg:'',msgOk:false,
   form:{grp:'fleet',person:null,type:'sick',start:'',end:'',note:'',q:''}};
-window.SPX_LEAVE={rows:L.rows,init:init,show:show,rosterLoaded:rosterLoaded,state:L};
+var PM={rows:[],admins:[],loaded:false,loading:false,err:'',msg:'',msgOk:false,busy:'',edit:{},draft:{email:'',v:true,a:false,e:false,d:false}};
+window.SPX_LEAVE={rows:L.rows,init:init,show:show,rosterLoaded:rosterLoaded,state:L,perms:PM,canView:function(){return L.perm.view;}};
 
 function esc(s){return U().esc(s);}
 function today(){return U().bkkToday();}
@@ -19,7 +21,24 @@ function isView(){return V()&&V().current()==='leave';}
 
 function init(){
   L.date=L.date||today();L.form.start=L.form.end=today();
-  api.isAdmin().then(function(a){L.admin=a;$('gearBtn').hidden=!a;if(isView())render();});
+  api.getMyLeavePerms().then(function(p){
+    p=p||{};
+    L.perm={known:true,email:p.email||'',admin:!!p.is_admin,view:!!p.can_view,add:!!p.can_add,edit:!!p.can_edit,del:!!p.can_delete};
+    applyPerm();
+  },function(){L.perm.known=true;applyPerm();});
+}
+/* show/hide everything leave-related for this account */
+function applyPerm(){
+  var P=L.perm;L.admin=P.admin;
+  $('gearBtn').hidden=!P.admin;
+  var tab=document.querySelector('#views button[data-v="leave"]');if(tab)tab.hidden=!P.view;
+  if(!P.view){
+    L.rows.length=0;L.loaded=false;L.formOpen=false;
+    if(isView())V().set('driver');
+    V().leavesChanged();
+    return;
+  }
+  if(!P.add&&!P.admin&&L.editId==null)L.formOpen=false;
   load();
 }
 function load(){
@@ -29,7 +48,10 @@ function load(){
     V().leavesChanged();if(isView())render();
   },function(e){L.loading=false;L.err=e.message||String(e);if(isView())render();});
 }
-function show(){V().ensure('fleet');V().ensure('ops');render();}
+function show(){
+  if(L.perm.known&&!L.perm.view){V().set('driver');return;}
+  V().ensure('fleet');V().ensure('ops');render();
+}
 function rosterLoaded(){if(isView())render();}
 
 /* person lookup in the loaded rosters */
@@ -63,12 +85,15 @@ function render(){
   h.push('<div class="lcards">'+types().map(function(t){
       return '<button type="button" class="lcard lv-'+t.key+(L.type===t.key?' on':'')+'" data-t="'+t.key+'"><span class="k">'+esc(t.label)+'</span><b>'+c[t.key]+'<small>คน</small></b></button>';}).join('')+
     '<button type="button" class="lcard lsum'+(L.type===''?' on':'')+'" data-t=""><span class="k">รวมทั้งหมด</span><b>'+c.all+'<small>คน</small></b></button></div>');
-  if(L.admin)h.push('<button type="button" class="ladd'+(L.formOpen?' on':'')+'" data-a="form">'+(L.formOpen?'✕ ปิดตั้งค่าการลา':'⚙ ตั้งค่าการลา · เพิ่มการลา')+'</button>');
+  var P=L.perm;
+  if(P.admin)h.push('<button type="button" class="ladd'+(L.formOpen?' on':'')+'" data-a="form">'+(L.formOpen?'✕ ปิดตั้งค่า':'⚙ ตั้งค่าการลา · จัดการสิทธิ์')+'</button>');
+  else if(P.add)h.push('<button type="button" class="ladd'+(L.formOpen?' on':'')+'" data-a="form">'+(L.formOpen?'✕ ปิดฟอร์ม':'+ เพิ่มการลา')+'</button>');
   $('lhead').innerHTML=h.join('');
 
   var m=[];
   if(L.err)m.push('<div class="warn">⚠️ '+esc(L.err)+'</div>');
-  if(L.admin&&L.formOpen)m.push(formHTML());
+  if(L.formOpen&&(P.add||P.admin||L.editId!=null))m.push(formHTML());
+  if(L.formOpen&&P.admin)m.push(permHTML());
   var sel=list.filter(function(x){return !L.type||x.r.leave_type===L.type;});
   sel.sort(function(a,b){return (a.rd-b.rd)||a.r.leave_type.localeCompare(b.r.leave_type)||(a.r.person_name||'').localeCompare(b.r.person_name||'','th');});
   m.push('<div class="lsec"><h2>'+(L.type?esc(tOf(L.type).label):'ลา / ขาดงาน')+' · '+esc(U().dShort(d))+(L.type?' <button type="button" class="chip c-ag on" data-t="">'+esc(tOf(L.type).label)+' ✕</button>':'')+'</h2>'+
@@ -76,9 +101,10 @@ function render(){
   var t0=today(),up=L.rows.filter(function(r){return r.end_date>=t0&&(L.grp==='all'||r.staff_type===L.grp);});
   m.push('<div class="lsec"><h2>การลาปัจจุบันและที่กำลังจะถึง <small>· '+up.length+' รายการ</small></h2>'+
     (up.length?up.map(function(r){return rowHTML(r,findPerson(r.staff_type,r.person_id,r.person_name),false,true);}).join(''):'<div class="empty">ยังไม่มีรายการลา</div>')+
-    (L.admin?'':'<p class="lnote">เพิ่ม/ลบการลาได้เฉพาะผู้ดูแลระบบ</p>')+'</div>');
+    (P.admin||P.add||P.edit||P.del?'':'<p class="lnote">บัญชีนี้ดูข้อมูลการลาได้อย่างเดียว</p>')+'</div>');
   $('lmain').innerHTML=m.join('');
-  window.__SPX_LEAVE_UI={date:d,grp:L.grp,type:L.type,counts:c,listed:sel.length,upcoming:up.length,admin:L.admin,rows:L.rows.length};
+  window.__SPX_LEAVE_UI={date:d,grp:L.grp,type:L.type,counts:c,listed:sel.length,upcoming:up.length,admin:L.admin,perm:JSON.parse(JSON.stringify(P)),rows:L.rows.length,
+    ui:{add:!!document.querySelector('#lhead .ladd'),form:!!$('lForm'),perm:!!$('lPerm'),edit:document.querySelectorAll('#lmain .ledit').length,del:document.querySelectorAll('#lmain .ldel').length}};
 }
 function rowHTML(r,p,rd,showRange){
   var t=tOf(r.leave_type),n=days(r.start_date,r.end_date);
@@ -88,7 +114,8 @@ function rowHTML(r,p,rd,showRange){
     '<div class="l2">'+esc(GRP[r.staff_type])+(id?' · ID '+esc(id):'')+(fn?' · '+esc(fn):'')+'</div>'+
     '<div class="l3"><span class="rng">'+esc(U().dShort(r.start_date))+(n>1?' – '+esc(U().dShort(r.end_date)):'')+' · '+n+' วัน</span>'+
       (rd?'<span class="rdn">ตรงวันหยุด RD · ไม่นับ</span>':'')+
-      (L.admin?'<span class="lact"><button type="button" class="ledit'+(L.editId===r.id?' on':'')+'" data-edit="'+r.id+'" aria-label="แก้ไขการลา">แก้ไข</button><button type="button" class="ldel" data-del="'+r.id+'" aria-label="ลบการลา">ลบ</button></span>':'')+'</div>'+
+      (L.perm.edit||L.perm.del?'<span class="lact">'+(L.perm.edit?'<button type="button" class="ledit'+(L.editId===r.id?' on':'')+'" data-edit="'+r.id+'" aria-label="แก้ไขการลา">แก้ไข</button>':'')+
+        (L.perm.del?'<button type="button" class="ldel" data-del="'+r.id+'" aria-label="ลบการลา">ลบ</button>':'')+'</span>':'')+'</div>'+
     (r.note?'<div class="l4">📝 '+esc(r.note)+'</div>':'')+'</div>';
 }
 function formHTML(){
@@ -119,7 +146,7 @@ function resHTML(){
 /* ---------- events ---------- */
 function setDate(d){if(/^\d{4}-\d{2}-\d{2}$/.test(d)){L.date=d;render();}}
 document.addEventListener('click',function(e){
-  if(e.target.closest('#gearBtn')){L.formOpen=true;V().set('leave');setTimeout(function(){var f=$('lForm');if(f)f.scrollIntoView({block:'start'});},50);return;}
+  if(e.target.closest('#gearBtn')){if(!L.perm.admin)return;L.formOpen=true;loadPerms();V().set('leave');setTimeout(function(){var f=$('lForm');if(f)f.scrollIntoView({block:'start'});},50);return;}
   var host=e.target.closest('#lhead,#lmain');if(!host)return;
   var b=e.target.closest('button');if(!b)return;
   var a=b.getAttribute('data-a');
@@ -127,7 +154,11 @@ document.addEventListener('click',function(e){
   if(a==='next')return setDate(addDays(L.date,1));
   if(a==='today')return setDate(today());
   if(a==='reload')return load();
-  if(a==='form'){L.formOpen=!L.formOpen;if(!L.formOpen)resetForm();L.msg='';render();return;}
+  if(a==='form'){L.formOpen=!L.formOpen;if(!L.formOpen)resetForm();else if(L.perm.admin)loadPerms();L.msg='';render();return;}
+  if(a==='padd')return permAdd();
+  if(a==='preload'){PM.loaded=false;return loadPerms();}
+  if(b.hasAttribute('data-psave'))return permSave(b.getAttribute('data-psave'));
+  if(b.hasAttribute('data-pdel'))return permDel(b.getAttribute('data-pdel'));
   if(a==='unpick'){L.form.person=null;render();var q=$('lq');if(q)q.focus();return;}
   if(b.hasAttribute('data-g')){L.grp=b.getAttribute('data-g');render();return;}
   if(b.hasAttribute('data-t')){var t=b.getAttribute('data-t');L.type=(L.type===t?'':t);render();return;}
@@ -136,17 +167,25 @@ document.addEventListener('click',function(e){
   if(b.hasAttribute('data-pk')){var s=roster(L.form.grp),k=b.getAttribute('data-pk');L.form.person=s&&s.people.filter(function(p){return p.key===k;})[0]||null;L.msg='';syncForm();render();return;}
   if(b.hasAttribute('data-del'))return del(+b.getAttribute('data-del'));
   if(b.hasAttribute('data-edit'))return startEdit(+b.getAttribute('data-edit'));
-  if(a==='cancelEdit'){resetForm();L.msg='';render();return;}
+  if(a==='cancelEdit'){resetForm();closeIfNoAdd();L.msg='';render();return;}
 });
 function syncForm(){var f=L.form,x;if((x=$('lStart')))f.start=x.value;if((x=$('lEnd')))f.end=x.value;if((x=$('lNote')))f.note=x.value;}
 document.addEventListener('input',function(e){
   if(e.target.id==='lq'){L.form.q=e.target.value;var r=$('lres');if(r)r.innerHTML=resHTML();}
   else if(e.target.id==='lNote')L.form.note=e.target.value;
+  else if(e.target.id==='pEmail')PM.draft.email=e.target.value;
 });
 document.addEventListener('change',function(e){
   if(e.target.id==='lDate')setDate(e.target.value);
   else if(e.target.id==='lStart'){L.form.start=e.target.value;var en=$('lEnd');if(en&&(!en.value||en.value<e.target.value)){en.value=e.target.value;L.form.end=e.target.value;}}
   else if(e.target.id==='lEnd')L.form.end=e.target.value;
+  else if(e.target.hasAttribute&&e.target.hasAttribute('data-pf')){
+    var em=e.target.getAttribute('data-em'),k=e.target.getAttribute('data-pf'),on=e.target.checked;
+    var tgt=em?(PM.edit[em]||(PM.edit[em]=flagsOf(PM.rows.filter(function(r){return r.email===em;})[0]))):PM.draft;
+    setFlag(tgt,k,on);
+    if(em&&sameFlags(tgt,flagsOf(PM.rows.filter(function(r){return r.email===em;})[0])))delete PM.edit[em];
+    PM.msg='';render();
+  }
 });
 document.addEventListener('submit',function(e){
   if(e.target.id!=='lForm')return;e.preventDefault();syncForm();
@@ -161,7 +200,7 @@ document.addEventListener('submit',function(e){
     api.updateLeave(eid,{staff_type:f.grp,person_id:f.person.key,person_name:f.person.name,leave_type:f.type,start_date:f.start,end_date:f.end,note:f.note.trim()}).then(function(row){
       L.busy=false;var i=-1;L.rows.forEach(function(r,j){if(r.id===eid)i=j;});if(i>=0)L.rows[i]=row;else L.rows.push(row);sortRows();
       L.msg='แก้ไขแล้ว: '+row.person_name+' · '+tOf(row.leave_type).label+' '+U().dShort(row.start_date)+(row.end_date!==row.start_date?' – '+U().dShort(row.end_date):'');L.msgOk=true;
-      resetForm();V().leavesChanged();render();
+      resetForm();closeIfNoAdd();V().leavesChanged();render();
     },function(e2){L.busy=false;L.msg=e2.message||String(e2);L.msgOk=false;render();});
     return;
   }
@@ -172,14 +211,79 @@ document.addEventListener('submit',function(e){
     V().leavesChanged();render();
   },function(e2){L.busy=false;L.msg=e2.message||String(e2);L.msgOk=false;render();});
 });
+function closeIfNoAdd(){if(!L.perm.add&&!L.perm.admin)L.formOpen=false;}
 function sortRows(){L.rows.sort(function(a,b){return a.start_date<b.start_date?-1:a.start_date>b.start_date?1:a.id-b.id;});}
 function resetForm(){var f=L.form;L.editId=null;f.person=null;f.q='';f.note='';f.type='sick';f.start=f.end=today();}
 function startEdit(id){
-  var r=L.rows.filter(function(x){return x.id===id;})[0];if(!r||!L.admin)return;
+  var r=L.rows.filter(function(x){return x.id===id;})[0];if(!r||!L.perm.edit)return;
   var p=findPerson(r.staff_type,r.person_id,r.person_name)||{key:r.person_id,id:'',name:r.person_name||r.person_id,func:'',empId:''};
   L.editId=id;L.formOpen=true;L.msg='';
   L.form={grp:r.staff_type,person:p,type:r.leave_type,start:r.start_date,end:r.end_date,note:r.note||'',q:''};
   render();var fm=$('lForm');if(fm)fm.scrollIntoView({block:'start'});
+}
+/* ---------- จัดการสิทธิ์ (admin) ---------- */
+var EM_RE=/^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+var PF=[['v','ดู'],['a','เพิ่ม'],['e','แก้ไข'],['d','ลบ']];
+function flagsOf(r){return r?{v:!!r.can_view,a:!!r.can_add,e:!!r.can_edit,d:!!r.can_delete}:{v:false,a:false,e:false,d:false};}
+function sameFlags(a,b){return a.v===b.v&&a.a===b.a&&a.e===b.e&&a.d===b.d;}
+/* เพิ่ม / แก้ไข / ลบ imply ดู (same rule as the database) */
+function setFlag(f,k,on){f[k]=on;if(on&&k!=='v')f.v=true;if(!on&&k==='v'){f.a=f.e=f.d=false;}}
+function loadPerms(){
+  if(!L.perm.admin||PM.loading||PM.loaded)return;
+  PM.loading=true;PM.err='';if(isView())render();
+  api.listLeavePerms().then(function(d){
+    PM.rows=(d&&d.perms)||[];PM.admins=(d&&d.admins)||[];PM.loaded=true;PM.loading=false;PM.edit={};if(isView())render();
+  },function(e){PM.loading=false;PM.err=e.message||String(e);if(isView())render();});
+}
+function checks(f,em){
+  return '<div class="pchk">'+PF.map(function(x){
+    var id='pf-'+x[0]+'-'+(em?em.replace(/[^a-z0-9]/gi,'_'):'new');
+    return '<label class="pck'+(f[x[0]]?' on':'')+'" for="'+esc(id)+'"><input type="checkbox" id="'+esc(id)+'" data-pf="'+x[0]+'"'+(em?' data-em="'+esc(em)+'"':'')+(f[x[0]]?' checked':'')+'><span>'+x[1]+'</span></label>';
+  }).join('')+'</div>';
+}
+function permHTML(){
+  var h=['<section class="lpanel lperm" id="lPerm"><div class="phead"><h2>👥 จัดการสิทธิ์</h2><button type="button" class="tbtn" data-a="preload" aria-label="โหลดรายการสิทธิ์ใหม่">↻</button></div>',
+    '<p class="phint">กำหนดว่าบัญชีไหน (ตามอีเมล) <b>ดู / เพิ่ม / แก้ไข / ลบ</b> ข้อมูลการลาได้ · ติ๊ก เพิ่ม/แก้ไข/ลบ จะได้สิทธิ์ดูด้วย · ใส่อีเมลไว้ก่อนได้แม้ยังไม่มีบัญชี</p>'];
+  if(PM.err)h.push('<div class="amsg">'+esc(PM.err)+'</div>');
+  if(PM.loading&&!PM.loaded)h.push('<div class="lhint"><div class="spinner"></div>กำลังโหลดรายการสิทธิ์…</div>');
+  PM.admins.forEach(function(em){h.push('<div class="prm adm"><div class="pem"><b>'+esc(em)+'</b><span class="pbd adm">ผู้ดูแลระบบ · สิทธิ์เต็ม</span></div></div>');});
+  PM.rows.forEach(function(r){
+    var f=PM.edit[r.email]||flagsOf(r),dirty=!!PM.edit[r.email],busy=PM.busy===r.email;
+    var none=!f.v&&!f.a&&!f.e&&!f.d;
+    h.push('<div class="prm'+(dirty?' dirty':'')+'" data-em="'+esc(r.email)+'"><div class="pem"><b>'+esc(r.email)+'</b><span class="pbd'+(r.has_account?' ok':'')+'">'+(r.has_account?'มีบัญชีแล้ว':'ยังไม่มีบัญชี')+'</span></div>'+
+      checks(f,r.email)+
+      '<div class="pact">'+(none?'<span class="pnone">ไม่มีสิทธิ์</span>':'')+
+        '<button type="button" class="psave" data-psave="'+esc(r.email)+'"'+(dirty&&!busy?'':' disabled')+'>'+(busy?'กำลังบันทึก…':'บันทึก')+'</button>'+
+        '<button type="button" class="ldel" data-pdel="'+esc(r.email)+'"'+(busy?' disabled':'')+'>ลบ</button></div></div>');
+  });
+  if(PM.loaded&&!PM.rows.length)h.push('<div class="lhint">ยังไม่ได้ให้สิทธิ์ใคร — เพิ่มอีเมลด้านล่าง</div>');
+  var dft=PM.draft;
+  h.push('<div class="padd"><label class="fk" for="pEmail">เพิ่มอีเมล</label><input type="email" id="pEmail" inputmode="email" autocapitalize="off" spellcheck="false" autocomplete="off" placeholder="name@example.com" value="'+esc(dft.email)+'">'+
+    checks(dft,'')+'<button type="button" class="abtn" data-a="padd"'+(PM.busy==='+'?' disabled':'')+'>'+(PM.busy==='+'?'กำลังบันทึก…':'+ เพิ่ม / บันทึกสิทธิ์')+'</button></div>');
+  h.push('<div class="amsg'+(PM.msgOk?' ok':'')+'" id="pMsg" role="alert">'+esc(PM.msg)+'</div></section>');
+  return h.join('');
+}
+function permUpsert(email,f,key){
+  PM.busy=key;PM.msg='';render();
+  return api.upsertLeavePerm(email,f).then(function(row){
+    PM.busy='';var i=-1;PM.rows.forEach(function(r,j){if(r.email===row.email)i=j;});
+    if(i>=0)PM.rows[i]=row;else{PM.rows.push(row);PM.rows.sort(function(a,b){return a.email<b.email?-1:1;});}
+    delete PM.edit[row.email];PM.msg='บันทึกสิทธิ์ของ '+row.email+' แล้ว';PM.msgOk=true;render();return row;
+  },function(e){PM.busy='';PM.msg=e.message||String(e);PM.msgOk=false;render();throw e;});
+}
+function permSave(email){var f=PM.edit[email];if(!f)return;permUpsert(email,f,email).catch(function(){});}
+function permAdd(){
+  var em=String(PM.draft.email||'').trim().toLowerCase();
+  if(!EM_RE.test(em)){PM.msg='กรุณากรอกอีเมลให้ถูกต้อง';PM.msgOk=false;render();return;}
+  var f={v:PM.draft.v,a:PM.draft.a,e:PM.draft.e,d:PM.draft.d};
+  permUpsert(em,f,'+').then(function(){PM.draft={email:'',v:true,a:false,e:false,d:false};render();},function(){});
+}
+function permDel(email){
+  if(!window.confirm('ลบสิทธิ์การลาของ '+email+'?\n(บัญชีนี้จะดู/แก้ไขข้อมูลการลาไม่ได้อีก)'))return;
+  PM.busy=email;render();
+  api.deleteLeavePerm(email).then(function(){
+    PM.busy='';PM.rows=PM.rows.filter(function(r){return r.email!==email;});delete PM.edit[email];PM.msg='ลบสิทธิ์ของ '+email+' แล้ว';PM.msgOk=true;render();
+  },function(e){PM.busy='';PM.msg=e.message||String(e);PM.msgOk=false;render();});
 }
 function del(id){
   var r=L.rows.filter(function(x){return x.id===id;})[0];if(!r)return;

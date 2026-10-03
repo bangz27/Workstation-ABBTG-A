@@ -488,3 +488,29 @@ body.v-leave header{background:var(--lvh)}
 .lbtns{display:flex;gap:8px}
 .lbtns .abtn{flex:1}
 .lbtns .lcancel{flex:0 0 auto;width:auto;padding:12px 16px;background:#fff}
+/* ===== per-account leave permissions ===== */
+.views button[hidden]{display:none!important}
+.lperm .phead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.lperm .phead h2{margin:0}
+.lperm .phead .tbtn{padding:3px 10px;box-shadow:var(--sh2)}
+.phint{font-size:12.5px;font-weight:600;margin:8px 0 10px;line-height:1.45}
+.prm{border:var(--bd2);border-radius:10px;background:var(--cream);padding:8px 9px;margin-top:9px}
+.prm.adm{background:var(--yel2)}
+.prm.dirty{background:#FFFBEA;outline:2px dashed #000;outline-offset:2px}
+.pem{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px 8px}
+.pem b{font-size:14.5px;word-break:break-all;min-width:0}
+.pbd{flex:0 0 auto;font-size:11px;font-weight:800;border:1.5px solid #000;border-radius:999px;padding:0 7px;background:#fff}
+.pbd.ok{background:var(--blu2)}.pbd.adm{background:var(--yel)}
+.pchk{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px}
+.pck{position:relative;display:flex;align-items:center;justify-content:center;gap:5px;border:var(--bd2);border-radius:8px;background:#fff;padding:7px 2px;font-size:13.5px;font-weight:800;cursor:pointer;min-height:40px;user-select:none}
+.pck input{width:17px;height:17px;margin:0;accent-color:#000;flex:0 0 auto}
+.pck.on{background:var(--yel);box-shadow:var(--sh2)}
+.pact{display:flex;align-items:center;justify-content:flex-end;gap:7px;margin-top:8px}
+.pnone{margin-right:auto;font-size:12px;font-weight:700;background:var(--gry);border:1.5px solid #000;border-radius:999px;padding:0 7px}
+.psave{border:var(--bd2);background:var(--blu2);border-radius:999px;padding:3px 13px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:var(--sh2)}
+.psave:disabled{opacity:.45;box-shadow:none;cursor:default}
+.prm.dirty .psave:not(:disabled){background:var(--yel)}
+.pact .ldel{margin-left:0;padding:3px 12px;font-size:13px}
+.padd{margin-top:14px;border-top:3px dashed #000;padding-top:12px}
+.padd input[type=email]{width:100%;font-size:16px;font-weight:600;border:var(--bd2);border-radius:8px;padding:8px 9px;background:var(--cream)}
+.padd .abtn{width:100%;margin-top:10px;font-size:15.5px;padding:10px}

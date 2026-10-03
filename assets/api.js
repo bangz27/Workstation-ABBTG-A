@@ -45,8 +45,13 @@ window.SPX_API={
   getDashboardData:function(){return call('get_daily_report');},
   /* "Dayoff Fleet" | "Dayoff Ops" */
   getRosterData:function(sheet){return call('get_roster',{p_key:/ops/i.test(String(sheet))?'ops':'fleet'});},
-  /* ---- leave records (table public.leave_records; writes are admin-only via RLS) ---- */
+  /* ---- leave records (table public.leave_records; view/add/edit/delete per account via RLS) ---- */
   isAdmin:function(){return sb.rpc('is_admin').then(function(r){return !r.error&&r.data===true;},function(){return false;});},
+  /* ---- per-account leave permissions (private.leave_permissions via RPC; manage = admin only) ---- */
+  getMyLeavePerms:function(){return call('get_my_leave_perms');},
+  listLeavePerms:function(){return call('list_leave_perms');},
+  upsertLeavePerm:function(email,f){return call('upsert_leave_perm',{p_email:email,p_view:!!f.v,p_add:!!f.a,p_edit:!!f.e,p_delete:!!f.d});},
+  deleteLeavePerm:function(email){return call('delete_leave_perm',{p_email:email});},
   listLeaves:function(){return q(sb.from('leave_records').select(LV_COLS).order('start_date',{ascending:true}).order('id',{ascending:true}).limit(5000));},
   addLeave:function(row){return q(sb.from('leave_records').insert(row).select(LV_COLS).single());},
   updateLeave:function(id,row){return q(sb.from('leave_records').update(row).eq('id',id).select(LV_COLS)).then(function(d){
