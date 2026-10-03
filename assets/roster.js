@@ -30,6 +30,19 @@ function bkkToday(){
 function thStamp(s){var m=/^(\d{4})-(\d{2})-(\d{2}) (\d{2}:\d{2}):\d{2}/.exec(String(s||''));return m?(+m[3])+' '+TH_MON[+m[2]-1]+' '+m[4]+' น.':String(s||'');}
 function relDay(s,today){var k=dnum(s)-dnum(today);return k===0?'วันนี้':k===1?'พรุ่งนี้':k===-1?'เมื่อวาน':'';}
 
+/* ---------- leave types (edit here) ----------
+   A cell (or one comma-separated part of it) equal to one of `match` (case-insensitive, spaces trimmed)
+   is that leave type. Leave counts as NOT working (k:'other') → never in ทำงาน / กะเช้า / กะบ่าย. */
+var LEAVE_UI=false;          // show ลาป่วย/ลากิจ/ลาพักร้อน cards + legend (off until leave records ship)
+var LEAVE_TEXT_MATCH=false;  // recognise leave words typed in the sheet cells (off: leave comes from leave records later)
+var LEAVE_TYPES=[
+  {key:'sick',     label:'ลาป่วย',    short:'ป่วย',    match:['ลาป่วย','ป่วย','SL','Sick']},
+  {key:'personal', label:'ลากิจ',     short:'กิจ',     match:['ลากิจ','กิจ','PL','BL','Personal']},
+  {key:'annual',   label:'ลาพักร้อน', short:'พักร้อน', match:['ลาพักร้อน','พักร้อน','AL','VL','Annual','Vacation']}
+];
+var LEAVE_BY={};LEAVE_TYPES.forEach(function(t){t.match.forEach(function(m){LEAVE_BY[String(m).replace(/\s+/g,' ').trim().toLowerCase()]=t;});});
+function leaveOf(tok){if(!LEAVE_TEXT_MATCH)return null;return LEAVE_BY[String(tok==null?'':tok).replace(/\s+/g,' ').trim().toLowerCase()]||null;}
+
 /* ---------- shift cell parsing ---------- */
 var RD_RE=/^(RD|OFF|DAY\s*OFF|DAYOFF|หยุด|วันหยุด)$/i;
 var SH_RE=/^(\d{1,2})[:.]?(\d{2})\s*[-–~]\s*(\d{1,2})[:.]?(\d{2})$/;
@@ -48,6 +61,10 @@ function parseCell(raw){
   });
   if(sh.length){var f=sh[0];return {k:'work',raw:s,key:f.key,start:f.start,end:f.end,label:f.label,short:f.short,mixed:rd||sh.length>1||oth.length>0};}
   if(rd&&!oth.length)return {k:'off',raw:s,key:'RD',label:'หยุด (RD)',short:'RD'};
+  var lv=null;for(var q=0;q<oth.length&&!lv;q++)lv=leaveOf(oth[q]);
+  if(lv&&oth.length===1&&!rd)return {k:'other',lv:lv.key,raw:s,key:'lv:'+lv.key,label:lv.label,short:lv.short};
+  if(lv){var lo=oth.map(function(t){var x=leaveOf(t);return x?x.label:t;}).join(', ')+(rd?' + RD':'');
+    return {k:'other',lv:lv.key,raw:s,key:'o:'+lo,label:lo,short:lv.short};}
   var o=oth.join(', ')+(rd?' + RD':'');
   return {k:'other',raw:s,key:'o:'+o,label:o,short:o.length>5?o.slice(0,5):o};
 }
@@ -166,6 +183,24 @@ function setDate(d,scroll){
   renderDay();
 }
 
+/* ---------- "พรุ่งนี้หยุด" + leave cards ---------- */
+function nextDay(s){var p=dparts(s);if(!p)return '';var d=new Date(Date.UTC(p.y,p.m,p.d+1));return d.getUTCFullYear()+'-'+pad2(d.getUTCMonth()+1)+'-'+pad2(d.getUTCDate());}
+/* index of the calendar day after the selected date, -1 if that day is not in the roster */
+function tmrIdx(st){return st&&st.res?st.res.dates.indexOf(nextDay(st.date)):-1;}
+function tmrCount(st){var t=tmrIdx(st),n=0;if(t>=0)st.people.forEach(function(p){if(p.cells[t]&&p.cells[t].k==='off')n++;});return n;}
+function leaveCounts(st,i){var o={};LEAVE_TYPES.forEach(function(t){o[t.key]=0;});st.people.forEach(function(p){var c=p.cells[i];if(c&&c.lv)o[c.lv]++;});return o;}
+function extraCards(st,i){
+  var t=tmrIdx(st),nd=nextDay(st.date),dis=t<0,n=dis?0:tmrCount(st),on=st.filter==='tmr',lc=leaveCounts(st,i);
+  var h='<div class="tmr'+(on?' on':'')+(dis?' dis':'')+'"'+(dis?' aria-disabled="true"':' data-f="tmr" role="button" tabindex="0"')+' aria-label="พรุ่งนี้หยุด '+n+' คน">'+
+    '<span class="tg">พรุ่งนี้</span>'+
+    '<span class="tk">หยุด (RD)<small>'+(dis?'ไม่มีข้อมูลวันถัดไป':esc(dShort(nd)))+'</small></span>'+
+    '<b class="tv">'+n+'<small>'+(dis?'ไม่มีข้อมูล':'คน')+'</small></b>'+
+    (dis?'':'<span class="tx">'+(on?'✕ ปิด':'ดูรายชื่อ ›')+'</span>')+'</div>';
+  if(LEAVE_UI)h+='<div class="lvrow">'+LEAVE_TYPES.map(function(x){var f='lv:'+x.key;
+    return '<div class="lvc lv-'+x.key+(st.filter===f?' on':'')+'" data-f="'+f+'" role="button" tabindex="0"><span class="k">'+esc(x.label)+'</span><b>'+lc[x.key]+'</b></div>';}).join('')+'</div>';
+  return {html:h,tmr:dis?null:n,leave:lc};
+}
+
 /* stats for the selected date */
 function dayStats(st,i){
   var s={total:0,work:0,off:0,other:0,blank:0,shifts:{},others:{}};
@@ -185,6 +220,7 @@ function renderDay(){
   var note=res.dates.indexOf(st.today)<0?'<small>วันนี้ไม่อยู่ในตาราง — แสดงวันที่ใกล้ที่สุด</small>':(rel?'<small>'+rel+'</small>':'<small>&nbsp;</small>');
   $('sDateLong').innerHTML=esc(dLong(st.date))+note;
   if(i<0){$('scards').innerHTML='';$('stiles').innerHTML='';$('schips').innerHTML='';$('slist').innerHTML='<div class="empty">ไม่พบข้อมูลวันที่ในแท็บนี้</div>';$('scnt').textContent='';return;}
+  if(st.filter==='tmr'&&tmrIdx(st)<0)st.filter='all';
   var s=dayStats(st,i);
   var pw=s.total?Math.round(s.work/s.total*100):0;
   if(view==='ops'){renderOpsCards(st,i,s);renderChips(s);renderList();return;}
@@ -193,6 +229,8 @@ function renderDay(){
     '<div class="scard" data-f="all"><div class="k">พนักงานทั้งหมด</div><div class="v">'+s.total+'<small>คน</small></div><div class="s">ในตาราง</div></div>'+
     '<div class="scard work'+(st.filter==='work'?' on':'')+'" data-f="work"><div class="k">ทำงาน</div><div class="v">'+s.work+'<small>คน</small></div><div class="s">'+pw+'% ของทั้งหมด</div></div>'+
     '<div class="scard off'+(st.filter==='off'?' on':'')+'" data-f="off"><div class="k">หยุด (RD)</div><div class="v">'+s.off+'<small>คน</small></div><div class="s">วันหยุด</div></div>';
+  var xc=extraCards(st,i);
+  $('scards').innerHTML+=xc.html;
   var max=Math.max.apply(null,[1].concat(s.shiftList.map(function(g){return g.n;})));
   var tiles=s.shiftList.map(function(g){
     return '<div class="stile'+(st.filter==='s:'+g.key?' on':'')+'" data-f="s:'+esc(g.key)+'"><div class="t">'+esc(g.label)+'</div><div class="c">'+g.n+' <small>คน</small></div><div class="bar"><i style="width:'+(g.n/max*100).toFixed(1)+'%"></i></div></div>';
@@ -200,7 +238,7 @@ function renderDay(){
   if(s.other)tiles.push('<div class="stile other'+(st.filter==='other'?' on':'')+'" data-f="other"><div class="t">ลา / อื่นๆ</div><div class="c">'+s.other+' <small>คน</small></div></div>');
   if(s.blank)tiles.push('<div class="stile blank'+(st.filter==='blank'?' on':'')+'" data-f="blank"><div class="t">ไม่ระบุกะ</div><div class="c">'+s.blank+' <small>คน</small></div></div>');
   $('stiles').innerHTML=tiles.join('');
-  window.__SPX_ROSTER={view:view,date:st.date,total:s.total,work:s.work,off:s.off,other:s.other,blank:s.blank,shifts:s.shiftList.map(function(g){return g.key+':'+g.n;})};
+  window.__SPX_ROSTER={view:view,date:st.date,total:s.total,work:s.work,off:s.off,other:s.other,blank:s.blank,shifts:s.shiftList.map(function(g){return g.key+':'+g.n;}),tmr:xc.tmr,leave:xc.leave};
   renderChips(s);renderList();
 }
 
@@ -236,7 +274,7 @@ function mileShift(p,i){
 function shiftBadge(c){
   if(c.k==='work')return '<span class="sbdg work">'+esc(c.label)+(c.mixed?'<span class="mx">'+(/RD/i.test(c.raw)?'+RD':'+')+'</span>':'')+'</span>';
   if(c.k==='off')return '<span class="sbdg off">หยุด RD</span>';
-  if(c.k==='other')return '<span class="sbdg other">'+esc(c.label)+'</span>';
+  if(c.k==='other')return '<span class="sbdg other'+(c.lv?' lv-'+c.lv:'')+'">'+esc(c.label)+'</span>';
   return '<span class="sbdg blank">ไม่ระบุ</span>';
 }
 function personCard(p,i,dates,title,cls){
@@ -245,7 +283,7 @@ function personCard(p,i,dates,title,cls){
     '<div class="pc1"><span class="pcn">'+esc(p.name)+'</span></div>'+
     '<div class="pcd '+(cls||'')+'">'+esc(title)+'</div>'+
     '<div class="pcr"><span class="k">กะเข้างาน</span><span class="v">'+shiftBadge(c)+'</span>'+
-    '<span class="k">สถานะ</span><span class="v">'+(c.k==='off'?'<span class="sbdg off">วันหยุด</span>':c.k==='work'?'<span class="sbdg work">ทำงาน</span>':'<span class="sbdg blank">ไม่ระบุ</span>')+'</span></div></div>';
+    '<span class="k">สถานะ</span><span class="v">'+(c.k==='off'?'<span class="sbdg off">วันหยุด</span>':c.k==='work'?'<span class="sbdg work">ทำงาน</span>':c.lv?'<span class="sbdg other lv-'+c.lv+'">'+esc(c.label)+'</span>':'<span class="sbdg blank">ไม่ระบุ</span>')+'</span></div></div>';
 }
 function agentBucket(p,i){var c=p.cells[i]||parseCell('');return c.k==='work'?(c.start>=MILE_CUT?'pm':'am'):c.k==='off'?'off':'';}
 function renderOpsCards(st,i,s){
@@ -273,6 +311,8 @@ function renderOpsCards(st,i,s){
     '<div class="os" data-f="all"><span class="k">ทั้งหมด</span><b>'+s.total+'</b><span class="k">คน</span></div>'+
     '<div class="os work'+(st.filter==='work'?' on':'')+'" data-f="work"><span class="k">ทำงาน</span><b>'+s.work+'</b></div>'+
     '<div class="os off'+(st.filter==='off'?' on':'')+'" data-f="off"><span class="k">หยุด RD</span><b>'+s.off+'</b></div></div>');
+  var xc=extraCards(st,i);
+  h.push(xc.html);
   if(sups.length){
     h.push('<div class="osec">Hub Supervisor</div>');
     sups.forEach(function(p){h.push(personCard(p,i,dates,p.func||'Hub Supervisor',''));});
@@ -304,10 +344,10 @@ function renderOpsCards(st,i,s){
   window.__SPX_ROSTER={view:view,date:st.date,total:s.total,work:s.work,off:s.off,other:s.other,blank:s.blank,shifts:s.shiftList.map(function(g){return g.key+':'+g.n;}),
     ops:{sup:sups.map(function(p){var c=p.cells[i];return p.name+'|'+c.raw+'|'+offList(p,i,dates);}),
       asst:am.map(function(x){var c=x.p.cells[i];return x.p.name+'|'+(x.o===0?'Last':x.o===1?'First':'?')+'|'+c.raw+'|'+offList(x.p,i,dates);}),
-      agent:{am:ag.am,pm:ag.pm,off:ag.off,total:ag.total}}};
+      agent:{am:ag.am,pm:ag.pm,off:ag.off,other:ag.other,total:ag.total}},tmr:xc.tmr,leave:xc.leave};
 }
 var AGF={'ag:am':'Hub Agent · กะเช้า','ag:pm':'Hub Agent · กะบ่าย','ag:off':'Hub Agent · หยุด RD'};
-function agLabel(f){if(AGF[f])return AGF[f];if(String(f).indexOf('ag:s:')===0){var k=f.slice(5),m=/^(\d{2})(\d{2})-(\d{2})(\d{2})$/.exec(k);return 'Hub Agent · '+(m?m[1]+':'+m[2]+'–'+m[3]+':'+m[4]:k);}return '';}
+function agLabel(f){if(AGF[f])return AGF[f];if(f==='tmr')return 'พรุ่งนี้หยุด';if(String(f).indexOf('lv:')===0){for(var j=0;j<LEAVE_TYPES.length;j++)if('lv:'+LEAVE_TYPES[j].key===f)return LEAVE_TYPES[j].label;}if(String(f).indexOf('ag:s:')===0){var k=f.slice(5),m=/^(\d{2})(\d{2})-(\d{2})(\d{2})$/.exec(k);return 'Hub Agent · '+(m?m[1]+':'+m[2]+'–'+m[3]+':'+m[4]:k);}return '';}
 
 /* filter chips: status + per-shift (single choice), Function/Department (separate row) */
 function funcPass(st,p){return !st.func||p.func===st.func;}
@@ -345,6 +385,8 @@ function passFilter(f,c,p){
   if(f.indexOf('ag:s:')===0)return !!p&&(deptKind(p.func)==='agent'||deptKind(p.func)==='other')&&c.k==='work'&&c.key===f.slice(5);
   if(f==='work'||f==='off'||f==='other'||f==='blank')return c.k===f;
   if(f.indexOf('s:')===0)return c.k==='work'&&c.key===f.slice(2);
+  if(f==='tmr'){var t=tmrIdx(cur());return !!p&&t>=0&&!!p.cells[t]&&p.cells[t].k==='off';}
+  if(f.indexOf('lv:')===0)return c.k==='other'&&c.lv===f.slice(3);
   return true;
 }
 
@@ -381,7 +423,7 @@ function renderList(){
 function badge(c){
   if(c.k==='work')return '<span class="sbdg work">'+esc(c.label)+(c.mixed?'<span class="mx">'+(/RD/i.test(c.raw)?'+RD':'+')+'</span>':'')+'</span>';
   if(c.k==='off')return '<span class="sbdg off">หยุด RD</span>';
-  if(c.k==='other')return '<span class="sbdg other">'+esc(c.label)+'</span>';
+  if(c.k==='other')return '<span class="sbdg other'+(c.lv?' lv-'+c.lv:'')+'">'+esc(c.label)+'</span>';
   return '<span class="sbdg blank">ไม่ระบุ</span>';
 }
 
@@ -399,7 +441,7 @@ function rowHTML(st,p,i,dates){
     if(r>=0){var gap=dnum(dates[r])-dnum(dates[i]);nx='<span class="nx'+(gap<=1?' soon':'')+'">'+(gap===1?'พรุ่งนี้หยุด':'หยุดถัดไป '+esc(dShort(dates[r])))+'</span>';}
     else nx='<span class="nx">ไม่มีวันหยุดถัดไปในตาราง</span>';
   }
-  return '<div class="prow p-'+c.k+(open?' open':'')+'" data-k="'+esc(p.key)+'">'+
+  return '<div class="prow p-'+c.k+(c.lv?' lv-'+c.lv:'')+(open?' open':'')+'" data-k="'+esc(p.key)+'">'+
     '<div class="pmain"><div class="p1"><span class="pnm">'+esc(p.name)+'</span>'+badge(c)+'</div>'+
     '<div class="p2"><span class="meta">'+meta.join(' · ')+'</span>'+nx+'</div></div>'+
     '<div class="pdet">'+(open?detHTML(st,p,i,dates):'')+'</div></div>';
@@ -411,7 +453,7 @@ function detHTML(st,p,i,dates){
   if(p.id)info.push(esc(cols.id||'ID')+' <b>'+esc(p.id)+'</b>');
   if(p.empId)info.push(esc(cols.empId||'Employee ID')+' <b>'+esc(p.empId)+'</b>');
   if(p.func)info.push(esc(cols.func||'กลุ่ม')+' <b>'+esc(p.func)+'</b>');
-  var nw=0,no=0;p.cells.forEach(function(c){if(c.k==='work')nw++;else if(c.k==='off')no++;});
+  var nw=0,no=0,nl=0;p.cells.forEach(function(c){if(c.k==='work')nw++;else if(c.k==='off')no++;else if(c.lv)nl++;});
   var upc=[];for(var j=i;j<p.cells.length&&upc.length<8;j++)if(p.cells[j].k==='off')upc.push(dShort(dates[j])+(dates[j]===st.today?' (วันนี้)':''));
   var raw=p.cells[i]&&p.cells[i].mixed?'<div class="rawn">ข้อมูลในช่องวันนี้: "'+esc(p.cells[i].raw)+'"</div>':'';
   // calendar, Monday first
@@ -422,15 +464,15 @@ function detHTML(st,p,i,dates){
     if(prev!==null){var gap=dnum(d)-dnum(prev)-1;for(var b=0;b<gap&&b<6;b++)cal.push('<div class="cc pad"></div>');}
     prev=d;
     var c=p.cells[j],pd=dparts(d);
-    cal.push('<div class="cc c-'+c.k+(d===st.date?' c-sel':'')+(d===st.today?' c-today':'')+(dnum(d)<dnum(st.today)?' c-past':'')+'" data-d="'+d+'" title="'+esc(dShort(d)+': '+(c.raw||'ไม่ระบุ'))+'">'+
+    cal.push('<div class="cc c-'+c.k+(c.lv?' lv-'+c.lv:'')+(d===st.date?' c-sel':'')+(d===st.today?' c-today':'')+(dnum(d)<dnum(st.today)?' c-past':'')+'" data-d="'+d+'" title="'+esc(dShort(d)+': '+(c.raw||'ไม่ระบุ'))+'">'+
       '<span class="cd">'+pd.d+'</span><span class="cs">'+esc(c.short)+'</span></div>');
   });
   var r0=dparts(dates[0]),r1=dparts(dates[dates.length-1]);
   return '<div class="info">'+info.join('')+'</div>'+
-    '<div class="stat">ทั้งช่วง '+r0.d+' '+TH_MON[r0.m]+' – '+r1.d+' '+TH_MON[r1.m]+': ทำงาน <span class="w">'+nw+'</span> วัน · หยุด <span class="o">'+no+'</span> วัน</div>'+
+    '<div class="stat">ทั้งช่วง '+r0.d+' '+TH_MON[r0.m]+' – '+r1.d+' '+TH_MON[r1.m]+': ทำงาน <span class="w">'+nw+'</span> วัน · หยุด <span class="o">'+no+'</span> วัน'+(nl?' · ลา <span class="l">'+nl+'</span> วัน':'')+'</div>'+
     (upc.length?'<div class="upc">วันหยุดตั้งแต่ '+esc(dShort(dates[i]))+': '+esc(upc.join(', '))+'</div>':'<div class="upc none">ไม่มีวันหยุดตั้งแต่ '+esc(dShort(dates[i]))+' จนจบตาราง</div>')+raw+
     '<div class="cal">'+cal.join('')+'</div>'+
-    '<div class="legend"><span><i style="background:var(--sgl);border:1px solid var(--sgln)"></i>ทำงาน (เวลาเข้า-ออก)</span><span><i style="background:var(--srbg)"></i>หยุด RD</span><span>แตะวันที่เพื่อดูทั้งทีม</span></div>';
+    '<div class="legend"><span><i style="background:var(--sgl);border:1px solid var(--sgln)"></i>ทำงาน (เวลาเข้า-ออก)</span><span><i style="background:var(--srbg)"></i>หยุด RD</span>'+(LEAVE_UI?'<span><i class="lg-lv"></i>ลา (ป่วย/กิจ/พักร้อน)</span>':'')+'<span>แตะวันที่เพื่อดูทั้งทีม</span></div>';
 }
 
 /* ---------- events ---------- */
@@ -443,6 +485,7 @@ $('sRetryBtn').addEventListener('click',function(){if(RS[view])loadRoster(view);
 function setFilter(f){var st=cur();if(!st||!st.res)return;st.filter=(st.filter===f&&f!=='all')?'all':f;renderDay();}
 $('schips').addEventListener('click',function(e){var b=e.target.closest('.chip');if(b)setFilter(b.getAttribute('data-f'));});
 $('scards').addEventListener('click',function(e){var b=e.target.closest('[data-f]');if(b)setFilter(b.getAttribute('data-f'));});
+$('scards').addEventListener('keydown',function(e){if(e.key!=='Enter'&&e.key!==' ')return;var b=e.target.closest('[data-f][role="button"]');if(b){e.preventDefault();setFilter(b.getAttribute('data-f'));var x=$('scards').querySelector('[data-f="'+b.getAttribute('data-f')+'"]');if(x)x.focus();}});
 $('stiles').addEventListener('click',function(e){var b=e.target.closest('.stile');if(b)setFilter(b.getAttribute('data-f'));});
 $('fchips').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;var st=cur();st.func=b.getAttribute('data-fn')||'';renderChips();renderList();});
 var sq=$('sq'),sclr=$('sclr');

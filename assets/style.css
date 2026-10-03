@@ -346,3 +346,37 @@ body:not(.auth-out) #auth{display:none}
 /* keyboard focus (accessibility) */
 :focus-visible{outline:3px solid var(--blu);outline-offset:2px}
 .nums .v.del{color:#1F3FBF}
+
+/* ===== "พรุ่งนี้หยุด" card + leave cards (กะ Fleet / กะ Ops) ===== */
+:root{--lv-sick:#FFE15D;--lv-personal:#FFF3B0;--lv-annual:#FFC46B;--oth:#F3E9C6}
+.tmr{grid-column:1/-1;display:flex;align-items:center;gap:9px;background:#FFE4E4;color:#000;border:var(--bd);border-radius:var(--r);padding:6px 9px 6px 6px;box-shadow:var(--sh3);cursor:pointer;min-width:0;transition:transform .06s ease,box-shadow .06s ease}
+.scards.opsx .tmr{margin-top:9px}
+.tmr .tg{flex:0 0 auto;background:var(--cor);border:var(--bd2);border-radius:7px;font-size:12.5px;font-weight:700;padding:5px 8px;line-height:1.2}
+.tmr .tk{flex:1;min-width:0;font-size:14px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tmr .tk small{display:block;font-size:11px;font-weight:600}
+.tmr .tv{flex:0 0 auto;font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
+.tmr .tv small{font-size:12px;font-weight:600;margin-left:3px}
+.tmr .tx{flex:0 0 auto;font-size:11.5px;font-weight:700;background:#fff;border:var(--bd2);border-radius:999px;padding:2px 8px;white-space:nowrap}
+.tmr:active,.lvc:active{transform:translate(2px,2px);box-shadow:var(--sh2)}
+.tmr.on{background:var(--yel);outline:3px solid #000;outline-offset:2px}
+.tmr.on .tx{background:#000;color:#fff}
+.tmr.dis{cursor:default;background:#fff;box-shadow:none;opacity:.75}
+.tmr.dis .tk small{font-weight:700}
+.lvrow{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.scards.opsx .lvrow{margin-top:9px}
+.lvc{display:flex;align-items:baseline;justify-content:space-between;gap:4px;border:var(--bd);border-radius:9px;padding:4px 8px;box-shadow:var(--sh3);cursor:pointer;min-width:0;white-space:nowrap;color:#000;transition:transform .06s ease,box-shadow .06s ease}
+.lvc .k{font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis}
+.lvc b{font-size:17px;font-variant-numeric:tabular-nums}
+.lvc.lv-sick{background:var(--lv-sick)}.lvc.lv-personal{background:var(--lv-personal)}.lvc.lv-annual{background:var(--lv-annual)}
+.lvc.on{outline:3px solid #000;outline-offset:2px;box-shadow:var(--sh2);transform:translate(1px,1px)}
+.lvc.on b{background:#000;color:#fff;border-radius:5px;padding:0 5px}
+/* leave colours in badges, list rows, calendar cells (yellow family; RD stays coral) */
+.sbdg.other{background:var(--oth)}
+.sbdg.lv-sick{background:var(--lv-sick)}.sbdg.lv-personal{background:var(--lv-personal)}.sbdg.lv-annual{background:var(--lv-annual)}
+.prow.lv-sick{--stc:var(--lv-sick)}.prow.lv-personal{--stc:var(--lv-personal)}.prow.lv-annual{--stc:var(--lv-annual)}
+.prow.p-other.lv-sick,.prow.p-other.lv-personal,.prow.p-other.lv-annual{background:#FFFBEA}
+.cc.c-other{background:var(--oth)}
+.cc.lv-sick{background:var(--lv-sick)}.cc.lv-personal{background:var(--lv-personal)}.cc.lv-annual{background:var(--lv-annual)}
+.pdet .stat .l{font-weight:700;padding:0 5px;border:var(--bd2);border-radius:5px;background:var(--lv-sick)}
+.legend i.lg-lv{background:var(--lv-annual)}
+.chip.c-ag.on{background:var(--yel)}
