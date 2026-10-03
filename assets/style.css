@@ -528,3 +528,124 @@ body.v-leave header{background:var(--lvh)}
 .plink b{display:block;font-size:14px;word-break:break-all}
 .plink input{width:100%;margin-top:8px;font-size:13px;font-weight:600;border:var(--bd2);border-radius:8px;padding:7px 8px;background:#fff;font-family:ui-monospace,monospace}
 .plink .pclose{flex:0 0 auto;background:#fff;padding:10px 16px}
+
+/* =====================================================================
+   ABBTG-A Workstation — Pixel Art / 8-Bit Retro Arcade skin
+   The selectors below intentionally override presentation only. The DOM
+   contracts consumed by the dashboard scripts remain unchanged.
+   ===================================================================== */
+:root{
+  --navy:#1a1c23; --arcade:#5b6ee1; --coin:#fbf236; --health:#ac3232;
+  --ice:#c7d2ff; --ink:#08090d; --wh:#f7f7ef; --gry:#3b4252;
+  --yel:var(--coin); --blu:var(--arcade); --cor:var(--health);
+  --yel2:#fff7a3; --blu2:var(--ice); --cor2:#e98b8b;
+  --bg:var(--navy); --tx:var(--wh); --stx:#d8d8d0; --ln:#000;
+  --bw:4px; --bd:4px solid #000; --bd2:3px solid #000;
+  --sh:4px 4px 0 #000; --sh3:3px 3px 0 #000; --sh2:2px 2px 0 #000; --r:0;
+  --font:"Press Start 2P","Noto Sans Thai",monospace;
+}
+*{image-rendering:pixelated}
+html{background:var(--navy)}
+body{background:var(--navy);color:var(--wh);font-family:"Noto Sans Thai",system-ui,sans-serif;font-size:14px;font-weight:600;letter-spacing:.01em}
+button,input,select{font-family:"Noto Sans Thai",system-ui,sans-serif}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--coin);outline-offset:3px}
+::selection{background:var(--coin);color:#000}
+
+/* Pixel display type is reserved for short labels and numerical HUD data,
+   keeping the Thai operational text legible on small screens. */
+.brand,h1,.datebox b,.card .v,.scard .v,.stile .c,.lcard b,.tv,.ostat .os b,
+.thead,.rank,.badge,.sbdg,.dchip b,.views button,.abtn,.refbtn,.tbtn,.arw,.chip,
+.dirbtn,.lo,.gear,.ladd,.lseg button,.ldel,.ledit,.pinv,.psave{font-family:var(--font)}
+.brand{font-size:9px;line-height:1.7;letter-spacing:.08em}
+h1{font-size:14px;line-height:1.55;letter-spacing:.02em}
+
+/* Shared arcade frame */
+header{background:var(--arcade);color:var(--wh);border-bottom:4px solid #000;padding:16px 12px 18px}
+body.v-fleet header{background:var(--arcade)}
+body.v-ops header{background:#7353ba}
+body.v-leave header{background:#866329}
+.datebox,.card,.scard,.stile,.row,.prow,.lrow,.lcard,.tmr,.lpanel,.lseg,.ldate,
+.search input,.selwrap select,.views,.refbtn,.tbtn,.arw,.chip,.dirbtn,.err,.empty,
+.dchip,.ostat .os,.agc,.lvc,.lvs,.pck,.prm,.lopt,.lpick{border-radius:0}
+.datebox{background:var(--navy);color:var(--coin);border:var(--bd);box-shadow:var(--sh);padding:7px 8px;font-size:11px}
+.datebox b{font-size:14px;line-height:1.6}
+.lo,.gear{border-radius:0;background:var(--health);color:#fff;border:var(--bd2);box-shadow:var(--sh2);padding:4px 7px}
+.gear{background:var(--coin);color:#000}
+.views{background:var(--navy);border:var(--bd);box-shadow:var(--sh);gap:3px;padding:4px}
+.views button{border-radius:0;color:var(--wh);font-size:9px;line-height:1.55;padding:8px 3px}
+.views button.on,body.v-fleet .views button.on,body.v-ops .views button.on,body.v-leave .views button.on{background:var(--coin);color:#000;border-color:#000}
+
+.ctl,.sctl,.lctl{gap:10px}
+.selwrap select,.search input{background:var(--wh);border:var(--bd);box-shadow:var(--sh);border-radius:0;color:#000}
+.selwrap select{padding-top:10px;padding-bottom:10px}
+.refbtn,.tbtn,.arw,.chip,.dirbtn,.abtn,.eye,.err button,.dchip,.scard,.stile,.os,.agc,.ladd,.ldel,.ledit,.pinv,.psave,.lopt,.lvc,.lvs{border-radius:0}
+.refbtn,.tbtn,.arw,.dirbtn,.eye,.err button{background:var(--coin);border:var(--bd);box-shadow:var(--sh);color:#000}
+.refbtn svg{fill:#000}.refbtn:active,.tbtn:active,.arw:active,.chip:active,.dirbtn:active,.abtn:active,.eye:active,.lo:active,.gear:active,.err button:active,.dchip:active,.scard:active,.stile:active,.os:active,.agc:active,.ladd:active,.ldel:active,.ledit:active,.pinv:active,.psave:active{transform:translate(4px,4px);box-shadow:none}
+
+/* HUD cards and lists */
+.cards,.scards,.lcards{gap:10px}
+.card,.scard,.stile,.ostat .os,.agc{background:var(--wh);border:var(--bd);box-shadow:var(--sh);color:#000}
+.cards .card:nth-child(3),.scard.work,.ostat .os.work,.agc.pm{background:var(--ice)}
+.cards .card:nth-child(4),.scard.off,.ostat .os.off,.agc.off{background:#e98b8b}
+.cards .card:nth-child(5),.stile.other,.agc.am{background:var(--coin)}
+.card .k,.scard .k,.stile .t,.agc .k{font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.card .v,.scard .v,.stile .c,.agc .v{font-size:18px;line-height:1.65}
+.row,.prow,.lrow{background:var(--wh);border:var(--bd);box-shadow:var(--sh);color:#000}
+.row:before,.prow:before,.lrow:before{width:10px;border-right:var(--bd2)}
+.rank,.badge,.sbdg,.nums>div,.rng,.rdn,.p2 .nx{border-radius:0}
+.rank,.badge,.sbdg{border:var(--bd2);background:var(--coin);padding:3px 5px}
+.nums>div{background:#e8e8dd;border:var(--bd2);padding:4px 1px}
+.nums .v{font-size:14px}.nums .k{font-size:10px}
+.track,.stile .bar{background:var(--navy);border:var(--bd2);border-radius:0;height:14px}
+.fill{background:var(--coin)}.fill.f100{background:var(--arcade)}.fill.flow{background:#e98b8b}.fill.fvlow{background:var(--health)}
+.det,.pdet{background:#e8e8dd;border-top:var(--bd2)}
+
+/* Search and sticky controls */
+.toolbar{background:var(--navy);border-bottom:4px solid #000;color:var(--wh);padding-top:14px}
+.search input{font-size:15px}.search input:focus{background:var(--coin)}
+.chips{gap:9px}.chip{background:var(--wh);border:var(--bd2);box-shadow:var(--sh2);color:#000;padding:6px 9px}
+.chip .n{border-radius:0;background:var(--navy);color:var(--coin)}
+.chip.on,.schips .chip.on,.chip.c-ag.on{background:var(--coin);color:#000}
+.sortbar select{border-radius:0;background:var(--wh);border:var(--bd2);box-shadow:var(--sh2)}
+.err{background:var(--health);color:#fff;border:var(--bd);box-shadow:var(--sh)}
+.err button{background:var(--coin)}
+.thead{background:var(--navy);color:var(--coin);border-radius:0;border:var(--bd);box-shadow:var(--sh)}
+footer{color:#d8d8d0}
+
+/* Calendar, roster and leave controls */
+.dchip{background:var(--wh);border:var(--bd);box-shadow:var(--sh3);color:#000}
+.dchip.wkend,.dchip.sel{background:var(--coin)}
+.dchip.today:after{border-radius:0;background:var(--health);border:2px solid #000}
+.dchip .doff{border-top-color:#000}
+.ghdr{color:var(--coin)}.ghdr .dot{border-radius:0;background:var(--arcade)}
+.sbdg.work,.p2 .nx.back{background:var(--ice)}.sbdg.off,.p2 .nx.soon{background:#e98b8b}
+.lseg{background:var(--navy);border:var(--bd);box-shadow:var(--sh)}
+.lseg button{color:var(--wh);border-radius:0}.lseg button.on{background:var(--coin);color:#000}
+.ldate,.lpanel{background:var(--wh);color:#000;border:var(--bd);box-shadow:var(--sh)}
+.lcard.lsum{background:var(--wh)}
+.ladd{background:var(--coin);border:var(--bd);box-shadow:var(--sh);color:#000}
+.ladd.on{background:var(--navy);color:var(--coin)}
+.lpanel input[type=date],.lpanel input[type=text],.padd input[type=email],.ldate input{border-radius:0;border:var(--bd2);background:#f1f1e7}
+.lopt,.prm{background:#e8e8dd;border:var(--bd2);box-shadow:var(--sh2)}
+.lopt:hover{background:var(--coin)}
+.pck{border-radius:0}.pck.on,.prm.adm{background:var(--coin)}
+
+/* Login screen is a dedicated arcade start screen. */
+.auth{background:var(--navy);position:relative;overflow:hidden}
+.auth:before,.auth:after{content:"";position:absolute;pointer-events:none;inset:0;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(255,255,255,.035) 4px)}
+.auth:after{inset:20px;border:4px solid var(--arcade);box-shadow:inset 0 0 0 4px #000}
+.abox{position:relative;z-index:1;background:var(--wh);color:#000;border:4px solid #000;border-radius:0;box-shadow:8px 8px 0 var(--arcade);padding:24px 18px}
+.abrand{font-family:var(--font);font-size:10px;line-height:1.8;color:var(--arcade)}
+.abox h1{font-size:15px;line-height:1.7;margin-top:12px}.asub{font-family:var(--font);font-size:9px;line-height:1.8}
+.aform input{border-radius:0;border:var(--bd2);background:#f1f1e7}.abtn{border-radius:0;background:var(--coin);border:var(--bd);box-shadow:var(--sh);color:#000}
+.amsg{border-radius:0}.anote{border-top:3px dashed #000}
+
+@media (min-width:760px){
+  header{border:4px solid #000;border-top:0;border-radius:0;box-shadow:8px 8px 0 #000}
+  .toolbar{border-left:4px solid #000;border-right:4px solid #000;border-bottom:4px solid #000}
+  .row,.prow,.lrow{box-shadow:var(--sh)}
+}
+@media (max-width:420px){
+  .views.v4 button,.views.v4 button.vdrv{font-size:8px;line-height:1.55}
+  h1{font-size:12px}.card .v,.scard .v{font-size:15px}
+}
