@@ -7,7 +7,8 @@ var TH_WD=['อา','จ','อ','พ','พฤ','ศ','ส'];
 var TH_WDL=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
 var VIEWS={driver:{theme:'#FFE15D'},
   fleet:{sheet:'Dayoff Fleet',title:'กะ Fleet',theme:'#4D77FF'},
-  ops:{sheet:'Dayoff Ops',title:'กะ Ops',theme:'#A388EE'}};
+  ops:{sheet:'Dayoff Ops',title:'กะ Ops',theme:'#A388EE'},
+  leave:{title:'การลา',theme:'#FFC46B'}};
 var RS={};
 ['fleet','ops'].forEach(function(v){RS[v]={v:v,res:null,people:[],date:'',filter:'all',func:'',q:'',open:{},seq:0,loading:false};});
 var view='driver';
@@ -33,12 +34,14 @@ function relDay(s,today){var k=dnum(s)-dnum(today);return k===0?'วันนี
 /* ---------- leave types (edit here) ----------
    A cell (or one comma-separated part of it) equal to one of `match` (case-insensitive, spaces trimmed)
    is that leave type. Leave counts as NOT working (k:'other') → never in ทำงาน / กะเช้า / กะบ่าย. */
-var LEAVE_UI=false;          // show ลาป่วย/ลากิจ/ลาพักร้อน cards + legend (off until leave records ship)
-var LEAVE_TEXT_MATCH=false;  // recognise leave words typed in the sheet cells (off: leave comes from leave records later)
+var LEAVE_UI=true;           // compact leave line in กะ Fleet / กะ Ops + legend (full cards live in the การลา tab)
+var LEAVE_TEXT_MATCH=false;  // recognise leave words typed in the sheet cells (off: leave comes from leave_records)
 var LEAVE_TYPES=[
   {key:'sick',     label:'ลาป่วย',    short:'ป่วย',    match:['ลาป่วย','ป่วย','SL','Sick']},
   {key:'personal', label:'ลากิจ',     short:'กิจ',     match:['ลากิจ','กิจ','PL','BL','Personal']},
-  {key:'annual',   label:'ลาพักร้อน', short:'พักร้อน', match:['ลาพักร้อน','พักร้อน','AL','VL','Annual','Vacation']}
+  {key:'annual',   label:'ลาพักร้อน', short:'พักร้อน', match:['ลาพักร้อน','พักร้อน','AL','VL','Annual','Vacation']},
+  {key:'absent',   label:'ขาดงาน',    short:'ขาด',     match:['ขาดงาน','ขาด','ABS','Absent']},
+  {key:'other',    label:'ลาอื่นๆ',    short:'อื่นๆ',    match:['ลาอื่นๆ','ลาอื่น','OL','Other leave']}
 ];
 var LEAVE_BY={};LEAVE_TYPES.forEach(function(t){t.match.forEach(function(m){LEAVE_BY[String(m).replace(/\s+/g,' ').trim().toLowerCase()]=t;});});
 function leaveOf(tok){if(!LEAVE_TEXT_MATCH)return null;return LEAVE_BY[String(tok==null?'':tok).replace(/\s+/g,' ').trim().toLowerCase()]||null;}
@@ -67,6 +70,32 @@ function parseCell(raw){
     return {k:'other',lv:lv.key,raw:s,key:'o:'+lo,label:lo,short:lv.short};}
   var o=oth.join(', ')+(rd?' + RD':'');
   return {k:'other',raw:s,key:'o:'+o,label:o,short:o.length>5?o.slice(0,5):o};
+}
+
+/* ---------- leave records overlay (from public.leave_records via SPX_LEAVE) ----------
+   A record covering a date turns that person's cell into leave (not working).
+   RD in the sheet stays RD. */
+var LT_BY={};LEAVE_TYPES.forEach(function(t){LT_BY[t.key]=t;});
+function leaveIndex(v){
+  var L=window.SPX_LEAVE,rows=L&&L.rows||[],m={};
+  rows.forEach(function(r){if(r.staff_type===v&&LT_BY[r.leave_type])(m[r.person_id]||(m[r.person_id]=[])).push(r);});
+  return m;
+}
+function applyLeave(v){
+  var st=RS[v];if(!st||!st.res)return;
+  var m=leaveIndex(v),dates=st.res.dates;
+  st.people.forEach(function(p){
+    var recs=m[p.key]||(p.id?null:m[p.name]);
+    p.cells=p.base.map(function(c,i){
+      if(!recs||c.k==='off')return c;
+      var d=dates[i],r=null;
+      for(var j=0;j<recs.length;j++)if(recs[j].start_date<=d&&recs[j].end_date>=d){r=recs[j];break;}
+      if(!r)return c;
+      var t=LT_BY[r.leave_type];
+      return {k:'other',lv:t.key,key:'lv:'+t.key,label:t.label,short:t.short,rec:r,
+        raw:t.label+(r.note?' – '+r.note:'')+(c.raw?' (ตารางเดิม: '+c.raw+')':'')};
+    });
+  });
 }
 
 /* ---------- loading ---------- */
@@ -103,11 +132,13 @@ function onRoster(v,res){
   st.today=res.today||bkkToday();
   st.people=res.people.map(function(p){
     return {id:String(p.id||''),empId:String(p.empId||''),name:String(p.name||''),func:String(p.func||''),station:String(p.station||''),
-      cells:(p.shifts||[]).map(parseCell),key:String(p.id||p.name)};
+      base:(p.shifts||[]).map(parseCell),cells:null,key:String(p.id||p.name)};
   });
+  applyLeave(v);
   if(!st.date||res.dates.indexOf(st.date)<0)st.date=pickDate(res.dates,st.today);
   if(st.func&&!st.people.some(function(p){return p.func===st.func;}))st.func='';
   if(v===view)renderAll(true);
+  if(window.SPX_LEAVE)window.SPX_LEAVE.rosterLoaded(v);
 }
 /* today if present, else nearest date in range */
 function pickDate(dates,today){
@@ -122,12 +153,13 @@ function pickDate(dates,today){
 function setView(v,save){
   if(!VIEWS[v])v='driver';
   view=v;
-  document.body.classList.remove('v-driver','v-fleet','v-ops');
+  document.body.classList.remove('v-driver','v-fleet','v-ops','v-leave');
   document.body.classList.add('v-'+v);
   Array.prototype.forEach.call($('views').children,function(b){var on=b.getAttribute('data-v')===v;b.classList.toggle('on',on);b.setAttribute('aria-selected',on?'true':'false');});
   var tm=document.querySelector('meta[name="theme-color"]');if(tm)tm.setAttribute('content',VIEWS[v].theme);
   if(save){try{localStorage.setItem('spxView',v);}catch(e){}}
   if(v==='driver'){if(window.SPX_DRIVER)window.SPX_DRIVER.ensure();return;}
+  if(v==='leave'){if(window.SPX_LEAVE)window.SPX_LEAVE.show();window.scrollTo(0,0);return;}
   var st=RS[v];
   $('sViewLbl').textContent=VIEWS[v].title;
   hideSErr();
@@ -196,8 +228,13 @@ function extraCards(st,i){
     '<span class="tk">หยุด (RD)<small>'+(dis?'ไม่มีข้อมูลวันถัดไป':esc(dShort(nd)))+'</small></span>'+
     '<b class="tv">'+n+'<small>'+(dis?'ไม่มีข้อมูล':'คน')+'</small></b>'+
     (dis?'':'<span class="tx">'+(on?'✕ ปิด':'ดูรายชื่อ ›')+'</span>')+'</div>';
-  if(LEAVE_UI)h+='<div class="lvrow">'+LEAVE_TYPES.map(function(x){var f='lv:'+x.key;
-    return '<div class="lvc lv-'+x.key+(st.filter===f?' on':'')+'" data-f="'+f+'" role="button" tabindex="0"><span class="k">'+esc(x.label)+'</span><b>'+lc[x.key]+'</b></div>';}).join('')+'</div>';
+  if(LEAVE_UI){   // compact: only the types that have people today (full 5 cards are in the การลา tab)
+    var ltot=0,lp=LEAVE_TYPES.filter(function(x){ltot+=lc[x.key];return lc[x.key]>0||st.filter==='lv:'+x.key;});
+    h+='<div class="lvline'+(ltot?'':' none')+'"><span class="lt">ลา/ขาด '+ltot+' คน</span>'+lp.map(function(x){var f='lv:'+x.key;
+      return '<button type="button" class="lvs lv-'+x.key+(st.filter===f?' on':'')+'" data-f="'+f+'" aria-label="'+esc(x.label)+' '+lc[x.key]+' คน">'+esc(x.label)+' <b>'+lc[x.key]+'</b></button>';}).join('')+
+      (ltot?'':'<span class="lnone">ไม่มีคนลาวันนี้</span>')+
+      '<button type="button" class="lvgo" data-go="leave">การลา ›</button></div>';
+  }
   return {html:h,tmr:dis?null:n,leave:lc};
 }
 
@@ -472,7 +509,7 @@ function detHTML(st,p,i,dates){
     '<div class="stat">ทั้งช่วง '+r0.d+' '+TH_MON[r0.m]+' – '+r1.d+' '+TH_MON[r1.m]+': ทำงาน <span class="w">'+nw+'</span> วัน · หยุด <span class="o">'+no+'</span> วัน'+(nl?' · ลา <span class="l">'+nl+'</span> วัน':'')+'</div>'+
     (upc.length?'<div class="upc">วันหยุดตั้งแต่ '+esc(dShort(dates[i]))+': '+esc(upc.join(', '))+'</div>':'<div class="upc none">ไม่มีวันหยุดตั้งแต่ '+esc(dShort(dates[i]))+' จนจบตาราง</div>')+raw+
     '<div class="cal">'+cal.join('')+'</div>'+
-    '<div class="legend"><span><i style="background:var(--sgl);border:1px solid var(--sgln)"></i>ทำงาน (เวลาเข้า-ออก)</span><span><i style="background:var(--srbg)"></i>หยุด RD</span>'+(LEAVE_UI?'<span><i class="lg-lv"></i>ลา (ป่วย/กิจ/พักร้อน)</span>':'')+'<span>แตะวันที่เพื่อดูทั้งทีม</span></div>';
+    '<div class="legend"><span><i style="background:var(--sgl);border:1px solid var(--sgln)"></i>ทำงาน (เวลาเข้า-ออก)</span><span><i style="background:var(--srbg)"></i>หยุด RD</span>'+(LEAVE_UI?'<span><i class="lg-lv"></i>ลา/ขาดงาน</span>':'')+'<span>แตะวันที่เพื่อดูทั้งทีม</span></div>';
 }
 
 /* ---------- events ---------- */
@@ -484,7 +521,7 @@ $('sRefBtn').addEventListener('click',function(){if(RS[view])loadRoster(view);})
 $('sRetryBtn').addEventListener('click',function(){if(RS[view])loadRoster(view);});
 function setFilter(f){var st=cur();if(!st||!st.res)return;st.filter=(st.filter===f&&f!=='all')?'all':f;renderDay();}
 $('schips').addEventListener('click',function(e){var b=e.target.closest('.chip');if(b)setFilter(b.getAttribute('data-f'));});
-$('scards').addEventListener('click',function(e){var b=e.target.closest('[data-f]');if(b)setFilter(b.getAttribute('data-f'));});
+$('scards').addEventListener('click',function(e){var g=e.target.closest('[data-go]');if(g){setView(g.getAttribute('data-go'),true);return;}var b=e.target.closest('[data-f]');if(b)setFilter(b.getAttribute('data-f'));});
 $('scards').addEventListener('keydown',function(e){if(e.key!=='Enter'&&e.key!==' ')return;var b=e.target.closest('[data-f][role="button"]');if(b){e.preventDefault();setFilter(b.getAttribute('data-f'));var x=$('scards').querySelector('[data-f="'+b.getAttribute('data-f')+'"]');if(x)x.focus();}});
 $('stiles').addEventListener('click',function(e){var b=e.target.closest('.stile');if(b)setFilter(b.getAttribute('data-f'));});
 $('fchips').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;var st=cur();st.func=b.getAttribute('data-fn')||'';renderChips();renderList();});
@@ -504,7 +541,11 @@ $('slist').addEventListener('click',function(e){
 /* ---------- start ---------- */
 var start='driver';
 try{var sv=localStorage.getItem('spxView');if(VIEWS[sv])start=sv;}catch(e){}
-var hm0=/[#&?]view=(driver|fleet|ops)/.exec(location.hash||'');if(hm0)start=hm0[1];
-window.SPX_START=function(){setView(start,false);};
-window.SPX_VIEW={set:function(v){setView(v,true);},state:RS};
+var hm0=/[#&?]view=(driver|fleet|ops|leave)/.exec(location.hash||'');if(hm0)start=hm0[1];
+window.SPX_START=function(){if(window.SPX_LEAVE)window.SPX_LEAVE.init();setView(start,false);};
+window.SPX_VIEW={set:function(v){setView(v,true);},state:RS,current:function(){return view;},
+  ensure:function(v){var st=RS[v];if(st&&!st.res&&!st.loading)loadRoster(v);return !!(st&&st.res);},
+  /* called by SPX_LEAVE after leave records change */
+  leavesChanged:function(){['fleet','ops'].forEach(applyLeave);if(RS[view]&&RS[view].res)renderAll(false);},
+  util:{esc:esc,pad2:pad2,dShort:dShort,dBox:dBox,dLong:dLong,dnum:dnum,bkkToday:bkkToday,LEAVE_TYPES:LEAVE_TYPES}};
 })();
