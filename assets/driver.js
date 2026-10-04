@@ -123,7 +123,7 @@ function renderCards(){
     ['ค้างรวม',fmt(rem),'ยังส่งไม่ครบ '+(n-done)+' คน','y'],
     ['ส่งครบ',fmt(done),'จาก '+n+' คน','g']
   ].map(function(c){return '<div class="card"><div class="k">'+c[0]+'</div><div class="v '+c[3]+'">'+c[1]+'</div><div class="s">'+c[2]+'</div></div>';}).join('');
-  window.__SPX_TOTALS={sheet:state.sheet,drivers:n,done:done,assign:a,delivered:del,onhold:oh,remain:rem,trips:trips,pct:+pct.toFixed(1)};
+  window.__SPX_TOTALS={sheet:state.sheet,drivers:n,done:done,assign:a,delivered:del,onhold:oh,remain:rem,trips:trips,pct:+pct.toFixed(1),people:DATA.map(function(d){return {position:d.position,assign:d.assign,delivered:d.delivered};})};
   if(window.SPX_HOME)window.SPX_HOME.paint();
 }
 
