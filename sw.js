@@ -3,7 +3,7 @@
    - static assets (css/js/icons/fonts/supabase-js CDN): stale-while-revalidate, versioned cache
    - Supabase API / auth (bkmvwgoldyrzmgvmeskp.supabase.co): NEVER cached, passed straight through */
 'use strict';
-var VERSION = '20261005leaveinhub';
+var VERSION = '20261005homekpi';
 var CACHE = 'abbtga-ws-' + VERSION;
 var CORE = ['./', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 var SUPABASE_HOST = 'bkmvwgoldyrzmgvmeskp.supabase.co';
