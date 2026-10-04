@@ -1,26 +1,78 @@
-/* Home dashboard — presentation only. Numbers come from Daily Report totals already computed in driver.js. */
+/* Home dashboard — numbers are derived only from Daily Report totals and the Fleet roster already loaded. */
 (function(){
 "use strict";
 function $(id){return document.getElementById(id);}
 function fmt(n){return Number(n||0).toLocaleString('en-US');}
+function num(n){var x=Number(n)||0;return (Math.round(x*10)/10).toLocaleString('en-US',{minimumFractionDigits:1,maximumFractionDigits:1});}
 function card(label,value,sub,bg){
   return '<article class="hkpi" style="background:'+bg+'"><span>'+label+'</span><b>'+value+'</b><span>'+sub+'</span></article>';
+}
+function met(label,value,sub,bg){
+  return '<article class="hmet" style="background:'+bg+'"><span>'+label+'</span><b>'+value+'</b><small>'+sub+'</small></article>';
+}
+var EN={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+function sheetISO(name){
+  var m=/(\d{1,2})\s+([A-Za-z]{3})[A-Za-z]*\.?\s+(\d{4})/.exec(String(name||''));
+  if(!m)return '';
+  var mo=EN[m[2].toLowerCase()];
+  if(!mo)return '';
+  var d=+m[1];
+  return m[3]+'-'+(mo<10?'0':'')+mo+'-'+(d<10?'0':'')+d;
+}
+function wheelOf(func){
+  var s=String(func||'').toLowerCase();
+  if(/4\s*w|4w|สี่ล้อ|van|pickup/.test(s))return 4;
+  if(/2\s*w|2w|สองล้อ|bike|motor|มอเตอร์/.test(s))return 2;
+  return 0;
+}
+function fleetHC(sheet){
+  var V=window.SPX_VIEW;
+  if(V&&V.ensure)V.ensure('fleet');
+  var st=V&&V.state&&V.state.fleet;
+  if(!st||!st.res)return {label:'HC 2W/4W',v:'…',sub:'กำลังโหลดกะ Fleet'};
+  var iso=sheetISO(sheet),i=st.res.dates.indexOf(iso);
+  if(i<0)return {label:'HC เข้ากะ',v:'–',sub:'วันนี้ไม่อยู่ในตารางกะ'};
+  var n2=0,n4=0,work=0;
+  st.people.forEach(function(p){
+    var c=p.cells[i];
+    if(!c||c.k!=='work')return;
+    work++;
+    var w=wheelOf(p.func);
+    if(w===2)n2++;else if(w===4)n4++;
+  });
+  if(n2||n4)return {label:'HC 2W/4W',v:fmt(n2)+' / '+fmt(n4),sub:'คนเข้ากะ สองล้อ / สี่ล้อ'};
+  return {label:'HC เข้ากะ',v:fmt(work),sub:'คนเข้ากะ · ชีตไม่ได้แยก 2W/4W'};
 }
 function paint(){
   var t=window.__SPX_TOTALS,root=$('home');
   if(!root)return;
   if(!t){
     $('hkpis').innerHTML=card('Assign','—','รอ Daily Report','#FFE6D8')+card('Delivered','—','รอ Daily Report','#F4F7FB')+card('ค้าง','—','รอ Daily Report','#FFF4E5')+card('คนขับ','—','รอ Daily Report','#FFE9A8');
+    $('hmetrics').innerHTML=met('In Hub','—','รอรายงาน','#E7F4FF')+met('เที่ยวงาน','—','รอรายงาน','#FFE6D8')+met('HC 2W/4W','—','รอรายงาน','#FFE9A8')+met('WL','—','รอรายงาน','#F4F7FB')+met('PDTY','—','รอรายงาน','#E9F9EF')+met('SLA','—','รอรายงาน','#FFF4E5');
     $('hSheet').textContent='กำลังโหลดรายงาน…';
+    $('hnote').textContent='กำลังคำนวณจากรายงานที่ซิงก์…';
     $('hFollow').innerHTML='<div>ยังไม่มีตัวเลข</div>';
     return;
   }
+  var trips=t.trips>0?t.trips:(t.drivers||0);
+  var inHub=Math.max(0,(t.assign||0)-(t.delivered||0));
+  var wl=trips?t.assign/trips:0,pdty=trips?t.delivered/trips:0;
+  var hc=fleetHC(t.sheet);
   $('hkpis').innerHTML=[
     card('Assign',fmt(t.assign),'ชิ้น จากแท็บที่เลือก','#FFE6D8'),
     card('Delivered',fmt(t.delivered),t.pct+'% ของ Assign','#F4F7FB'),
     card('ค้าง',fmt(t.remain),'On-hold '+fmt(t.onhold),'#FFF4E5'),
     card('HC ในรายงาน',fmt(t.drivers),'ส่งครบ '+fmt(t.done)+' คน','#FFE9A8')
   ].join('');
+  $('hmetrics').innerHTML=[
+    met('In Hub',fmt(inHub),'ชิ้นที่ยังไม่ Delivered','#E7F4FF'),
+    met('เที่ยวงาน',fmt(trips),'คนที่มี Assign วันนี้','#FFE6D8'),
+    met(hc.label,hc.v,hc.sub,'#FFE9A8'),
+    met('WL',num(wl),'ชิ้น Assign ต่อคน','#F4F7FB'),
+    met('PDTY',num(pdty),'ชิ้นที่ส่งแล้วต่อคน','#E9F9EF'),
+    met('SLA',num(t.pct)+'%','Delivered ÷ Assign','#FFF4E5')
+  ].join('');
+  $('hnote').textContent='คำนวณจากแท็บ '+(t.sheet||'Daily Report')+' · In Hub = Assign − Delivered · เที่ยวงาน = คนที่มี Assign · WL = Assign ต่อคน · PDTY = ส่งแล้วต่อคน · SLA = Delivered ÷ Assign';
   $('hminis').innerHTML=[
     ['On-hold',fmt(t.onhold)],
     ['ส่งครบ',fmt(t.done)],

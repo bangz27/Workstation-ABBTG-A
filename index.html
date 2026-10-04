@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=20261004pc">
+<link rel="stylesheet" href="assets/style.css?v=20261004hub">
 </head>
 <body class="v-home auth-out">
 <svg class="svgdefs" aria-hidden="true" focusable="false" width="0" height="0">
@@ -102,7 +102,7 @@
       <div>
         <p class="hhi">สวัสดีครับ</p>
         <h1>ยินดีต้อนรับสู่ Workstation ABBTG-A</h1>
-        <p class="hsub">ติดตามภาพรวมการทำงานของ Hub · ตัวเลขด้านล่างมาจาก Daily Report ที่ซิงก์แล้วเท่านั้น</p>
+        <p class="hsub">ติดตามภาพรวมการทำงานของ Hub · ตัวเลขคำนวณจาก Daily Report และกะ Fleet ของวันเดียวกัน</p>
       </div>
       <svg class="hillus" viewBox="0 0 220 140" aria-hidden="true">
         <rect width="220" height="140" rx="16" fill="#E7F4FF"/>
@@ -149,7 +149,8 @@
       <div id="hLeave" class="hfollow"></div>
     </section>
   </div>
-  <p class="hnote">In Hub, เที่ยวงาน, HC 2W/4W, WL, PDTY และ SLA ยังไม่มีในชีตที่ซิงก์ จึงไม่แสดงเป็นตัวเลขจริง</p>
+  <div class="hmetrics" id="hmetrics"></div>
+  <p class="hnote" id="hnote">กำลังคำนวณจากรายงานที่ซิงก์…</p>
 </div>
 <header>
   <section class="welcome vd">
@@ -270,11 +271,11 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" integrity="sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok" crossorigin="anonymous"></script>
 <script src="assets/config.js?v=20261004home"></script>
 <script src="assets/api.js?v=20261004home"></script>
-<script src="assets/driver.js?v=20261004home"></script>
+<script src="assets/driver.js?v=20261004hub"></script>
 <script src="assets/roster.js?v=20261004home"></script>
 <script src="assets/leave.js?v=20261004home"></script>
 <script src="assets/auth.js?v=20261004home"></script>
-<script src="assets/home.js?v=20261004home"></script>
+<script src="assets/home.js?v=20261004hub"></script>
 <script src="assets/shell.js?v=20261004hi"></script>
 <script src="assets/pwa.js?v=20261004home"></script>
 </body>

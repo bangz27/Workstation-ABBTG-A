@@ -112,8 +112,8 @@ function fillTabs(names,cur){
 
 /* ---------- summary cards ---------- */
 function renderCards(){
-  var n=DATA.length,done=0,a=0,del=0,oh=0,rem=0;
-  DATA.forEach(function(d){a+=d.assign;del+=d.delivered;oh+=d.onhold;rem+=d.remain;if(d.done)done++;});
+  var n=DATA.length,done=0,a=0,del=0,oh=0,rem=0,trips=0;
+  DATA.forEach(function(d){a+=d.assign;del+=d.delivered;oh+=d.onhold;rem+=d.remain;if(d.done)done++;if(d.assign>0)trips++;});
   var pct=a?(del/a*100):0;
   $('cards').innerHTML=[
     ['คนขับทั้งหมด',fmt(n),'คน',''],
@@ -123,7 +123,7 @@ function renderCards(){
     ['ค้างรวม',fmt(rem),'ยังส่งไม่ครบ '+(n-done)+' คน','y'],
     ['ส่งครบ',fmt(done),'จาก '+n+' คน','g']
   ].map(function(c){return '<div class="card"><div class="k">'+c[0]+'</div><div class="v '+c[3]+'">'+c[1]+'</div><div class="s">'+c[2]+'</div></div>';}).join('');
-  window.__SPX_TOTALS={sheet:state.sheet,drivers:n,done:done,assign:a,delivered:del,onhold:oh,remain:rem,pct:+pct.toFixed(1)};
+  window.__SPX_TOTALS={sheet:state.sheet,drivers:n,done:done,assign:a,delivered:del,onhold:oh,remain:rem,trips:trips,pct:+pct.toFixed(1)};
   if(window.SPX_HOME)window.SPX_HOME.paint();
 }
 
