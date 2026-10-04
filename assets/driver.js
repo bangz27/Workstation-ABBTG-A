@@ -30,7 +30,7 @@ function thStamp(s){
 /* derived fields: progress = Delivered/Assign %, ค้าง = Assign − Delivered − On-hold */
 function enrich(d){
   var a=+d.assign||0,del=+d.delivered||0,oh=+d.onhold||0,raw=a-del-oh;
-  return {id:String(d.id),name:String(d.name),first:d.first||'-',assign:a,delivered:del,onhold:oh,
+  return {id:String(d.id),name:String(d.name),position:String(d.position==null?'':d.position).trim(),first:d.first||'-',assign:a,delivered:del,onhold:oh,
     remainRaw:raw,remain:Math.max(0,raw),done:raw<=0,progress:a?del/a*100:0};
 }
 function status(d){
@@ -171,6 +171,7 @@ listEl.addEventListener('click',function(e){
 
 /* ---------- rows ---------- */
 function fillCls(p){return p>=100?'f100':p<50?'fvlow':p<70?'flow':'';}
+function posText(d){var s=String(d.position==null?'':d.position).trim();return s||'-';}
 function rowHTML(d,i){
   var st=status(d);
   var ohCls=d.onhold>=10?'hot':d.onhold>=5?'warn':'';
@@ -185,9 +186,9 @@ function rowHTML(d,i){
    '<div class="rmain">'+
     '<div class="l1">'+
       '<span class="rank">'+(i+1)+'</span>'+
-      '<span class="wrapname nm"><span class="nm">'+esc(d.name)+'</span><span class="id d-only">ID '+esc(d.id)+'</span></span>'+
+      '<span class="wrapname nm"><span class="nm">'+esc(d.name)+'</span><span class="id d-only">ID '+esc(d.id)+' · '+esc(posText(d))+'</span></span>'+
     '</div>'+
-    '<div class="l2 m-only"><span class="id">ID '+esc(d.id)+'</span><span>·</span><span>เริ่มส่ง '+esc(d.first)+'</span><span style="margin-left:auto"><span class="badge sb '+st.c+'">'+st.t+'</span></span></div>'+
+    '<div class="l2 m-only"><span class="id">ID '+esc(d.id)+'</span><span>·</span><span class="pos">'+esc(posText(d))+'</span><span>·</span><span>เริ่มส่ง '+esc(d.first)+'</span><span style="margin-left:auto"><span class="badge sb '+st.c+'">'+st.t+'</span></span></div>'+
     '<div class="nums">'+
       '<div class="m-only"><div class="k">First Del</div><div class="v">'+esc(d.first)+'</div></div>'+
       '<div class="d-only"><div class="v">'+esc(d.first)+'</div></div>'+
@@ -202,6 +203,7 @@ function rowHTML(d,i){
    '<div class="det"><dl>'+
      '<dt>Driver ID</dt><dd>'+esc(d.id)+'</dd>'+
      '<dt>ชื่อคนขับ</dt><dd>'+esc(d.name)+'</dd>'+
+     '<dt>ตำแหน่ง</dt><dd>'+esc(posText(d))+'</dd>'+
      '<dt>เริ่มส่งชิ้นแรก</dt><dd>'+esc(d.first)+(d.first!=='-'?' น.':'')+'</dd>'+
      '<dt>Assign</dt><dd>'+fmt(d.assign)+' ชิ้น</dd>'+
      '<dt>Delivered</dt><dd>'+fmt(d.delivered)+' ชิ้น</dd>'+
