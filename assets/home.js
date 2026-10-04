@@ -43,19 +43,27 @@ function fleetHC(sheet){
   if(n2||n4)return {label:'HC 2W/4W',v:fmt(n2)+' / '+fmt(n4),sub:'คนเข้ากะ สองล้อ / สี่ล้อ'};
   return {label:'HC เข้ากะ',v:fmt(work),sub:'คนเข้ากะ · ชีตไม่ได้แยก 2W/4W'};
 }
+function fillMetrics(html){
+  var box=$('hmetrics');
+  if(!box)return;
+  var old=box.querySelectorAll('.hmet:not(#inHubCard)');
+  for(var i=0;i<old.length;i++)old[i].parentNode.removeChild(old[i]);
+  var hold=document.createElement('div');
+  hold.innerHTML=html;
+  while(hold.firstChild)box.appendChild(hold.firstChild);
+}
 function paint(){
   var t=window.__SPX_TOTALS,root=$('home');
   if(!root)return;
   if(!t){
     $('hkpis').innerHTML=card('Assign','—','รอ Daily Report','#FFE6D8')+card('Delivered','—','รอ Daily Report','#F4F7FB')+card('ค้าง','—','รอ Daily Report','#FFF4E5')+card('คนขับ','—','รอ Daily Report','#FFE9A8');
-    $('hmetrics').innerHTML=met('In Hub','—','รอรายงาน','#E7F4FF')+met('เที่ยวงาน','—','รอรายงาน','#FFE6D8')+met('HC 2W/4W','—','รอรายงาน','#FFE9A8')+met('WL','—','รอรายงาน','#F4F7FB')+met('PDTY','—','รอรายงาน','#E9F9EF')+met('SLA','—','รอรายงาน','#FFF4E5');
+    fillMetrics(met('เที่ยวงาน','—','รอรายงาน','#FFE6D8')+met('HC 2W/4W','—','รอรายงาน','#FFE9A8')+met('WL','—','รอรายงาน','#F4F7FB')+met('PDTY','—','รอรายงาน','#E9F9EF')+met('SLA','—','รอรายงาน','#FFF4E5'));
     $('hSheet').textContent='กำลังโหลดรายงาน…';
-    $('hnote').textContent='กำลังคำนวณจากรายงานที่ซิงก์…';
+    $('hnote').textContent='กำลังคำนวณจากรายงานที่ซิงก์… · In Hub กรอกเอง';
     $('hFollow').innerHTML='<div>ยังไม่มีตัวเลข</div>';
     return;
   }
   var trips=t.trips>0?t.trips:(t.drivers||0);
-  var inHub=Math.max(0,(t.assign||0)-(t.delivered||0));
   var wl=trips?t.assign/trips:0,pdty=trips?t.delivered/trips:0;
   var hc=fleetHC(t.sheet);
   $('hkpis').innerHTML=[
@@ -64,15 +72,14 @@ function paint(){
     card('ค้าง',fmt(t.remain),'On-hold '+fmt(t.onhold),'#FFF4E5'),
     card('HC ในรายงาน',fmt(t.drivers),'ส่งครบ '+fmt(t.done)+' คน','#FFE9A8')
   ].join('');
-  $('hmetrics').innerHTML=[
-    met('In Hub',fmt(inHub),'ชิ้นที่ยังไม่ Delivered','#E7F4FF'),
+  fillMetrics([
     met('เที่ยวงาน',fmt(trips),'คนที่มี Assign วันนี้','#FFE6D8'),
     met(hc.label,hc.v,hc.sub,'#FFE9A8'),
     met('WL',num(wl),'ชิ้น Assign ต่อคน','#F4F7FB'),
     met('PDTY',num(pdty),'ชิ้นที่ส่งแล้วต่อคน','#E9F9EF'),
     met('SLA',num(t.pct)+'%','Delivered ÷ Assign','#FFF4E5')
-  ].join('');
-  $('hnote').textContent='คำนวณจากแท็บ '+(t.sheet||'Daily Report')+' · In Hub = Assign − Delivered · เที่ยวงาน = คนที่มี Assign · WL = Assign ต่อคน · PDTY = ส่งแล้วต่อคน · SLA = Delivered ÷ Assign';
+  ].join(''));
+  $('hnote').textContent='คำนวณจากแท็บ '+(t.sheet||'Daily Report')+' · เที่ยวงาน = คนที่มี Assign · WL = Assign ต่อคน · PDTY = ส่งแล้วต่อคน · SLA = Delivered ÷ Assign · In Hub กรอกเอง';
   $('hminis').innerHTML=[
     ['On-hold',fmt(t.onhold)],
     ['ส่งครบ',fmt(t.done)],
@@ -96,6 +103,32 @@ function paint(){
   var L=window.SPX_LEAVE&&window.SPX_LEAVE.state;
   if(!L||!L.perm||!L.perm.view)$('hLeave').innerHTML='<div>บัญชีนี้ยังไม่มีสิทธิ์ดูการลา</div>';
   else $('hLeave').innerHTML='<div>มีรายการลาในระบบ '+((L.rows&&L.rows.length)||0)+' รายการ</div><small>ไม่แสดงชื่อบนหน้าแรก</small>';
+}
+var inHubEl=$('inHub'),inHubLast='',INHUB_KEY='spxInHubManual';
+function saveInHub(){
+  if(!inHubEl)return;
+  var v=String(inHubEl.value||'');
+  if(v===''){
+    inHubLast='';
+    try{localStorage.removeItem(INHUB_KEY);}catch(e){}
+    return;
+  }
+  if(!/^\d+$/.test(v)){inHubEl.value=inHubLast;return;}
+  var n=v.replace(/^0+(?=\d)/,'');
+  if(inHubEl.value!==n)inHubEl.value=n;
+  inHubLast=n;
+  try{localStorage.setItem(INHUB_KEY,n);}catch(e){}
+}
+if(inHubEl){
+  try{
+    var savedInHub=localStorage.getItem(INHUB_KEY);
+    if(savedInHub!==null&&/^\d+$/.test(savedInHub)){
+      inHubLast=savedInHub.replace(/^0+(?=\d)/,'');
+      inHubEl.value=inHubLast;
+    }
+  }catch(e){}
+  inHubEl.addEventListener('beforeinput',function(e){if(e.data!=null&&/\D/.test(e.data))e.preventDefault();});
+  inHubEl.addEventListener('input',saveInHub);
 }
 document.addEventListener('click',function(e){
   var b=e.target.closest('#home [data-go]');

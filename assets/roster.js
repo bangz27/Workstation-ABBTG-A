@@ -44,6 +44,13 @@ var LEAVE_TYPES=[
   {key:'absent',   label:'ขาดงาน',    short:'ขาด',     match:['ขาดงาน','ขาด','ABS','Absent']},
   {key:'other',    label:'ลาอื่นๆ',    short:'อื่นๆ',    match:['ลาอื่นๆ','ลาอื่น','OL','Other leave']}
 ];
+/* Exact values from the read-only Dayoff Fleet / Dayoff Ops sheet cells only. */
+var SHEET_LEAVE_CODES={
+  sl:{key:'sick',label:'ลาป่วย',short:'ป่วย'},
+  bl:{key:'personal',label:'ลากิจ',short:'กิจ'},
+  ab:{key:'absent',label:'ขาดงาน',short:'ขาด'},
+  l:{key:'other',label:'ลาอื่นๆ',short:'อื่นๆ'}
+};
 var LEAVE_BY={};LEAVE_TYPES.forEach(function(t){t.match.forEach(function(m){LEAVE_BY[String(m).replace(/\s+/g,' ').trim().toLowerCase()]=t;});});
 function leaveOf(tok){if(!LEAVE_TEXT_MATCH)return null;return LEAVE_BY[String(tok==null?'':tok).replace(/\s+/g,' ').trim().toLowerCase()]||null;}
 
@@ -54,6 +61,8 @@ function hm(h,m){return pad2(h)+':'+m;}
 function parseCell(raw){
   var s=String(raw==null?'':raw).trim();
   if(!s)return {k:'blank',raw:'',key:'blank',label:'ไม่ระบุ',short:'–'};
+  var sheetLeave=SHEET_LEAVE_CODES[s.toLowerCase()];
+  if(sheetLeave)return {k:'other',lv:sheetLeave.key,raw:s,key:'lv:'+sheetLeave.key,label:sheetLeave.label,short:sheetLeave.short};
   var toks=s.split(/\s*[,;|\n]\s*/).filter(Boolean),sh=[],rd=false,oth=[];
   toks.forEach(function(t){
     var m=SH_RE.exec(t);
