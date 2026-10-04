@@ -86,12 +86,12 @@ function render(){
       return '<button type="button" class="lcard lv-'+t.key+(L.type===t.key?' on':'')+'" data-t="'+t.key+'"><span class="k">'+esc(t.label)+'</span><b>'+c[t.key]+'<small>คน</small></b></button>';}).join('')+
     '<button type="button" class="lcard lsum'+(L.type===''?' on':'')+'" data-t=""><span class="k">รวมทั้งหมด</span><b>'+c.all+'<small>คน</small></b></button></div>');
   var P=L.perm;
-  if(P.admin)h.push('<button type="button" class="ladd'+(L.formOpen?' on':'')+'" data-a="form">'+(L.formOpen?'✕ ปิดตั้งค่า':'⚙ ตั้งค่าการลา · จัดการสิทธิ์')+'</button>');
+  if(P.admin)h.push('<button type="button" class="ladd'+(L.formOpen?' on':'')+'" data-a="form">'+(L.formOpen?'✕ ปิดตั้งค่า':'ตั้งค่าการลา · จัดการสิทธิ์')+'</button>');
   else if(P.add)h.push('<button type="button" class="ladd'+(L.formOpen?' on':'')+'" data-a="form">'+(L.formOpen?'✕ ปิดฟอร์ม':'+ เพิ่มการลา')+'</button>');
   $('lhead').innerHTML=h.join('');
 
   var m=[];
-  if(L.err)m.push('<div class="warn">⚠️ '+esc(L.err)+'</div>');
+  if(L.err)m.push('<div class="warn">'+esc(L.err)+'</div>');
   if(L.formOpen&&(P.add||P.admin||L.editId!=null))m.push(formHTML());
   if(L.formOpen&&P.admin)m.push(permHTML());
   var sel=list.filter(function(x){return !L.type||x.r.leave_type===L.type;});
@@ -116,12 +116,12 @@ function rowHTML(r,p,rd,showRange){
       (rd?'<span class="rdn">ตรงวันหยุด RD · ไม่นับ</span>':'')+
       (L.perm.edit||L.perm.del?'<span class="lact">'+(L.perm.edit?'<button type="button" class="ledit'+(L.editId===r.id?' on':'')+'" data-edit="'+r.id+'" aria-label="แก้ไขการลา">แก้ไข</button>':'')+
         (L.perm.del?'<button type="button" class="ldel" data-del="'+r.id+'" aria-label="ลบการลา">ลบ</button>':'')+'</span>':'')+'</div>'+
-    (r.note?'<div class="l4">📝 '+esc(r.note)+'</div>':'')+'</div>';
+    (r.note?'<div class="l4">'+esc(r.note)+'</div>':'')+'</div>';
 }
 function formHTML(){
   var f=L.form,s=roster(f.grp);
   var ed=L.editId!=null;
-  return '<form class="lpanel'+(ed?' editing':'')+'" id="lForm" novalidate><h2>'+(ed?'✏️ แก้ไขการลา <small>#'+L.editId+'</small>':'⚙ ตั้งค่าการลา')+'</h2>'+
+  return '<form class="lpanel'+(ed?' editing':'')+'" id="lForm" novalidate><h2>'+(ed?'แก้ไขการลา <small>#'+L.editId+'</small>':'ตั้งค่าการลา')+'</h2>'+
     '<div class="fl"><span class="fk">กลุ่ม</span><div class="lseg">'+['fleet','ops'].map(function(g){return '<button type="button" data-fg="'+g+'" class="'+(f.grp===g?'on':'')+'">กะ '+GRP[g]+'</button>';}).join('')+'</div></div>'+
     '<div class="fl"><span class="fk">พนักงาน</span>'+
       (f.person?'<div class="lpick"><div><b>'+esc(f.person.name)+'</b><small>'+(f.person.id?'ID '+esc(f.person.id)+' · ':'')+esc(f.person.func||'')+'</small></div><button type="button" class="tbtn" data-a="unpick">เปลี่ยน</button></div>':
@@ -246,7 +246,7 @@ function checks(f,em){
   }).join('')+'</div>';
 }
 function permHTML(){
-  var h=['<section class="lpanel lperm" id="lPerm"><div class="phead"><h2>👥 จัดการสิทธิ์</h2><button type="button" class="tbtn" data-a="preload" aria-label="โหลดรายการสิทธิ์ใหม่">↻</button></div>',
+  var h=['<section class="lpanel lperm" id="lPerm"><div class="phead"><h2>จัดการสิทธิ์</h2><button type="button" class="tbtn" data-a="preload" aria-label="โหลดรายการสิทธิ์ใหม่">↻</button></div>',
     '<p class="phint">กำหนดว่าบัญชีไหน (ตามอีเมล) <b>ดู / เพิ่ม / แก้ไข / ลบ</b> ข้อมูลการลาได้ · ติ๊ก เพิ่ม/แก้ไข/ลบ จะได้สิทธิ์ดูด้วย · ใส่อีเมลไว้ก่อนได้แม้ยังไม่มีบัญชี</p>'];
   if(PM.err)h.push('<div class="amsg">'+esc(PM.err)+'</div>');
   if(PM.loading&&!PM.loaded)h.push('<div class="lhint"><div class="spinner"></div>กำลังโหลดรายการสิทธิ์…</div>');
@@ -258,7 +258,7 @@ function permHTML(){
     h.push('<div class="prm'+(dirty?' dirty':'')+'" data-em="'+esc(r.email)+'" data-acc="'+acc+'"><div class="pem"><b>'+esc(r.email)+'</b><span class="pbd acc-'+acc+'">'+esc(ACC[acc]||acc)+'</span></div>'+
       checks(f,r.email)+
       '<div class="pact">'+(none?'<span class="pnone">ไม่มีสิทธิ์</span>':'')+
-        (acc!=='active'?'<button type="button" class="pinv" data-pinv="'+esc(r.email)+'"'+(busy?' disabled':'')+'>'+(acc==='none'?'✉️ ส่งคำเชิญ':'✉️ ส่งอีกครั้ง')+'</button>':'')+
+        (acc!=='active'?'<button type="button" class="pinv" data-pinv="'+esc(r.email)+'"'+(busy?' disabled':'')+'>'+(acc==='none'?'ส่งคำเชิญ':'ส่งอีกครั้ง')+'</button>':'')+
         '<button type="button" class="psave" data-psave="'+esc(r.email)+'"'+(dirty&&!busy?'':' disabled')+'>'+(busy?'กำลังบันทึก…':'บันทึก')+'</button>'+
         '<button type="button" class="ldel" data-pdel="'+esc(r.email)+'"'+(busy?' disabled':'')+'>ลบ</button></div></div>');
   });
@@ -266,12 +266,12 @@ function permHTML(){
   var dft=PM.draft;
   h.push('<div class="padd"><label class="fk" for="pEmail">เพิ่มอีเมล</label><input type="email" id="pEmail" inputmode="email" autocapitalize="off" spellcheck="false" autocomplete="off" placeholder="name@example.com" value="'+esc(dft.email)+'">'+
     checks(dft,'')+'<div class="pbtns"><button type="button" class="abtn" data-a="padd"'+(PM.busy?' disabled':'')+'>'+(PM.busy==='+'?'กำลังบันทึก…':'+ บันทึกสิทธิ์')+'</button>'+
-    '<button type="button" class="abtn pinvbtn" data-a="pinvite"'+(PM.busy?' disabled':'')+'>'+(PM.busy==='✉'?'กำลังส่ง…':'✉️ ส่งคำเชิญ')+'</button></div>'+
+    '<button type="button" class="abtn pinvbtn" data-a="pinvite"'+(PM.busy?' disabled':'')+'>'+(PM.busy==='✉'?'กำลังส่ง…':'ส่งคำเชิญ')+'</button></div>'+
     '<p class="phint sm">ส่งคำเชิญ = บันทึกสิทธิ์ + ส่งอีเมลให้ตั้งรหัสผ่าน · ถ้าส่งอีเมลไม่ได้ ระบบจะสร้างลิงก์เชิญให้คัดลอกไปส่งทาง LINE</p></div>');
-  if(PM.link)h.push('<div class="plink" id="pLink"><b>🔗 ลิงก์เชิญสำหรับ '+esc(PM.link.email)+'</b>'+
+  if(PM.link)h.push('<div class="plink" id="pLink"><b>ลิงก์เชิญสำหรับ '+esc(PM.link.email)+'</b>'+
     '<input type="text" id="pLinkUrl" readonly value="'+esc(PM.link.url)+'" aria-label="ลิงก์เชิญ">'+
     '<div class="pbtns"><button type="button" class="abtn" data-a="pcopy">คัดลอกลิงก์</button><button type="button" class="abtn pclose" data-a="pclose">ปิด</button></div>'+
-    '<p class="phint sm">⚠️ ลิงก์นี้ใช้เข้าระบบในชื่อ '+esc(PM.link.email)+' ได้ — ส่งให้เจ้าของอีเมลเท่านั้น ใช้ได้ครั้งเดียวและหมดอายุภายใน 24 ชม.</p></div>');
+    '<p class="phint sm">ลิงก์นี้ใช้เข้าระบบในชื่อ '+esc(PM.link.email)+' ได้ — ส่งให้เจ้าของอีเมลเท่านั้น ใช้ได้ครั้งเดียวและหมดอายุภายใน 24 ชม.</p></div>');
   h.push('<div class="amsg'+(PM.msgOk?' ok':'')+'" id="pMsg" role="alert">'+esc(PM.msg)+'</div></section>');
   return h.join('');
 }

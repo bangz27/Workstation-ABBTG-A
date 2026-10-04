@@ -5,10 +5,10 @@
 var TH_MON=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
 var TH_WD=['อา','จ','อ','พ','พฤ','ศ','ส'];
 var TH_WDL=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
-var VIEWS={driver:{theme:'#FFE15D'},
-  fleet:{sheet:'Dayoff Fleet',title:'กะ Fleet',theme:'#4D77FF'},
-  ops:{sheet:'Dayoff Ops',title:'กะ Ops',theme:'#A388EE'},
-  leave:{title:'การลา',theme:'#FFC46B'}};
+var VIEWS={driver:{theme:'#F8F8F5'},
+  fleet:{sheet:'Dayoff Fleet',title:'กะ Fleet',theme:'#F8F8F5'},
+  ops:{sheet:'Dayoff Ops',title:'กะ Ops',theme:'#F8F8F5'},
+  leave:{title:'การลา',theme:'#F8F8F5'}};
 var RS={};
 ['fleet','ops'].forEach(function(v){RS[v]={v:v,res:null,people:[],date:'',filter:'all',func:'',q:'',open:{},seq:0,loading:false};});
 var view='driver';
@@ -107,7 +107,7 @@ function setSLoading(){
   $('sRefBtn').disabled=!!st.loading;
   $('sRetryBtn').disabled=!!st.loading;
 }
-function showSErr(msg){$('serrMsg').textContent='⚠️ โหลดตารางกะไม่สำเร็จ: '+msg;$('serr').classList.add('show');}
+function showSErr(msg){$('serrMsg').textContent='โหลดตารางกะไม่สำเร็จ: '+msg;$('serr').classList.add('show');}
 function hideSErr(){$('serr').classList.remove('show');}
 
 function loadRoster(v){

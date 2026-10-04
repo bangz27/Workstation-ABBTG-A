@@ -67,7 +67,7 @@ function setLoading(on){
   $('tabSel').disabled=on||!META;
   $('retryBtn').disabled=on;
 }
-function showErr(msg){$('errMsg').textContent='⚠️ โหลดข้อมูลไม่สำเร็จ: '+msg;$('err').classList.add('show');}
+function showErr(msg){$('errMsg').textContent='โหลดข้อมูลไม่สำเร็จ: '+msg;$('err').classList.add('show');}
 function hideErr(){$('err').classList.remove('show');}
 
 function load(sheetName){
@@ -175,11 +175,11 @@ function rowHTML(d,i){
   var ohCls=d.onhold>=10?'hot':d.onhold>=5?'warn':'';
   var p=d.progress;
   var note='';
-  if(!d.done&&p<50)note+='<div class="note r">⚠️ ส่งได้ต่ำกว่า 50% — ค้างอีก '+fmt(d.remain)+' ชิ้น ควรติดต่อคนขับ</div>';
-  else if(!d.done&&p<70)note+='<div class="note y">⏳ ส่งได้ '+p.toFixed(1)+'% — ติดตามความคืบหน้า</div>';
+  if(!d.done&&p<50)note+='<div class="note r">ส่งได้ต่ำกว่า 50% — ค้างอีก '+fmt(d.remain)+' ชิ้น ควรติดต่อคนขับ</div>';
+  else if(!d.done&&p<70)note+='<div class="note y">ส่งได้ '+p.toFixed(1)+'% — ติดตามความคืบหน้า</div>';
   if(d.onhold>=10)note+='<div class="note r">On-hold สูง ('+d.onhold+' ชิ้น) — ตรวจสอบเหตุผลพัสดุตีกลับ</div>';
   if(d.remainRaw<0)note+='<div class="note y">ข้อมูลเกิน: Delivered + On-hold มากกว่า Assign '+fmt(-d.remainRaw)+' ชิ้น</div>';
-  if(d.done)note+='<div class="note g">✅ ส่งครบแล้ว'+(d.onhold>0?' (On-hold '+d.onhold+' ชิ้น)':'')+'</div>';
+  if(d.done)note+='<div class="note g">ส่งครบแล้ว'+(d.onhold>0?' (On-hold '+d.onhold+' ชิ้น)':'')+'</div>';
   return '<div class="row st-'+st.c+(state.open[d.id]?' open':'')+'" data-id="'+esc(d.id)+'">'+
    '<div class="rmain">'+
     '<div class="l1">'+
