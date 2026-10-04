@@ -3,7 +3,7 @@
    - static assets (css/js/icons/fonts/supabase-js CDN): stale-while-revalidate, versioned cache
    - Supabase API / auth (bkmvwgoldyrzmgvmeskp.supabase.co): NEVER cached, passed straight through */
 'use strict';
-var VERSION = '20261004arcade1';
+var VERSION = '20261004home';
 var CACHE = 'abbtga-ws-' + VERSION;
 var CORE = ['./', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 var SUPABASE_HOST = 'bkmvwgoldyrzmgvmeskp.supabase.co';
@@ -19,7 +19,7 @@ self.addEventListener('activate', function (e) {
 });
 
 function isStatic(url) {
-  if (url.origin === self.location.origin) return /\.(css|js|png|svg|ico|webmanifest|woff2?)$/i.test(url.pathname) && !/\/sw\.js$/.test(url.pathname);
+  if (url.origin === self.location.origin) return /\.(css|js|png|jpe?g|svg|ico|webmanifest|woff2?)$/i.test(url.pathname) && !/\/sw\.js$/.test(url.pathname);
   return STATIC_HOSTS.indexOf(url.hostname) >= 0;
 }
 function put(req, res) {

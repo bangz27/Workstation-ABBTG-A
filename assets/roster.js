@@ -5,10 +5,11 @@
 var TH_MON=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
 var TH_WD=['อา','จ','อ','พ','พฤ','ศ','ส'];
 var TH_WDL=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
-var VIEWS={driver:{theme:'#FFE15D'},
-  fleet:{sheet:'Dayoff Fleet',title:'กะ Fleet',theme:'#4D77FF'},
-  ops:{sheet:'Dayoff Ops',title:'กะ Ops',theme:'#A388EE'},
-  leave:{title:'การลา',theme:'#FFC46B'}};
+var VIEWS={home:{title:'หน้าแรก',theme:'#F8F8F5'},
+  driver:{theme:'#F8F8F5'},
+  fleet:{sheet:'Dayoff Fleet',title:'กะ Fleet',theme:'#F8F8F5'},
+  ops:{sheet:'Dayoff Ops',title:'กะ Ops',theme:'#F8F8F5'},
+  leave:{title:'การลา',theme:'#F8F8F5'}};
 var RS={};
 ['fleet','ops'].forEach(function(v){RS[v]={v:v,res:null,people:[],date:'',filter:'all',func:'',q:'',open:{},seq:0,loading:false};});
 var view='driver';
@@ -107,7 +108,7 @@ function setSLoading(){
   $('sRefBtn').disabled=!!st.loading;
   $('sRetryBtn').disabled=!!st.loading;
 }
-function showSErr(msg){$('serrMsg').textContent='⚠️ โหลดตารางกะไม่สำเร็จ: '+msg;$('serr').classList.add('show');}
+function showSErr(msg){$('serrMsg').textContent='โหลดตารางกะไม่สำเร็จ: '+msg;$('serr').classList.add('show');}
 function hideSErr(){$('serr').classList.remove('show');}
 
 function loadRoster(v){
@@ -153,11 +154,12 @@ function pickDate(dates,today){
 function setView(v,save){
   if(!VIEWS[v])v='driver';
   view=v;
-  document.body.classList.remove('v-driver','v-fleet','v-ops','v-leave');
+  document.body.classList.remove('v-home','v-driver','v-fleet','v-ops','v-leave');
   document.body.classList.add('v-'+v);
   Array.prototype.forEach.call($('views').children,function(b){var on=b.getAttribute('data-v')===v;b.classList.toggle('on',on);b.setAttribute('aria-selected',on?'true':'false');});
   var tm=document.querySelector('meta[name="theme-color"]');if(tm)tm.setAttribute('content',VIEWS[v].theme);
-  if(save){try{localStorage.setItem('spxView',v);}catch(e){}}
+  if(save){try{localStorage.setItem('spxView2',v);}catch(e){}}
+  if(v==='home'){if(window.SPX_DRIVER)window.SPX_DRIVER.ensure();if(window.SPX_HOME)window.SPX_HOME.paint();window.scrollTo(0,0);return;}
   if(v==='driver'){if(window.SPX_DRIVER)window.SPX_DRIVER.ensure();return;}
   if(v==='leave'){if(window.SPX_LEAVE)window.SPX_LEAVE.show();window.scrollTo(0,0);return;}
   var st=RS[v];
@@ -539,9 +541,9 @@ $('slist').addEventListener('click',function(e){
 });
 
 /* ---------- start ---------- */
-var start='driver';
-try{var sv=localStorage.getItem('spxView');if(VIEWS[sv])start=sv;}catch(e){}
-var hm0=/[#&?]view=(driver|fleet|ops|leave)/.exec(location.hash||'');if(hm0)start=hm0[1];
+var start='home';
+try{var sv=localStorage.getItem('spxView2');if(VIEWS[sv])start=sv;}catch(e){}
+var hm0=/[#&?]view=(home|driver|fleet|ops|leave)/.exec(location.hash||'');if(hm0)start=hm0[1];
 window.SPX_START=function(){if(window.SPX_LEAVE)window.SPX_LEAVE.init();setView(start,false);};
 window.SPX_VIEW={set:function(v){setView(v,true);},state:RS,current:function(){return view;},
   ensure:function(v){var st=RS[v];if(st&&!st.res&&!st.loading)loadRoster(v);return !!(st&&st.res);},
