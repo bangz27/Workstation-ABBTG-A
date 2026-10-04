@@ -380,6 +380,10 @@ var SpxSync_ = (function () {
       if (col.name < 0) warnings.push('ไม่พบคอลัมน์ชื่อพนักงาน');
     }
 
+    if (normKey_(sheet.getName()) === normKey_('Dayoff Fleet')) {
+      colText.planHC = planHCFromAK_(display, col, hdrRow);
+    }
+
     // 3) Date columns (sorted by date, duplicates dropped).
     var dcols = [];
     var seen = {};
@@ -500,6 +504,20 @@ var SpxSync_ = (function () {
   function normShift_(s) {
     return String(s == null ? '' : s).replace(/\s+/g, ' ').trim().toUpperCase();
   }
+  function planHCFromAK_(display, col, hdrRow) {
+    var out = { source: 'dayoff fleet!AK4:AK', two: 0, four: 0 };
+    var ak = 36; // Column AK, zero-based.
+    for (var i = Math.max(hdrRow + 1, 3); i < display.length; i++) {
+      var row = display[i] || [];
+      var id = col.id >= 0 ? String(row[col.id] == null ? '' : row[col.id]).trim() : '';
+      var name = col.name >= 0 ? String(row[col.name] == null ? '' : row[col.name]).trim() : '';
+      if ((!id && !name) || id === TOTAL_LABEL || name === TOTAL_LABEL || /^total$/i.test(id) || /^total$/i.test(name)) continue;
+      var position = String(row[ak] == null ? '' : row[ak]).replace(/\s+/g, ' ').trim().toUpperCase();
+      if (position === '2WH') out.two++;
+      else if (position === '4WH') out.four++;
+    }
+    return out;
+  }
 
-  return { run: run, buildPayload: buildPayload, requireSecret: requireSecret, isWatchedSheet: isWatchedSheet };
+  return { run: run, buildPayload: buildPayload, requireSecret: requireSecret, isWatchedSheet: isWatchedSheet, planHCFromAK: planHCFromAK_ };
 })();

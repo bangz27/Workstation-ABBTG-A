@@ -17,7 +17,7 @@ function makeRoster(){
   const people=[];
   for(let i=0;i<14;i++)people.push({func:'2WH',base:[{k:'work'}],cells:[{k:i===0?'other':'work'}]});
   for(let i=0;i<6;i++)people.push({func:'4WH',base:[{k:'work'}],cells:[{k:'work'}]});
-  return {dates:['2026-10-05'],people:people};
+  return {dates:['2026-10-05'],people:people,cols:{planHC:{source:'dayoff fleet!AK4:AK',two:14,four:6}}};
 }
 function harness(t,storageSeed){
   const elements=new Map();

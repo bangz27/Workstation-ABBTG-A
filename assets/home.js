@@ -41,19 +41,11 @@ function planHC(sheet){
   if(V&&V.ensure)V.ensure('fleet');
   var st=V&&V.state&&V.state.fleet;
   if(!st||!st.res)return {ready:false,available:false};
-  var dates=st.res.dates||[],iso=sheetISO(sheet);
-  if(dates.indexOf(iso)<0)iso=st.today||'';
-  var i=dates.indexOf(iso);
-  if(i<0)i=dates.indexOf(st.date||'');
-  if(i<0)return {ready:true,available:false};
-  var n2=0,n4=0,other=0;
-  (st.people||[]).forEach(function(p){
-    var shifts=Array.isArray(p.base)?p.base:p.cells||[],cell=shifts[i];
-    if(!cell||cell.k!=='work')return;
-    var type=wheelOf(p.func);
-    if(type===2)n2++;else if(type===4)n4++;else other++;
-  });
-  return {ready:true,available:true,total:n2+n4+other,two:n2,four:n4,other:other};
+  var source=st.res.cols&&st.res.cols.planHC;
+  if(!source||typeof source!=='object')return {ready:true,available:false};
+  var n2=Number(source.two),n4=Number(source.four);
+  if(!isFinite(n2)||!isFinite(n4)||n2<0||n4<0)return {ready:true,available:false};
+  return {ready:true,available:true,total:n2+n4,two:n2,four:n4,source:source.source||'dayoff fleet!AK4:AK'};
 }
 var cardsReady=false;
 function renderKpiCards(){
@@ -107,10 +99,10 @@ function paint(){
     setText('kpiAllocation2w','—');setText('kpiAllocation4w','—');setText('kpiPdtyValue','—');setText('kpiSlaValue','—');
   }
   if(!hc.ready){setText('kpiPlanValue','—');setText('kpiPlan2w','–');setText('kpiPlan4w','–');setText('kpiPlanNote','กำลังโหลดกะ Fleet');}
-  else if(!hc.available){setText('kpiPlanValue','—');setText('kpiPlan2w','–');setText('kpiPlan4w','–');setText('kpiPlanNote','ไม่พบแผนกะของวันที่เลือก');}
+  else if(!hc.available){setText('kpiPlanValue','—');setText('kpiPlan2w','–');setText('kpiPlan4w','–');setText('kpiPlanNote','ยังไม่มี Plan HC จาก dayoff fleet!AK4:AK');}
   else{
     setText('kpiPlanValue',fmt(hc.total));setText('kpiPlan2w',fmt(hc.two));setText('kpiPlan4w',fmt(hc.four));
-    setText('kpiPlanNote',hc.other?'ไม่ระบุประเภท '+fmt(hc.other):'');
+    setText('kpiPlanNote',hc.source);
   }
   if(!t){
     setText('hSheet','กำลังโหลดรายงาน…');
