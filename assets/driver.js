@@ -124,6 +124,7 @@ function renderCards(){
     ['ส่งครบ',fmt(done),'จาก '+n+' คน','g']
   ].map(function(c){return '<div class="card"><div class="k">'+c[0]+'</div><div class="v '+c[3]+'">'+c[1]+'</div><div class="s">'+c[2]+'</div></div>';}).join('');
   window.__SPX_TOTALS={sheet:state.sheet,drivers:n,done:done,assign:a,delivered:del,onhold:oh,remain:rem,pct:+pct.toFixed(1)};
+  if(window.SPX_HOME)window.SPX_HOME.paint();
 }
 
 /* ---------- chips ---------- */
@@ -240,5 +241,5 @@ function render(){
 
 dirBtn.textContent='↓ มาก→น้อย';
 /* loaded lazily when the คนขับ view is first shown (see view switcher below) */
-window.SPX_DRIVER={ensure:function(){if(!META&&!state.loading)load('');}};
+window.SPX_DRIVER={ensure:function(){if(!META&&!state.loading)load('');},reload:function(){reload();}};
 })();

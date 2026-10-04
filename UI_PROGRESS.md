@@ -12,6 +12,8 @@ UI-only redesign. `main` (live GitHub Pages) is untouched; Neobrutalism theme st
 - JS edits limited to presentation strings: removed emoji prefixes from display text (driver.js, roster.js, leave.js) and theme-color hex (roster.js, auth.js). No logic/API/auth changes.
 - `sw.js` cache VERSION and all `?v=` bumped to `20261004ui2`; manifest colours updated.
 
+- Home view (`assets/home.js`, `#home`): welcome, quick actions, KPI from `__SPX_TOTALS` only. Missing sheet fields stay unlabeled as live numbers.
+
 ## Remaining
 - Finish full regression run (5 viewports) + fix anything it finds; cleanup of temp test users/rows; draft PR.
 - Native `window.confirm` dialogs (logout / delete) cannot be styled without JS logic changes — left as is.

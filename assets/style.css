@@ -151,7 +151,7 @@ body:not(.auth-out) #auth{display:none}
 .tkick{font-size:12px;font-weight:500;color:var(--ui-muted)}
 .ttl{font-size:19px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ttl>span{display:none}
-body.v-driver .t-driver,body.v-fleet .t-fleet,body.v-ops .t-ops,body.v-leave .t-leave{display:inline}
+body.v-driver .t-driver,body.v-fleet .t-fleet,body.v-ops .t-ops,body.v-leave .t-leave,body.v-home .t-home{display:inline}
 .tdate{margin-left:auto;flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;background:#fff;border:var(--bd);border-radius:999px;padding:5px 12px 5px 9px;font-size:13px;font-weight:600;white-space:nowrap}
 .tdate:before{content:"";width:16px;height:16px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23171717' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3.5' y='5' width='17' height='15.5' rx='3'/%3E%3Cpath d='M3.5 10h17M8 3v4M16 3v4'/%3E%3C/svg%3E") center/16px no-repeat}
 .tdate:empty{display:none}
@@ -314,6 +314,35 @@ footer{text-align:center;font-size:12.5px;font-weight:500;color:var(--ui-muted);
    SHIFT ROSTER — กะ Fleet / กะ Ops
    ===================================================================== */
 body.v-driver .vs,body.v-fleet .vd,body.v-ops .vd{display:none!important}
+body.v-home header,body.v-home .toolbar,body.v-home .err,body.v-home footer,body.v-home .vd,body.v-home .vs,body.v-home .vl{display:none!important}
+body:not(.v-home) .vh{display:none!important}
+.vh{padding:18px var(--gut) 28px}
+.hgrid{display:grid;grid-template-columns:1.45fr .85fr;gap:14px;margin-bottom:14px}
+.hhero,.hqa,.hcard{background:#fff;border:var(--bd);border-radius:22px;box-shadow:var(--ui-shadow)}
+.hhero{display:flex;justify-content:space-between;gap:12px;padding:18px;background:linear-gradient(180deg,#F3FAFF,#fff);min-height:150px}
+.hhero img,.hillus{width:min(220px,34%);height:auto;border-radius:16px;border:var(--bd)}
+.hhi{margin:0;color:#3E8BFF;font-weight:700}
+.hhero h1{margin:6px 0;font-size:26px}
+.hsub,.hnote{color:var(--ui-muted);font-size:13px}
+.hqa{background:linear-gradient(180deg,#FFE58A,#FFD15C);padding:14px}
+.hqa h2{margin:0 0 10px;font-size:16px}
+.hqg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hqg button,.hrow button{border:var(--bd);border-radius:14px;padding:10px 8px;font-weight:700;cursor:pointer;background:#F05A1A;color:#fff}
+.hqg .lite,.hrow button{background:#fff;color:#171717}
+.hkpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
+.hkpi{border:var(--bd);border-radius:18px;padding:12px 14px;box-shadow:var(--ui-sh2)}
+.hkpi b{display:block;font-size:28px;font-family:"Space Grotesk",sans-serif}
+.hkpi span{font-size:12px;font-weight:700}
+.hminis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.hmini{background:#fff;border:var(--bd);border-radius:14px;padding:10px;box-shadow:var(--ui-sh2)}
+.hmini b{display:block;font-size:18px}
+.hcard{padding:14px}
+.hrow{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.hchart{width:100%;height:200px}
+.hdonut{display:flex;gap:12px;align-items:center}
+.hfollow{display:flex;flex-direction:column;gap:8px;font-size:14px}
+.hfollow small{color:var(--ui-muted)}
+@media(max-width:900px){.hgrid,.hkpis,.hminis{grid-template-columns:1fr 1fr}.hhero{flex-direction:column}.hhero img,.hillus{width:100%}}
 .dnav{display:flex;align-items:stretch;gap:8px;margin-top:18px}
 .arw{flex:0 0 auto;width:40px;display:flex;align-items:center;justify-content:center;padding:0;font-size:20px;box-shadow:var(--ui-sh2)}
 .arw .ic{width:20px;height:20px}
