@@ -503,5 +503,3 @@ var SpxSync_ = (function () {
 
   return { run: run, buildPayload: buildPayload, requireSecret: requireSecret, isWatchedSheet: isWatchedSheet };
 })();
-
-
