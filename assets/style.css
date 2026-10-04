@@ -733,7 +733,39 @@ body.v-leave .vd,body.v-leave .vs,body:not(.v-leave) .vl{display:none!important}
   .lpanel{padding:16px 12px}
 }
 @media (max-width:380px){.tdate{display:none}}
-
+/* Mobile navigation: reuse the existing #views buttons as a fixed bottom bar. */
+@media (max-width:767px){
+  body:not(.auth-out) .app{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+  body:not(.auth-out) .side{
+    top:auto;left:0;right:0;bottom:0;width:100%;height:calc(68px + env(safe-area-inset-bottom));
+    transform:none;visibility:visible;z-index:40;display:block;overflow:visible;
+    border:0;border-top:var(--bd);padding:4px 4px env(safe-area-inset-bottom);box-shadow:0 -3px 0 #171717;
+  }
+  body:not(.auth-out) .sbrand,
+  body:not(.auth-out) .slbl,
+  body:not(.auth-out) .gear,
+  body:not(.auth-out) .sfoot,
+  body:not(.auth-out) .navtog{display:none}
+  body:not(.auth-out) .views{height:64px;display:flex;flex-direction:row;align-items:stretch;gap:2px}
+  body:not(.auth-out) .views button{
+    flex:1 1 0;min-width:0;min-height:0;height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    padding:3px 1px;border:2px solid transparent;border-radius:12px;font-size:10px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  body:not(.auth-out) .views button .ic{width:30px;height:30px;flex:0 0 30px;padding:5px}
+  body:not(.auth-out) .views button span{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+  body:not(.auth-out) .views button.on{box-shadow:2px 2px 0 #171717}
+  body:not(.auth-out) .scrim{z-index:39}
+  body:not(.auth-out) .vh{padding-bottom:10px}
+  body.v-home .hhero{flex-direction:row;align-items:center;min-height:0;padding:14px;gap:10px}
+  body.v-home .hhero>div{min-width:0}
+  body.v-home .hhero .hillus{width:112px;flex:0 0 112px}
+  body.v-home .hhero h1{font-size:20px;line-height:1.25}
+  body.v-home .hhero .hsub{font-size:12px;line-height:1.45}
+  body.v-home .hqa{padding:12px}
+  body.v-home .hqa h2{margin-bottom:8px}
+  body.v-home .hqg{gap:7px}
+  body.v-home .hqg button{min-height:56px;padding:8px 5px;line-height:1.25}
+}
 /* Desktop only: the sidebar (264px) is on screen from 1024px, so viewport
    breakpoints at 900px still see a content column ~700px wide. The driver
    table was locked to 900px and the filter chips stayed one nowrap row,
