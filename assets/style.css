@@ -709,3 +709,25 @@ body.v-leave .vd,body.v-leave .vs,body:not(.v-leave) .vl{display:none!important}
   .lpanel{padding:16px 12px}
 }
 @media (max-width:380px){.tdate{display:none}}
+
+/* Desktop only: the sidebar (264px) is on screen from 1024px, so viewport
+   breakpoints at 900px still see a content column ~700px wide. The driver
+   table was locked to 900px and the filter chips stayed one nowrap row,
+   so both spilled sideways on a normal PC. Phones/tablets are unchanged. */
+@media (min-width:1024px){
+  .vh{width:min(var(--maxw),calc(100% - 2*var(--gut)));margin-left:auto;margin-right:auto;padding-left:0;padding-right:0}
+  .thead,main.vd .list,.row{min-width:0;width:100%}
+  .thead,.rmain{
+    grid-template-columns:28px minmax(0,2fr) minmax(58px,.55fr) minmax(56px,.55fr) minmax(74px,.7fr) minmax(62px,.6fr) minmax(44px,.45fr) minmax(0,1.35fr) minmax(88px,.65fr);
+    gap:6px}
+  .thead{padding:10px 12px 9px 16px}
+  .rmain{padding:8px 12px 8px 16px}
+  .thead span,.nums>div,.rmain .wrapname,.rmain .d-only{min-width:0}
+  .thead span{overflow:hidden;text-overflow:ellipsis}
+  .rmain .badge{max-width:100%}
+  .chips{flex-wrap:wrap;overflow:visible}
+  .sortbar{white-space:normal}
+  .lvline{flex-wrap:wrap;overflow:visible}
+  .stiles.agt{grid-template-columns:repeat(auto-fill,minmax(118px,1fr));grid-auto-flow:row;grid-auto-columns:auto}
+  .stiles.agt .stile .t{font-size:12px;letter-spacing:0;text-overflow:ellipsis}
+}
