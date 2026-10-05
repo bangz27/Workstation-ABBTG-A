@@ -1,4 +1,4 @@
-/* Home dashboard — Daily Report + Fleet shift roster; manual volume values stay on this device. */
+/* Home dashboard — Daily Report + Fleet shift roster; KPI values arrive through the existing sync/API flow. */
 (function(){
 "use strict";
 function $(id){return document.getElementById(id);}
@@ -36,55 +36,54 @@ function sheetISO(name){
   var mo=months[m[2].toLowerCase()];if(!mo)return '';
   return m[3]+'-'+(mo<10?'0':'')+mo+'-'+(+m[1]<10?'0':'')+(+m[1]);
 }
-function planHC(sheet){
+function fleetRoster(){
   var V=window.SPX_VIEW;
   if(V&&V.ensure)V.ensure('fleet');
   var st=V&&V.state&&V.state.fleet;
-  if(!st||!st.res)return {ready:false,available:false};
-  var source=st.res.cols&&st.res.cols.planHC;
+  return st&&st.res?st.res:null;
+}
+function countValue(n){
+  if(n==null||n==='')return null;
+  var x=Number(n);
+  return isFinite(x)&&x>=0?x:null;
+}
+function homeMetrics(){
+  var roster=fleetRoster(),values=roster&&roster.cols&&roster.cols.homeKpis;
+  return {todayVolume:countValue(values&&values.todayVolume),inbound:countValue(values&&values.inbound)};
+}
+function planHC(sheet){
+  var roster=fleetRoster();
+  if(!roster)return {ready:false,available:false};
+  var source=roster.cols&&roster.cols.planHC;
   if(!source||typeof source!=='object')return {ready:true,available:false};
   var n2=Number(source.two),n4=Number(source.four);
   if(!isFinite(n2)||!isFinite(n4)||n2<0||n4<0)return {ready:true,available:false};
-  return {ready:true,available:true,total:n2+n4,two:n2,four:n4,source:source.source||'dayoff fleet!AK4:AK'};
+  return {ready:true,available:true,total:n2+n4,two:n2,four:n4};
 }
 var cardsReady=false;
 function renderKpiCards(){
   if(cardsReady)return;
   var box=$('hkpis');if(!box)return;
   box.innerHTML=[
-    '<article class="hkpi hkpi-manual" data-kpi="today-volume" style="background:#FFE6D8"><span class="hkpi-label">Today Volume</span><input id="todayVolume" class="hkpi-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" spellcheck="false" placeholder="–" aria-label="Today Volume กรอกเอง"><small class="hkpi-meta">Manual · แตะตัวเลขเพื่อแก้ไข</small></article>',
-    '<article class="hkpi hkpi-manual" data-kpi="inbound" style="background:#E7F4FF"><span class="hkpi-label">Inbound</span><input id="inboundVolume" class="hkpi-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" spellcheck="false" placeholder="–" aria-label="Inbound กรอกเอง"><small class="hkpi-meta">Manual · แตะตัวเลขเพื่อแก้ไข</small></article>',
-    '<article class="hkpi hkpi-wide" data-kpi="plan-hc" style="background:#FFE9A8"><span class="hkpi-label">Plan HC</span><b id="kpiPlanValue">–</b><div class="hkpi-split"><span>2W <b id="kpiPlan2w">–</b></span><i aria-hidden="true">|</i><span>4W <b id="kpiPlan4w">–</b></span></div><small class="hkpi-note" id="kpiPlanNote"></small></article>',
+    "<article class=\"hkpi\" data-kpi=\"today-volume\" style=\"background:#FFE6D8\"><span class=\"hkpi-label\">Today's Volume</span><b id=\"kpiTodayVolume\">—</b></article>",
+    '<article class="hkpi" data-kpi="inbound" style="background:#E7F4FF"><span class="hkpi-label">Inbound</span><b id="kpiInboundValue">—</b></article>',
+    '<article class="hkpi" data-kpi="plan-hc" style="background:#FFE9A8"><span class="hkpi-label">Plan HC</span><b id="kpiPlanValue">–</b><div class="hkpi-split"><span>2W <b id="kpiPlan2w">–</b></span><i aria-hidden="true">|</i><span>4W <b id="kpiPlan4w">–</b></span></div></article>',
     '<article class="hkpi hkpi-wide" data-kpi="active" style="background:#E9F9EF"><span class="hkpi-label">Active</span><b id="kpiActiveValue">–</b><div class="hkpi-split"><span>2W <b id="kpiActive2w">–</b></span><i aria-hidden="true">|</i><span>4W <b id="kpiActive4w">–</b></span></div><small class="hkpi-note" id="kpiActiveNote"></small></article>',
     '<article class="hkpi" data-kpi="allocation-2w" style="background:#FFF4E5"><span class="hkpi-label">2W Allocation</span><b id="kpiAllocation2w">–</b><small class="hkpi-target">Target 69.80%</small></article>',
-    '<article class="hkpi" data-kpi="allocation-4w" style="background:#F4F7FB"><span class="hkpi-label">4W Allocation</span><b id="kpiAllocation4w">–</b><small class="hkpi-meta">จาก Assign 2W + 4W</small></article>',
+    '<article class="hkpi" data-kpi="allocation-4w" style="background:#F4F7FB"><span class="hkpi-label">4W Allocation</span><b id="kpiAllocation4w">–</b></article>',
     '<article class="hkpi" data-kpi="pdty" style="background:#E9F9EF"><span class="hkpi-label">PDTY</span><b id="kpiPdtyValue">–</b><small class="hkpi-target">Target 196</small></article>',
-    '<article class="hkpi" data-kpi="sla" style="background:#FFE6D8"><span class="hkpi-label">SLA</span><b id="kpiSlaValue">–</b><small class="hkpi-meta">Delivered ÷ Assign</small></article>'
+    '<article class="hkpi" data-kpi="sla" style="background:#FFE6D8"><span class="hkpi-label">SLA</span><b id="kpiSlaValue">–</b></article>'
   ].join('');
-  bindManual($('todayVolume'),'spxTodayVolumeManual');
-  bindManual($('inboundVolume'),'spxInboundManual');
   cardsReady=true;
 }
 function setText(id,text){var el=$(id);if(el)el.textContent=text;}
-function grouped(digits){return digits.replace(/\B(?=(\d{3})+(?!\d))/g,',');}
-function bindManual(el,key){
-  if(!el)return;
-  try{var saved=localStorage.getItem(key);if(saved!==null&&/^\d+$/.test(saved))el.value=grouped(saved.replace(/^0+(?=\d)/,''));}catch(e){}
-  function save(){
-    var clean=String(el.value||'').replace(/\D/g,'').replace(/^0+(?=\d)/,'');
-    if(el.value!==clean)el.value=clean;
-    try{if(clean==='')localStorage.removeItem(key);else localStorage.setItem(key,clean);}catch(e){}
-  }
-  el.addEventListener('beforeinput',function(e){if(e.data!=null&&/\D/.test(e.data))e.preventDefault();});
-  el.addEventListener('input',save);
-  el.addEventListener('focus',function(){el.value=String(el.value||'').replace(/\D/g,'');});
-  el.addEventListener('blur',function(){var clean=String(el.value||'').replace(/\D/g,'');el.value=clean?grouped(clean):'';});
-}
 function paint(){
   var t=window.__SPX_TOTALS,root=$('home');
   if(!root)return;
   renderKpiCards();
-  var k=calculate(t),hc=planHC(t&&t.sheet);
+  var k=calculate(t),hc=planHC(t&&t.sheet),metrics=homeMetrics();
+  setText('kpiTodayVolume',metrics.todayVolume==null?'—':fmt(metrics.todayVolume));
+  setText('kpiInboundValue',metrics.inbound==null?'—':fmt(metrics.inbound));
   if(t){
     setText('kpiActiveValue',k.active==null?'—':fmt(k.active));
     setText('kpiActive2w',k.active2==null?'–':fmt(k.active2));
@@ -95,14 +94,13 @@ function paint(){
     setText('kpiPdtyValue',decimal(k.pdty,1));
     setText('kpiSlaValue',pct(k.sla));
   }else{
-    setText('kpiActiveValue','—');setText('kpiActive2w','–');setText('kpiActive4w','–');setText('kpiActiveNote','รอ Daily Report');
+    setText('kpiActiveValue','—');setText('kpiActive2w','–');setText('kpiActive4w','–');setText('kpiActiveNote','');
     setText('kpiAllocation2w','—');setText('kpiAllocation4w','—');setText('kpiPdtyValue','—');setText('kpiSlaValue','—');
   }
-  if(!hc.ready){setText('kpiPlanValue','—');setText('kpiPlan2w','–');setText('kpiPlan4w','–');setText('kpiPlanNote','กำลังโหลดกะ Fleet');}
-  else if(!hc.available){setText('kpiPlanValue','—');setText('kpiPlan2w','–');setText('kpiPlan4w','–');setText('kpiPlanNote','ยังไม่มี Plan HC จาก dayoff fleet!AK4:AK');}
+  if(!hc.ready){setText('kpiPlanValue','—');setText('kpiPlan2w','–');setText('kpiPlan4w','–');}
+  else if(!hc.available){setText('kpiPlanValue','—');setText('kpiPlan2w','–');setText('kpiPlan4w','–');}
   else{
     setText('kpiPlanValue',fmt(hc.total));setText('kpiPlan2w',fmt(hc.two));setText('kpiPlan4w',fmt(hc.four));
-    setText('kpiPlanNote',hc.source);
   }
   if(!t){
     setText('hSheet','กำลังโหลดรายงาน…');
@@ -110,7 +108,7 @@ function paint(){
     if($('hFollow'))$('hFollow').innerHTML='<div>ยังไม่มีตัวเลข</div>';
     return;
   }
-  $('hnote').textContent='คำนวณจากแท็บ '+(t.sheet||'Daily Report')+' · Active = คนที่มี Assign > 0 · Allocation = Assign 2W/4W ÷ Assign 2W+4W · In Hub กรอกเอง';
+  $('hnote').textContent='คำนวณจากแท็บ '+(t.sheet||'Daily Report')+' · Active = คนที่มี Assign > 0 · Allocation = Assign 2W/4W ÷ Assign 2W+4W';
   $('hminis').innerHTML=[
     ['On-hold',fmt(t.onhold)],['ส่งครบ',fmt(t.done)],['ยังไม่ครบ',fmt(t.drivers-t.done)],['Completion',t.pct+'%']
   ].map(function(m){return '<article class="hmini"><span>'+m[0]+'</span><b>'+m[1]+'</b></article>';}).join('');
@@ -133,22 +131,6 @@ function paint(){
   else $('hLeave').innerHTML='<div>มีรายการลาในระบบ '+((L.rows&&L.rows.length)||0)+' รายการ</div><small>ไม่แสดงชื่อบนหน้าแรก</small>';
 }
 renderKpiCards();
-var inHubEl=$('inHub'),inHubLast='',INHUB_KEY='spxInHubManual';
-function saveInHub(){
-  if(!inHubEl)return;
-  var v=String(inHubEl.value||'');
-  if(v===''){inHubLast='';try{localStorage.removeItem(INHUB_KEY);}catch(e){}return;}
-  if(!/^\d+$/.test(v)){inHubEl.value=inHubLast;return;}
-  var n=v.replace(/^0+(?=\d)/,'');
-  if(inHubEl.value!==n)inHubEl.value=n;
-  inHubLast=n;
-  try{localStorage.setItem(INHUB_KEY,n);}catch(e){}
-}
-if(inHubEl){
-  try{var savedInHub=localStorage.getItem(INHUB_KEY);if(savedInHub!==null&&/^\d+$/.test(savedInHub)){inHubLast=savedInHub.replace(/^0+(?=\d)/,'');inHubEl.value=inHubLast;}}catch(e){}
-  inHubEl.addEventListener('beforeinput',function(e){if(e.data!=null&&/\D/.test(e.data))e.preventDefault();});
-  inHubEl.addEventListener('input',saveInHub);
-}
 document.addEventListener('click',function(e){
   var b=e.target.closest('#home [data-go]');
   if(!b||!window.SPX_VIEW)return;

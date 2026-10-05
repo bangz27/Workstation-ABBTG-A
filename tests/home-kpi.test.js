@@ -17,23 +17,21 @@ function makeRoster(){
   const people=[];
   for(let i=0;i<14;i++)people.push({func:'2WH',base:[{k:'work'}],cells:[{k:i===0?'other':'work'}]});
   for(let i=0;i<6;i++)people.push({func:'4WH',base:[{k:'work'}],cells:[{k:'work'}]});
-  return {dates:['2026-10-05'],people:people,cols:{planHC:{source:'dayoff fleet!AK4:AK',two:14,four:6}}};
+  return {dates:['2026-10-05'],people:people,cols:{homeKpis:{todayVolume:9876,inbound:4321},planHC:{source:'dayoff fleet!AK4:AK',two:14,four:6}}};
 }
-function harness(t,storageSeed){
+function harness(t){
   const elements=new Map();
   function element(id){
     if(!elements.has(id))elements.set(id,{id:id,innerHTML:'',textContent:'',value:'',style:{},listeners:{},addEventListener:function(type,fn){this.listeners[type]=fn;}});
     return elements.get(id);
   }
-  const storage=new Map(Object.entries(storageSeed||{}));
-  const localStorage={getItem:k=>storage.has(k)?storage.get(k):null,setItem:(k,v)=>storage.set(k,String(v)),removeItem:k=>storage.delete(k)};
   const view={ensure:function(){},state:{fleet:{res:makeRoster(),today:'2026-10-05',date:'2026-10-05',people:makeRoster().people}}};
   const window={__SPX_TOTALS:t,SPX_VIEW:view,SPX_DRIVER:{reload:function(){}},SPX_LEAVE:null};
   const document={getElementById:element,addEventListener:function(){}};
-  const context={window:window,document:document,localStorage:localStorage,setInterval:function(){},console:console,Number:Number,Math:Math,String:String,Array:Array,Object:Object,Date:Date,isFinite:isFinite};
+  const context={window:window,document:document,setInterval:function(){},console:console,Number:Number,Math:Math,String:String,Array:Array,Object:Object,Date:Date,isFinite:isFinite};
   vm.runInNewContext(source,context,{filename:'assets/home.js'});
   window.SPX_HOME.paint();
-  return {window:window,elements:elements,storage:storage,localStorage:localStorage};
+  return {window:window,elements:elements};
 }
 const rows=fixturePeople();
 const base={sheet:'Daily Report',drivers:rows.length,done:0,assign:16000,delivered:13387,onhold:0,remain:2613,trips:18,pct:83.7,people:rows};
@@ -59,6 +57,8 @@ assert.equal(calcHarness.elements.get('kpiAllocation4w').textContent,'25.00%','4
 assert.equal(calcHarness.elements.get('kpiActiveValue').textContent,'18','Active UI total');
 assert.equal(calcHarness.elements.get('kpiActive2w').textContent,'15','Active 2W UI');
 assert.equal(calcHarness.elements.get('kpiActive4w').textContent,'3','Active 4W UI');
+assert.equal(calcHarness.elements.get('kpiTodayVolume').textContent,'9,876','Today\'s Volume UI comes from synced fleet cols');
+assert.equal(calcHarness.elements.get('kpiInboundValue').textContent,'4,321','Inbound UI comes from synced fleet cols');
 const plan=calcHarness.window.SPX_HOME.planHC('Daily Report');
 assert.equal(plan.total,20,'Plan HC total from scheduled people');
 assert.equal(plan.two,14,'Plan HC 2W breakdown');
@@ -74,30 +74,30 @@ assert.equal(zero.sla,0,'zero Assign SLA is safe');
 const cards=calcHarness.elements.get('hkpis').innerHTML;
 const order=[...cards.matchAll(/data-kpi="([^"]+)"/g)].map(m=>m[1]);
 assert.deepEqual(order,['today-volume','inbound','plan-hc','active','allocation-2w','allocation-4w','pdty','sla'],'Home card order');
+assert.equal(order.length,8,'Home renders exactly 8 KPI cards');
+assert.match(cards,/Today's Volume/,'Today\'s Volume label is exact');
+assert.ok(!/<input\b/i.test(cards),'Home KPI cards have no manual input');
+assert.ok(!/manual|localStorage|in\s*hub/i.test(source),'Home KPI logic has no manual/localStorage/In Hub handling');
+assert.ok(!/dayoff fleet!AK4:AK|daily report!l[23]|debug|source/i.test(cards),'KPI cards do not render source/debug details');
 assert.ok(!/\bWL\b/i.test(cards),'WL must not appear in Home KPI cards');
 assert.ok(cards.includes('Target 69.80%'),'2W target is present');
-assert.equal((cards.match(/Target /g)||[]).length,2,'only the 2W Allocation and PDTY target labels are rendered; 4W has no target');
+assert.equal((cards.match(/Target /g)||[]).length,2,'only the 2W Allocation and PDTY targets are rendered');
 assert.ok(!/ชิ้น\s*\/\s*Active/i.test(cards),'PDTY does not promote a unit label');
 assert.ok(calcHarness.elements.get('hChart').innerHTML.includes('<rect'),'existing Home chart still renders');
 assert.ok(calcHarness.elements.get('hDonut').innerHTML.includes('<circle'),'existing Home donut still renders');
-assert.ok(!/\bWL\b/i.test(source),'Home KPI implementation contains no WL calculation or UI');
-const today=calcHarness.elements.get('todayVolume'),inbound=calcHarness.elements.get('inboundVolume');
-today.value='10,000';today.listeners.input({});
-inbound.value='3500';inbound.listeners.input({});
-assert.equal(calcHarness.storage.get('spxTodayVolumeManual'),'10000','Today Volume persists as digits');
-assert.equal(calcHarness.storage.get('spxInboundManual'),'3500','Inbound persists as digits');
-const reloadHarness=harness(base,{spxTodayVolumeManual:'10000',spxInboundManual:'3500'});
-assert.equal(reloadHarness.elements.get('todayVolume').value,'10,000','Today Volume restores after reload');
-assert.equal(reloadHarness.elements.get('inboundVolume').value,'3,500','Inbound restores after reload');
-const inHub=reloadHarness.elements.get('inHub');inHub.value='250';inHub.listeners.input({});
-assert.equal(reloadHarness.storage.get('spxInHubManual'),'250','existing In Hub manual persistence remains intact');
+assert.match(calcHarness.elements.get('hminis').innerHTML,/On-hold/,'existing On Hold summary remains below KPI cards');
 const css=fs.readFileSync(path.join(root,'assets/style.css'),'utf8');
+assert.match(css,/\.hkpis\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/,'Home KPI grid uses two columns');
+assert.match(css,/@media\(max-width:600px\)\{\.hgrid\{grid-template-columns:minmax\(0,1fr\)\}\.hkpis\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/,'Home KPI grid remains two columns on mobile');
 assert.match(css,/\.hkpi-target\{[^}]*font-size:10px/,'targets are visually secondary');
-assert.match(css,/@media\(max-width:600px\)\{\.hgrid\{grid-template-columns:minmax\(0,1fr\)\}/,'Home layout stacks on narrow screens');
 const index=fs.readFileSync(path.join(root,'index.html'),'utf8');
-assert.match(index,/assets\/driver\.js\?v=20261005homekpi/,'driver data bridge receives a fresh cache key');
+const homeMarkup=index.slice(index.indexOf('<div class="vh" id="home">'),index.indexOf('<header>'));
+assert.ok(!/in\s*hub|inHub/i.test(homeMarkup),'Home markup contains no In Hub card, input, or label');
+assert.ok(homeMarkup.includes('id="hminis"'),'On Hold summary container remains in Home markup');
+assert.match(index,/assets\/driver\.js\?v=20261005homekpi/,'driver data bridge cache key remains unchanged');
+assert.match(index,/assets\/home\.js\?v=20261005homekpifinal/,'Home script receives a fresh cache key');
 for(const file of ['assets/home.js','assets/driver.js','index.html','assets/style.css','sw.js']){
   const text=fs.readFileSync(path.join(root,file),'utf8');
   for(const qa of ['10000','3500','5574','13387'])assert.ok(!text.includes(qa),file+' must not contain QA constants '+qa);
 }
-console.log('PASS: Home KPI logic, rendering, manual persistence, Plan HC, zero division, WL removal, and existing Home/ In Hub regressions');
+console.log('PASS: Home KPI formulas, Daily Report value rendering, 8-card order, 2-column mobile layout, Plan HC, On Hold, and In Hub/manual removal');
