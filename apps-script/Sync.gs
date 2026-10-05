@@ -128,17 +128,21 @@ var SpxSync_ = (function () {
     var stamp = Utilities.formatDate(now, tz, 'yyyy-MM-dd HH:mm:ss');
     var payload = { spreadsheetName: ss.getName(), timezone: tz, source: 'apps-script', builtAt: stamp };
     var missing = [];
+    var dailyKpis = null;
 
     var dSheet = findSheet_(ss, C.SHEETS.daily);
     if (dSheet) {
       var d = parseSheet_(dSheet, tz);
       payload.daily = { sheetName: dSheet.getName(), loadedAt: stamp, warnings: d.warnings, drivers: d.drivers };
+      var kpiCells = dSheet.getRange('L2:L3').getValues();
+      dailyKpis = { todayVolume: toNum_(kpiCells[0][0]), inbound: toNum_(kpiCells[1][0]) };
     } else missing.push(C.SHEETS.daily);
 
     ['fleet', 'ops'].forEach(function (k) {
       var sh = findSheet_(ss, C.SHEETS[k]);
       if (!sh) { missing.push(C.SHEETS[k]); return; }
       var r = parseRoster_(sh, tz, now);
+      if (k === 'fleet' && dailyKpis) r.cols.homeKpis = dailyKpis;
       payload[k] = { sheetName: sh.getName(), loadedAt: stamp, cols: r.cols, dates: r.dates, people: r.people, warnings: r.warnings };
     });
     return { payload: payload, missing: missing };
