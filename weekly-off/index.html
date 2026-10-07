@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#F8F8F5">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://bkmvwgoldyrzmgvmeskp.supabase.co wss://bkmvwgoldyrzmgvmeskp.supabase.co; img-src 'self' data:; base-uri 'none'; form-action 'self'; object-src 'none'">
+  <title>📅 ตารางวันหยุด</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="weekly-off.css?v=20261007">
+</head>
+<body>
+  <main class="auth-page" id="auth-gate" hidden>
+    <section class="auth-card" aria-labelledby="auth-title">
+      <div class="auth-mark" aria-hidden="true">📅</div>
+      <p class="eyebrow">WORKSTATION ABBTG-A · WEEKLY OFF</p>
+      <h1 id="auth-title">เข้าสู่ระบบ</h1>
+      <p class="auth-copy">ใช้บัญชี Workstation ที่ผู้ดูแลระบบสร้างให้ เพื่อดูตารางวันหยุด</p>
+      <form id="login-form" novalidate>
+        <label for="login-email">อีเมล</label>
+        <input id="login-email" type="email" inputmode="email" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="name@example.com" required>
+        <label for="login-password">รหัสผ่าน</label>
+        <input id="login-password" type="password" autocomplete="current-password" placeholder="รหัสผ่าน" required>
+        <button id="login-button" type="submit">เข้าสู่ระบบ</button>
+        <p id="login-message" class="auth-message" role="alert" aria-live="polite"></p>
+      </form>
+      <p class="auth-footnote">หน้านี้เข้าได้โดยตรง ไม่ต้องเปิด Admin Workstation</p>
+    </section>
+  </main>
+
+  <main class="page" id="weekly-app" hidden>
+    <header class="page-header">
+      <div class="brand-mark" aria-hidden="true">📅</div>
+      <div class="heading-copy">
+        <p class="eyebrow">WORKSTATION ABBTG-A · WEEKLY OFF</p>
+        <h1>ตารางวันหยุด</h1>
+        <p class="subtitle">สรุปวันหยุดประจำสัปดาห์จากข้อมูล Owner Source</p>
+      </div>
+      <div class="source-state" id="source-state" role="status" aria-live="polite">กำลังโหลดข้อมูล…</div>
+    </header>
+
+    <section class="summary-grid" aria-label="สรุปจำนวนพนักงาน">
+      <article class="summary-card fleet-summary"><span class="summary-label">Fleet</span><strong id="fleet-total">—</strong><span>คน</span></article>
+      <article class="summary-card ops-summary"><span class="summary-label">Ops</span><strong id="ops-total">—</strong><span>คน</span></article>
+      <article class="summary-card total-summary"><span class="summary-label">รวมทั้งหมด</span><strong id="all-total">—</strong><span>คน</span></article>
+    </section>
+
+    <section class="panel calendar-panel" aria-labelledby="calendar-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">MONDAY — SUNDAY</p><h2 id="calendar-title">จำนวนคนหยุดในแต่ละวัน</h2></div>
+        <span class="hint">เลือกวันเพื่อดูรายชื่อ</span>
+      </div>
+      <div class="week-grid" id="week-grid" role="group" aria-label="ปฏิทินวันหยุด วันจันทร์ถึงวันอาทิตย์"></div>
+      <p class="data-note" id="weekday-note" hidden></p>
+    </section>
+
+    <section class="panel detail-panel" aria-labelledby="detail-title">
+      <div class="section-heading"><div><p class="eyebrow">DAY DETAIL</p><h2 id="detail-title">รายชื่อประจำวัน</h2></div><span id="detail-total" class="detail-total">—</span></div>
+      <div class="detail-groups">
+        <section class="detail-group fleet-group" aria-labelledby="fleet-detail-title"><h3 id="fleet-detail-title">Fleet <span id="fleet-day-count">0 คน</span></h3><div id="fleet-day-list" class="people-list"></div></section>
+        <section class="detail-group ops-group" aria-labelledby="ops-detail-title"><h3 id="ops-detail-title">Ops <span id="ops-day-count">0 คน</span></h3><div id="ops-day-list" class="people-list"></div></section>
+      </div>
+    </section>
+
+    <section class="search-section" aria-labelledby="search-title">
+      <div class="section-heading search-heading"><div><p class="eyebrow">FIND STAFF</p><h2 id="search-title">ค้นหารายชื่อ</h2></div><span class="hint">ค้นหาตามรหัส ชื่อ หรือแผนก</span></div>
+      <div class="search-grid">
+        <section class="panel search-panel fleet-search" aria-labelledby="fleet-search-title">
+          <h3 id="fleet-search-title">Fleet</h3>
+          <label class="search-label" for="fleet-search-input">ค้นหา Driver ID, Employee ID หรือชื่อ</label>
+          <input id="fleet-search-input" class="search-input" type="search" autocomplete="off" placeholder="พิมพ์รหัสหรือชื่อ…">
+          <p class="result-count" id="fleet-search-count" aria-live="polite"></p>
+          <div id="fleet-search-results" class="people-list search-results"></div>
+        </section>
+        <section class="panel search-panel ops-search" aria-labelledby="ops-search-title">
+          <h3 id="ops-search-title">Ops</h3>
+          <label class="search-label" for="ops-search-input">ค้นหา Ops ID, ชื่อ หรือแผนก</label>
+          <input id="ops-search-input" class="search-input" type="search" autocomplete="off" placeholder="พิมพ์รหัส ชื่อ หรือแผนก…">
+          <p class="result-count" id="ops-search-count" aria-live="polite"></p>
+          <div id="ops-search-results" class="people-list search-results"></div>
+        </section>
+      </div>
+    </section>
+
+    <div id="load-error" class="load-error" role="alert" hidden><span id="error-message"></span><button id="retry-button" type="button">ลองโหลดอีกครั้ง</button></div>
+    <footer class="page-footer">ข้อมูลอ่านอย่างเดียว · แหล่งข้อมูลหลัก: Owner Source</footer>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" integrity="sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok" crossorigin="anonymous"></script>
+  <script src="../assets/config.js?v=20261004home"></script>
+  <script src="core.js?v=20261007"></script>
+  <script src="weekly-off.js?v=20261007"></script>
+</body>
+</html>
