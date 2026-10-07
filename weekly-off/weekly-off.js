@@ -18,7 +18,7 @@
     $('login-message').textContent=message||'';
   }
   function showApp(session){
-    if(!allowed(session)){showGate('กรุณาเข้าสู่ระบบด้วยบัญชี Workstation');return;}
+    if(!allowed(session)){showGate('กรุณาเข้าสู่ระบบด้วยบัญชี Supabase ที่ยืนยันตัวตนแล้ว');return;}
     state.session=session; isAuthenticated=true;
     $('auth-gate').hidden=true; $('weekly-app').hidden=false;
     load();
