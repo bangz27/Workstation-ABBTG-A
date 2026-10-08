@@ -21,7 +21,7 @@ var SPX_SYNC_CONFIG = {
   SUPABASE_KEY: 'sb_publishable_glOfpLrNGGdz95Qt62eVJg_rlzIxqQ_',   // publishable (public) key — not a secret
   RPC: 'sync_sheet',
   SECRET_PROP: 'SYNC_SECRET',                                       // Script Properties key (the secret lives there)
-  SHEETS: { daily: 'Daily Report', fleet: 'Dayoff Fleet', ops: 'Dayoff Ops', weeklyOffFleet: 'Weekly Off Fleet', weeklyOffOps: 'Weekly Off Ops' },
+  SHEETS: { daily: 'Daily Report', fleet: 'Dayoff Fleet', ops: 'Dayoff Ops', weeklyOffFleet: 'Weekly Off Fleet', weeklyOffOps: 'Weekly Off Ops', weeklyOffFleetM0: 'Weekly Off Fleet M0', weeklyOffOpsM0: 'Weekly Off Ops M0', weeklyOffFleetM1: 'Weekly Off Fleet M+1', weeklyOffOpsM1: 'Weekly Off Ops M+1' },
   TIMER_MINUTES: 15                                                 // allowed: 1, 5, 10, 15, 30
 };
 
@@ -145,14 +145,8 @@ var SpxSync_ = (function () {
       if (k === 'fleet' && dailyKpis) r.cols.homeKpis = dailyKpis;
       payload[k] = { sheetName: sh.getName(), loadedAt: stamp, cols: r.cols, dates: r.dates, people: r.people, warnings: r.warnings };
     });
-    var weeklyFleetSheet = findSheet_(ss, C.SHEETS.weeklyOffFleet);
-    var weeklyOpsSheet = findSheet_(ss, C.SHEETS.weeklyOffOps);
     try {
-      if (!weeklyFleetSheet || !weeklyOpsSheet) throw new Error('ไม่พบแท็บ Weekly Off Fleet/Ops ใน Owner Source');
-      payload.weeklyOff = {
-        fleet: parseWeeklyOff_(weeklyFleetSheet, 'fleet'),
-        ops: parseWeeklyOff_(weeklyOpsSheet, 'ops')
-      };
+      payload.weeklyOff = buildWeeklyOffPayload_(ss, tz, now);
     } catch (weeklyOffErr) {
       payload.weeklyOffError = (weeklyOffErr && weeklyOffErr.message) || String(weeklyOffErr);
     }
@@ -465,6 +459,39 @@ var SpxSync_ = (function () {
     };
   }
 
+  function monthKeyOffset_(now, tz, offset) {
+    var base = Utilities.formatDate(now || new Date(), 'Asia/Bangkok', 'yyyy-MM');
+    var parts = base.split('-');
+    var y = +parts[0], m = (+parts[1]) - 1;
+    var d = new Date(Date.UTC(y, m + offset, 1));
+    return Utilities.formatDate(d, 'UTC', 'yyyy-MM-dd');
+  }
+
+  function buildWeeklyOffPayload_(ss, tz, now) {
+    var configs = [
+      { offset: 0, fleet: C.SHEETS.weeklyOffFleetM0, ops: C.SHEETS.weeklyOffOpsM0 },
+      { offset: 1, fleet: C.SHEETS.weeklyOffFleetM1, ops: C.SHEETS.weeklyOffOpsM1 }
+    ];
+    var months = [];
+    configs.forEach(function(cfg) {
+      var fleetSheet = findSheet_(ss, cfg.fleet);
+      var opsSheet = findSheet_(ss, cfg.ops);
+      if (cfg.offset === 1 && (!fleetSheet || !opsSheet)) {
+        fleetSheet = fleetSheet || findSheet_(ss, C.SHEETS.weeklyOffFleet);
+        opsSheet = opsSheet || findSheet_(ss, C.SHEETS.weeklyOffOps);
+      }
+      if (!fleetSheet && !opsSheet) return;
+      if (!fleetSheet || !opsSheet) throw new Error('Owner Source Weekly Off M' + (cfg.offset === 0 ? '0' : '+1') + ' ต้องมีทั้ง Fleet และ Ops');
+      months.push({
+        month_key: monthKeyOffset_(now, tz, cfg.offset),
+        fleet: parseWeeklyOff_(fleetSheet, 'fleet'),
+        ops: parseWeeklyOff_(opsSheet, 'ops')
+      });
+    });
+    if (!months.length) throw new Error('ไม่พบแท็บ Weekly Off M0/M+1 ใน Owner Source');
+    return { months: months };
+  }
+
   function parseWeeklyOff_(sheet, group) {
     var expected = group === 'fleet'
       ? ['driverid', 'employeeid', 'staffname', 'shift', 'weeklyoff']
@@ -493,7 +520,6 @@ var SpxSync_ = (function () {
     }
     return people;
   }
-
   /** Header cells → array of 'yyyy-MM-dd' or '' (same length as the row). */
   function headerDates_(vals, disp, tz, curYear) {
     var out = [];
