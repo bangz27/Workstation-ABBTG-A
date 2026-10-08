@@ -776,3 +776,68 @@ body.v-leave .vd,body.v-leave .vs,body:not(.v-leave) .vl{display:none!important}
   .stiles.agt{grid-template-columns:repeat(auto-fill,minmax(118px,1fr));grid-auto-flow:row;grid-auto-columns:auto}
   .stiles.agt .stile .t{font-size:12px;letter-spacing:0;text-overflow:ellipsis}
 }
+
+
+/* =====================================================================
+   HOME UI — Notion reference alignment
+   Visual/layout only. Data, navigation, auth and KPI calculations unchanged.
+   ===================================================================== */
+.vh{padding-top:0}
+.hgrid.htop{grid-template-columns:minmax(0,1fr);gap:14px}
+.hhero{
+  position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;
+  gap:16px;padding:20px;background:#fff;border:var(--bd);border-radius:24px;box-shadow:var(--ui-shadow);
+  min-height:150px;
+}
+.hhero:after{
+  content:"";position:absolute;width:180px;height:180px;right:-90px;top:-95px;
+  border-radius:50%;background:#EBF4FF;border:2px solid #171717;opacity:.9;
+}
+.hhero>div{position:relative;z-index:1;min-width:0}
+.hhero .hillus{
+  position:relative;z-index:1;flex:0 0 132px;width:132px;height:96px;object-fit:cover;
+  border-radius:16px;border:var(--bd);box-shadow:var(--ui-sh2);background:#EBF4FF;
+}
+.hhi{margin:0;color:#2563EB;font-size:14px;font-weight:700;line-height:1.35}
+.hhero h1{margin:4px 0 5px;font-size:23px;line-height:1.3;font-weight:800;letter-spacing:-.02em}
+.hsub{margin:0;color:var(--ui-muted);font-size:13px;line-height:1.5}
+.hqa{
+  background:#FDE68A;border:var(--bd);border-radius:24px;box-shadow:var(--ui-shadow);
+  padding:16px;
+}
+.hqa h2{margin:0 0 11px;padding:0 2px;font-size:18px;font-weight:800;letter-spacing:-.02em}
+.hqg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.hqg button{
+  width:100%;min-height:54px;padding:13px 10px;border:var(--bd);border-radius:16px;
+  box-shadow:var(--ui-sh3);font-size:14px;font-weight:700;
+  background:#EA580C;color:#fff;cursor:pointer;
+  transition:transform .08s ease,box-shadow .08s ease;
+}
+.hqg button:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 #171717}
+.hqg button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #171717}
+.hqg .lite{background:#fff;color:#171717}
+.hkpis{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.hkpi{border:var(--bd);border-radius:20px;padding:14px 16px;box-shadow:var(--ui-shadow);min-height:120px}
+.hmini{border:var(--bd);border-radius:16px;box-shadow:var(--ui-sh2)}
+.hcard{border-radius:20px;box-shadow:var(--ui-shadow)}
+@media(max-width:900px){
+  .hgrid.htop{grid-template-columns:minmax(0,1fr)}
+  .hhero{min-height:0}
+  .hhero h1{font-size:21px}
+  .hkpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+}
+@media(max-width:520px){
+  .hhero{padding:17px;gap:10px}
+  .hhero .hillus{flex-basis:118px;width:118px;height:88px}
+  .hhero h1{font-size:20px}
+  .hsub{font-size:12px}
+  .hqa{padding:14px}
+  .hqg{gap:9px}
+  .hqg button{min-height:56px;font-size:13.5px}
+  .hkpi{min-height:110px;padding:12px}
+}
+@media(max-width:380px){
+  .hhero .hillus{flex-basis:105px;width:105px;height:80px}
+  .hhero h1{font-size:18px}
+  .hqg button{min-height:52px;padding:11px 8px;font-size:13px}
+}
