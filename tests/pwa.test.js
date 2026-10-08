@@ -21,6 +21,8 @@ function pngDimensions(file) {
 }
 
 test('manifest is installable and references real 192/512 PNG and maskable icons', () => {
+  assert.equal(manifest.name, 'Workstation ABBTG-A');
+  assert.equal(manifest.short_name, 'Workstation ABBTG-A');
   assert.equal(manifest.display, 'standalone');
   assert.equal(manifest.start_url, './');
   assert.equal(manifest.scope, './');
@@ -35,8 +37,11 @@ test('manifest is installable and references real 192/512 PNG and maskable icons
 
 test('root and standalone Weekly Off use the same root manifest and shared worker bootstrap', () => {
   assert.match(rootHtml, /rel="manifest" href="manifest\.webmanifest"/);
+  assert.match(rootHtml, /name="apple-mobile-web-app-title" content="Workstation ABBTG-A"/);
+  assert.match(rootHtml, /name="application-name" content="Workstation ABBTG-A"/);
   assert.match(rootHtml, /assets\/pwa\.js/);
   assert.match(weeklyHtml, /rel="manifest" href="\.\.\/manifest\.webmanifest"/);
+  assert.match(weeklyHtml, /name="application-name" content="Workstation ABBTG-A"/);
   assert.match(weeklyHtml, /\.\.\/assets\/pwa\.js/);
   assert.match(weeklyHtml, /offline-store\.js/);
   assert.match(pwa, /new URL\('sw\.js', appRoot\)/);
@@ -49,7 +54,7 @@ test('the existing worker caches route-correct shells for /, /weekly-off, and /w
   assert.match(sw, /path === 'weekly-off' \|\| path === 'weekly-off\/' \|\| path === 'weekly-off\/index\.html'/);
   assert.match(sw, /Response\.redirect\(new URL\('weekly-off\/'/);
   assert.match(sw, /weekly-off\/index\.html/);
-  assert.match(sw, /var VERSION = '20261008pwa1'/);
+  assert.match(sw, /var VERSION = '20261009pwaidentity1'/);
 });
 
 test('service worker bypasses Supabase, credentials, tokens and non-GET data requests before caching', () => {
