@@ -41,5 +41,18 @@
       return fields.some(function(field){ return String(record[field] == null ? '' : record[field]).toLocaleLowerCase().indexOf(needle) >= 0; });
     });
   }
-  root.WeeklyOffCore = {DAYS:DAYS, THAI_DAYS:THAI_DAYS, dayIndex:dayIndex, summarize:summarize, forDay:forDay, search:search};
+  function monthLabel(monthKey){
+    var d = new Date(String(monthKey || '') + 'T00:00:00Z');
+    if(isNaN(d.getTime())) return String(monthKey || '');
+    return new Intl.DateTimeFormat('th-TH-u-ca-buddhist',{month:'long',year:'numeric',timeZone:'Asia/Bangkok'}).format(d);
+  }
+  function relativeMonthKey(offset, now){
+    var base = now instanceof Date ? now : new Date();
+    var parts = new Intl.DateTimeFormat('en-CA',{year:'numeric',month:'2-digit',timeZone:'Asia/Bangkok'}).formatToParts(base);
+    var y = +parts.find(function(p){return p.type==='year';}).value;
+    var m = (+parts.find(function(p){return p.type==='month';}).value)-1;
+    var d = new Date(Date.UTC(y,m+offset,1));
+    return d.toISOString().slice(0,10);
+  }
+  root.WeeklyOffCore = {DAYS:DAYS, THAI_DAYS:THAI_DAYS, dayIndex:dayIndex, summarize:summarize, forDay:forDay, search:search, monthLabel:monthLabel, relativeMonthKey:relativeMonthKey};
 })(typeof window !== 'undefined' ? window : globalThis);
