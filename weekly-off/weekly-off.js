@@ -36,7 +36,7 @@
     return isAuthenticated && version===loadVersion && OfflineStore.userId(state.session)===user;
   }
   function showSnapshot(snapshot, label){
-    state.fleet=snapshot.fleet; state.ops=snapshot.ops; state.lastUpdated=snapshot.savedAt;
+    state.months=snapshot.months||{}; state.lastUpdated=snapshot.savedAt;
     renderAll();
     $('load-error').hidden=true;
     setStatus(label+' · ข้อมูลล่าสุด '+OfflineStore.formatTimestamp(snapshot.savedAt),'offline');
@@ -136,7 +136,7 @@
       renderAll();
       var activeKey=selectedMonthKey(), active=months[activeKey];
       setStatus(active?'ออนไลน์ · '+(state.monthOffset===0?'M0':'M+1')+' · อัปเดตล่าสุด '+OfflineStore.formatTimestamp(savedAt):(state.monthOffset===0?'M0 ยังไม่มีข้อมูล':'M+1 ยังไม่มีข้อมูล'),'ready');
-      OfflineStore.save(session,result[0],result[1],savedAt);
+      OfflineStore.save(session,months,savedAt);
     }catch(error){
       if(!currentLoad(version,user)) return;
       var denied=error&&(error.status===401||error.status===403);
