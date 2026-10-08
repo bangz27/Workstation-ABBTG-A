@@ -8,3 +8,6 @@
 
 .source-state.offline{background:var(--yellow-soft);border-color:#D9AA00}.source-state.error{background:#FDE0DF}.source-state.ready{background:var(--green-soft)}
 @media(max-width:650px){.source-state{max-width:calc(100% - 64px);white-space:normal;line-height:1.4;overflow-wrap:anywhere}}
+
+.source-month{margin:5px 0 0;color:var(--ink);font-size:13px;font-weight:800;display:inline-flex;align-items:center;padding:5px 10px;border:1px solid var(--ink);border-radius:999px;background:var(--yellow-soft)}
+@media(max-width:650px){.source-month{font-size:12px;padding:4px 9px}}
