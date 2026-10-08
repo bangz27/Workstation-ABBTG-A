@@ -34,8 +34,21 @@ DECLARE
   v_unique_count integer;
   v_total integer := 0;
 BEGIN
-  IF p_payload IS NULL OR jsonb_typeof(p_payload) <> 'object' OR jsonb_typeof(p_payload -> 'months') IS DISTINCT FROM 'array' THEN
-    RAISE EXCEPTION 'Weekly Off payload requires months array' USING errcode = '22023';
+  IF p_payload IS NULL OR jsonb_typeof(p_payload) <> 'object' THEN
+    RAISE EXCEPTION 'Weekly Off payload must be a JSON object' USING errcode = '22023';
+  END IF;
+  IF jsonb_typeof(p_payload -> 'months') IS DISTINCT FROM 'array' THEN
+    IF jsonb_typeof(p_payload -> 'fleet') = 'array' AND jsonb_typeof(p_payload -> 'ops') = 'array' THEN
+      p_payload := jsonb_build_object(
+        'months', jsonb_build_array(jsonb_build_object(
+          'month_key', to_char((date_trunc('month', timezone('Asia/Bangkok', now())) + interval '1 month')::date, 'YYYY-MM-DD'),
+          'fleet', p_payload -> 'fleet',
+          'ops', p_payload -> 'ops'
+        ))
+      );
+    ELSE
+      RAISE EXCEPTION 'Weekly Off payload requires months array' USING errcode = '22023';
+    END IF;
   END IF;
 
   FOR v_month IN SELECT value FROM jsonb_array_elements(p_payload -> 'months')
