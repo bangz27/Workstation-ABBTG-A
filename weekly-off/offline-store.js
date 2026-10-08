@@ -16,15 +16,14 @@
       var raw = root.localStorage.getItem(key(id));
       if (!raw) return null;
       var snapshot = JSON.parse(raw);
-      if (!snapshot || snapshot.userId !== id || !Array.isArray(snapshot.fleet) ||
-          !Array.isArray(snapshot.ops) || typeof snapshot.savedAt !== 'string') return null;
+      if (!snapshot || snapshot.userId !== id || !snapshot.months || typeof snapshot.months !== 'object' || typeof snapshot.savedAt !== 'string') return null;
       return snapshot;
     } catch (_) { return null; }
   }
-  function save(session, fleet, ops, savedAt) {
+  function save(session, months, savedAt) {
     var id = userId(session);
-    if (!id || !Array.isArray(fleet) || !Array.isArray(ops)) return false;
-    var snapshot = {userId:id, savedAt:savedAt || new Date().toISOString(), fleet:fleet, ops:ops};
+    if (!id || !months || typeof months !== 'object') return false;
+    var snapshot = {userId:id, savedAt:savedAt || new Date().toISOString(), months:months};
     try {
       root.localStorage.setItem(key(id), JSON.stringify(snapshot));
       return true;

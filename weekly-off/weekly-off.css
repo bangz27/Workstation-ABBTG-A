@@ -11,3 +11,8 @@
 
 .source-month{margin:5px 0 0;color:var(--ink);font-size:13px;font-weight:800;display:inline-flex;align-items:center;padding:5px 10px;border:1px solid var(--ink);border-radius:999px;background:var(--yellow-soft)}
 @media(max-width:650px){.source-month{font-size:12px;padding:4px 9px}}
+
+.month-switcher{display:inline-flex;gap:6px;margin:10px 0 0;padding:4px;border:1px solid var(--ink);border-radius:12px;background:var(--paper)}
+.month-tab{border:1px solid transparent;background:transparent;color:var(--ink);font:inherit;font-weight:800;padding:7px 14px;border-radius:8px;cursor:pointer}
+.month-tab.active{background:var(--ink);color:var(--paper)}
+@media(max-width:650px){.month-switcher{margin-top:8px}.month-tab{padding:6px 12px;font-size:12px}}

@@ -6,7 +6,7 @@
   var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_KEY, {
     auth: {persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, flowType:'implicit', storageKey:'abbtga-ws-auth'}
   });
-  var state = {fleet:[], ops:[], selected:'Monday', session:null, lastUpdated:null};
+  var state = {fleet:[], ops:[], selected:'Monday', session:null, lastUpdated:null, months:{}, monthOffset:0};
   var PAGE_SIZE = 500;
   var WEEKDAY_LABELS = ['จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์','อาทิตย์'];
   var isAuthenticated = false;
@@ -14,6 +14,9 @@
   function $(id){ return document.getElementById(id); }
   function esc(value){ return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]; }); }
   function allowed(session){ return !!(session && session.user && session.user.is_anonymous !== true); }
+  function selectedMonthKey(){ return Core.relativeMonthKey(state.monthOffset); }
+  function setMonthTab(offset){ state.monthOffset=offset; state.selected='Monday'; renderAll(); }
+  function renderMonthHeader(){ var key=selectedMonthKey(); $('source-month').textContent=(state.monthOffset===0?'M0':'M+1')+' · '+Core.monthLabel(key); Array.prototype.forEach.call(document.querySelectorAll('.month-tab'),function(btn){var active=Number(btn.getAttribute('data-month-offset'))===state.monthOffset;btn.classList.toggle('active',active);btn.setAttribute('aria-selected',active?'true':'false');}); }
   function showGate(message){
     loadVersion++;
     if(state.session && OfflineStore) OfflineStore.clear(state.session);
@@ -33,7 +36,7 @@
     return isAuthenticated && version===loadVersion && OfflineStore.userId(state.session)===user;
   }
   function showSnapshot(snapshot, label){
-    state.fleet=snapshot.fleet; state.ops=snapshot.ops; state.lastUpdated=snapshot.savedAt;
+    state.months=snapshot.months||{}; state.lastUpdated=snapshot.savedAt;
     renderAll();
     $('load-error').hidden=true;
     setStatus(label+' · ข้อมูลล่าสุด '+OfflineStore.formatTimestamp(snapshot.savedAt),'offline');
@@ -97,7 +100,7 @@
     $(group+'-search-count').textContent=query.trim()?'พบ '+hits.length+' รายการ':'ทั้งหมด '+records.length+' รายการ';
     $(group+'-search-results').innerHTML=hits.length?hits.map(function(p){return personCard(p,group);}).join(''):'<div class="empty-state">ไม่พบรายชื่อที่ตรงกัน</div>';
   }
-  function renderAll(){ renderCalendar(); renderSearch('fleet'); renderSearch('ops'); }
+  function renderAll(){ var key=selectedMonthKey(); var month=state.months[key]||{fleet:[],ops:[]}; state.fleet=month.fleet; state.ops=month.ops; renderMonthHeader(); renderCalendar(); renderSearch('fleet'); renderSearch('ops'); }
   async function load(){
     var session=state.session;
     var user=OfflineStore.userId(session);
@@ -121,22 +124,25 @@
     setStatus('กำลังโหลดข้อมูล…','');
     try{
       var result=await Promise.all([
-        fetchAll('fleet_weekly_off','driver_id,employee_id,staff_name,shift,weekly_off','driver_id'),
-        fetchAll('ops_weekly_off','ops_id,staff_name,department,shift,weekly_off','ops_id')
+        fetchAll('fleet_weekly_off','month_key,driver_id,employee_id,staff_name,shift,weekly_off','month_key,driver_id'),
+        fetchAll('ops_weekly_off','month_key,ops_id,staff_name,department,shift,weekly_off','month_key,ops_id')
       ]);
       if(!currentLoad(version,user)) return;
-      var savedAt=new Date().toISOString();
-      state.fleet=result[0]; state.ops=result[1];
+      var savedAt=new Date().toISOString(), months={};
+      result[0].forEach(function(row){var key=String(row.month_key||'').slice(0,10);if(!months[key])months[key]={fleet:[],ops:[]};months[key].fleet.push(row);});
+      result[1].forEach(function(row){var key=String(row.month_key||'').slice(0,10);if(!months[key])months[key]={fleet:[],ops:[]};months[key].ops.push(row);});
+      state.months=months;
       state.lastUpdated=savedAt;
       renderAll();
-      setStatus('ออนไลน์ · อัปเดตล่าสุด '+OfflineStore.formatTimestamp(savedAt),'ready');
-      OfflineStore.save(session,result[0],result[1],savedAt);
+      var activeKey=selectedMonthKey(), active=months[activeKey];
+      setStatus(active?'ออนไลน์ · '+(state.monthOffset===0?'M0':'M+1')+' · อัปเดตล่าสุด '+OfflineStore.formatTimestamp(savedAt):(state.monthOffset===0?'M0 ยังไม่มีข้อมูล':'M+1 ยังไม่มีข้อมูล'),'ready');
+      OfflineStore.save(session,months,savedAt);
     }catch(error){
       if(!currentLoad(version,user)) return;
       var denied=error&&(error.status===401||error.status===403);
       if(denied){
         OfflineStore.clear(session);
-        state.fleet=[]; state.ops=[]; state.lastUpdated=null;
+        state.fleet=[]; state.ops=[]; state.months={}; state.lastUpdated=null;
         renderAll();
       }
       var snapshot=!denied&&(navigator.onLine===false||error.network===true)?OfflineStore.load(session):null;
@@ -162,6 +168,7 @@
       $('login-message').textContent=/invalid login credentials/i.test(message)?'อีเมลหรือรหัสผ่านไม่ถูกต้อง':(message||'เข้าสู่ระบบไม่สำเร็จ');
     }finally{button.disabled=false;button.textContent='เข้าสู่ระบบ';}
   });
+  Array.prototype.forEach.call(document.querySelectorAll('.month-tab'),function(button){button.addEventListener('click',function(){setMonthTab(Number(button.getAttribute('data-month-offset')));});});
   $('week-grid').addEventListener('click',function(event){
     var button=event.target.closest('[data-day]');
     if(!button) return;
