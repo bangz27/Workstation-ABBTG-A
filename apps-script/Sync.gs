@@ -493,29 +493,40 @@ var SpxSync_ = (function () {
   }
 
   function parseWeeklyOff_(sheet, group) {
-    var expected = group === 'fleet'
-      ? ['driverid', 'employeeid', 'staffname', 'shift', 'weeklyoff']
-      : ['opsid', 'staffname', 'department', 'shift', 'weeklyoff'];
+    var required = group === 'fleet'
+      ? { driverid: true, employeeid: true, staffname: true, shift: true, weeklyoff: true }
+      : { opsid: true, staffname: true, department: true, shift: true, weeklyoff: true };
     var data = sheet.getDataRange().getDisplayValues();
-    if (!data.length || expected.some(function (h, i) { return normKey_(data[0][i]) !== h; })) {
-      throw new Error('หัวคอลัมน์ Weekly Off ไม่ตรงกับ Owner Source ในแท็บ "' + sheet.getName() + '"');
-    }
+    if (!data.length) throw new Error('แท็บ Weekly Off ว่างใน "' + sheet.getName() + '"');
+    var headers = data[0].map(function (h) { return normKey_(h); });
+    var col = {};
+    headers.forEach(function (h, i) { if (h && col[h] == null) col[h] = i; });
+    Object.keys(required).forEach(function (h) {
+      if (col[h] == null) throw new Error('ไม่พบหัวคอลัมน์ "' + h + '" ในแท็บ "' + sheet.getName() + '"');
+    });
+    var compHeaders = ['วันหยุดชดเชย#1', 'วันหยุดชดเชย#2', 'วันหยุดชดเชย#3'];
+    var compKeys = ['compensatory_1', 'compensatory_2', 'compensatory_3'];
+    compHeaders.forEach(function (label, i) {
+      var key = normKey_(label);
+      if (col[key] == null) col[key] = -1;
+      else col[compKeys[i]] = col[key];
+    });
     var seen = Object.create(null), people = [];
     for (var i = 1; i < data.length; i++) {
-      var row = data[i].slice(0, 5).map(function (v) { return String(v == null ? '' : v).trim(); });
-      if (!row.some(function (v) { return v !== ''; })) continue;
-      var person;
-      if (group === 'fleet') {
-        if (!row[0] || !row[2] || !row[3] || !row[4]) throw new Error('ข้อมูล Weekly Off Fleet ไม่ครบในแถว ' + (i + 1));
-        if (seen[row[0]]) throw new Error('Driver ID ซ้ำในแท็บ Weekly Off Fleet แถว ' + (i + 1));
-        seen[row[0]] = true;
-        person = { driver_id: row[0], employee_id: row[1], staff_name: row[2], shift: row[3], weekly_off: row[4] };
-      } else {
-        if (!row[0] || !row[1] || !row[3] || !row[4]) throw new Error('ข้อมูล Weekly Off Ops ไม่ครบในแถว ' + (i + 1));
-        if (seen[row[0]]) throw new Error('Ops ID ซ้ำในแท็บ Weekly Off Ops แถว ' + (i + 1));
-        seen[row[0]] = true;
-        person = { ops_id: row[0], staff_name: row[1], department: row[2], shift: row[3], weekly_off: row[4] };
-      }
+      var row = data[i];
+      var get = function (key) { return col[key] >= 0 ? String(row[col[key]] == null ? '' : row[col[key]]).trim() : ''; };
+      var id = get(group === 'fleet' ? 'driverid' : 'opsid');
+      var name = get('staffname'), shift = get('shift'), weeklyOff = get('weeklyoff');
+      var department = group === 'ops' ? get('department') : '';
+      var employeeId = group === 'fleet' ? get('employeeid') : '';
+      if (!id && !name && !shift && !weeklyOff) continue;
+      if (!id || !name || !shift || !weeklyOff) throw new Error('ข้อมูล Weekly Off ' + (group === 'fleet' ? 'Fleet' : 'Ops') + ' ไม่ครบในแถว ' + (i + 1));
+      if (seen[id]) throw new Error((group === 'fleet' ? 'Driver ID' : 'Ops ID') + ' ซ้ำในแท็บ "' + sheet.getName() + '" แถว ' + (i + 1));
+      seen[id] = true;
+      var person = group === 'fleet'
+        ? { driver_id: id, employee_id: employeeId, staff_name: name, shift: shift, weekly_off: weeklyOff }
+        : { ops_id: id, staff_name: name, department: department, shift: shift, weekly_off: weeklyOff };
+      compKeys.forEach(function (key) { person[key] = get(key); });
       people.push(person);
     }
     return people;
