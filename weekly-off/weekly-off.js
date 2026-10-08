@@ -125,7 +125,7 @@
     try{
       var result=await Promise.all([
         fetchAll('fleet_weekly_off','month_key,driver_id,employee_id,staff_name,shift,weekly_off,compensatory_1,compensatory_2,compensatory_3','month_key,driver_id'),
-        fetchAll('ops_weekly_off','month_key,ops_id,staff_name,department,shift,weekly_off','month_key,ops_id')
+        fetchAll('ops_weekly_off','month_key,ops_id,staff_name,department,shift,weekly_off,compensatory_1,compensatory_2,compensatory_3','month_key,ops_id')
       ]);
       if(!currentLoad(version,user)) return;
       var savedAt=new Date().toISOString(), months={};
