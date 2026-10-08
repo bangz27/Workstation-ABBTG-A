@@ -64,7 +64,7 @@
     var id=group==='fleet'?person.driver_id:person.ops_id;
     var emp=group==='fleet'?person.employee_id:'';
     var dept=group==='ops'?person.department:'';
-    return '<article class="person-card"><div class="person-top"><div><div class="person-name">'+esc(person.staff_name)+'</div><div class="person-id">'+(group==='fleet'?'Driver ID':'Ops ID')+': '+esc(id||'—')+'</div></div><span class="tag '+group+'">'+(group==='fleet'?'Fleet':'Ops')+'</span></div><div class="person-meta">'+(emp?'<span>Employee ID <strong>'+esc(emp)+'</strong></span>':'')+(dept?'<span>แผนก <strong>'+esc(dept)+'</strong></span>':'')+'<span>กะ <strong>'+esc(person.shift||'—')+'</strong></span><span>Weekly Off <strong>'+esc(person.weekly_off||'—')+'</strong></span></div></article>';
+    var compensatory= ['compensatory_1','compensatory_2','compensatory_3'].map(function(key,i){return person[key]?'<span>วันหยุดชดเชย#'+(i+1)+' <strong>'+esc(person[key])+'</strong></span>':'';}).join(''); return '<article class="person-card"><div class="person-top"><div><div class="person-name">'+esc(person.staff_name)+'</div><div class="person-id">'+(group==='fleet'?'Driver ID':'Ops ID')+': '+esc(id||'—')+'</div></div><span class="tag '+group+'">'+(group==='fleet'?'Fleet':'Ops')+'</span></div><div class="person-meta">'+(emp?'<span>Employee ID <strong>'+esc(emp)+'</strong></span>':'')+(dept?'<span>แผนก <strong>'+esc(dept)+'</strong></span>':'')+'<span>กะ <strong>'+esc(person.shift||'—')+'</strong></span><span>Weekly Off <strong>'+esc(person.weekly_off||'—')+'</strong></span>'+compensatory+'</div></article>';
   }
   function renderCalendar(){
     var summary=Core.summarize(state.fleet,state.ops);
@@ -124,7 +124,7 @@
     setStatus('กำลังโหลดข้อมูล…','');
     try{
       var result=await Promise.all([
-        fetchAll('fleet_weekly_off','month_key,driver_id,employee_id,staff_name,shift,weekly_off','month_key,driver_id'),
+        fetchAll('fleet_weekly_off','month_key,driver_id,employee_id,staff_name,shift,weekly_off,compensatory_1,compensatory_2,compensatory_3','month_key,driver_id'),
         fetchAll('ops_weekly_off','month_key,ops_id,staff_name,department,shift,weekly_off','month_key,ops_id')
       ]);
       if(!currentLoad(version,user)) return;
