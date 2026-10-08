@@ -2,18 +2,23 @@
   'use strict';
   var C = window.SPX_CONFIG;
   var Core = window.WeeklyOffCore;
+  var OfflineStore = window.WeeklyOffOfflineStore;
   var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_KEY, {
     auth: {persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, flowType:'implicit', storageKey:'abbtga-ws-auth'}
   });
-  var state = {fleet:[], ops:[], selected:'Monday', session:null};
+  var state = {fleet:[], ops:[], selected:'Monday', session:null, lastUpdated:null};
   var PAGE_SIZE = 500;
   var WEEKDAY_LABELS = ['จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์','อาทิตย์'];
   var isAuthenticated = false;
+  var loadVersion = 0;
   function $(id){ return document.getElementById(id); }
   function esc(value){ return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]; }); }
   function allowed(session){ return !!(session && session.user && session.user.is_anonymous !== true); }
   function showGate(message){
+    loadVersion++;
+    if(state.session && OfflineStore) OfflineStore.clear(state.session);
     isAuthenticated=false; state.session=null; state.fleet=[]; state.ops=[];
+    state.lastUpdated=null;
     $('weekly-app').hidden=true; $('auth-gate').hidden=false;
     $('login-message').textContent=message||'';
   }
@@ -24,14 +29,25 @@
     load();
   }
   function setStatus(text, kind){ var el=$('source-state'); el.textContent=text; el.className='source-state'+(kind?' '+kind:''); }
+  function currentLoad(version, user){
+    return isAuthenticated && version===loadVersion && OfflineStore.userId(state.session)===user;
+  }
+  function showSnapshot(snapshot, label){
+    state.fleet=snapshot.fleet; state.ops=snapshot.ops; state.lastUpdated=snapshot.savedAt;
+    renderAll();
+    $('load-error').hidden=true;
+    setStatus(label+' · ข้อมูลล่าสุด '+OfflineStore.formatTimestamp(snapshot.savedAt),'offline');
+  }
   function restUrl(table, columns, order){
     return C.SUPABASE_URL.replace(/\/+$/,'')+'/rest/v1/'+table+'?select='+encodeURIComponent(columns)+'&order='+encodeURIComponent(order+'.asc');
   }
   async function fetchAll(table, columns, order){
     var url=restUrl(table, columns, order), rows=[], start=0;
     while(true){
-      if(!state.session || !state.session.access_token) throw new Error('ไม่พบ session สำหรับอ่านข้อมูล');
-      var response=await fetch(url,{method:'GET',headers:{apikey:C.SUPABASE_KEY,Authorization:'Bearer '+state.session.access_token,Range:start+'-'+(start+PAGE_SIZE-1)},cache:'no-store'});
+      if(!state.session || !state.session.access_token){var authError=new Error('ไม่พบ session สำหรับอ่านข้อมูล');authError.status=401;throw authError;}
+      var response;
+      try{response=await fetch(url,{method:'GET',headers:{apikey:C.SUPABASE_KEY,Authorization:'Bearer '+state.session.access_token,Range:start+'-'+(start+PAGE_SIZE-1)},cache:'no-store'});}
+      catch(networkError){networkError.network=true;throw networkError;}
       if(!response.ok){ var body=''; try{body=await response.text();}catch(e){} var error=new Error('อ่านข้อมูลไม่สำเร็จ ('+response.status+')'+(body?': '+body:'')); error.status=response.status; throw error; }
       var batch=await response.json();
       if(!Array.isArray(batch)) throw new Error('รูปแบบข้อมูลไม่ถูกต้อง');
@@ -83,6 +99,24 @@
   }
   function renderAll(){ renderCalendar(); renderSearch('fleet'); renderSearch('ops'); }
   async function load(){
+    var session=state.session;
+    var user=OfflineStore.userId(session);
+    if(!isAuthenticated || !user) return;
+    var version=++loadVersion;
+    if(!session.access_token){
+      setStatus('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่','error');
+      $('error-message').textContent='ไม่พบ session สำหรับอ่านข้อมูล';
+      $('load-error').hidden=false;
+      return;
+    }
+    if(navigator.onLine===false){
+      var offlineSnapshot=OfflineStore.load(session);
+      if(offlineSnapshot){if(currentLoad(version,user))showSnapshot(offlineSnapshot,'ออฟไลน์');return;}
+      setStatus('ออฟไลน์ · ไม่มีข้อมูลที่บันทึกไว้','offline');
+      $('error-message').textContent='ออฟไลน์และยังไม่มีข้อมูลที่บันทึกไว้สำหรับบัญชีนี้';
+      $('load-error').hidden=false;
+      return;
+    }
     $('load-error').hidden=true;
     setStatus('กำลังโหลดข้อมูล…','');
     try{
@@ -90,13 +124,24 @@
         fetchAll('fleet_weekly_off','driver_id,employee_id,staff_name,shift,weekly_off','driver_id'),
         fetchAll('ops_weekly_off','ops_id,staff_name,department,shift,weekly_off','ops_id')
       ]);
-      if(!isAuthenticated) return;
+      if(!currentLoad(version,user)) return;
+      var savedAt=new Date().toISOString();
       state.fleet=result[0]; state.ops=result[1];
+      state.lastUpdated=savedAt;
       renderAll();
-      setStatus('ข้อมูล Owner Source','ready');
+      setStatus('ออนไลน์ · อัปเดตล่าสุด '+OfflineStore.formatTimestamp(savedAt),'ready');
+      OfflineStore.save(session,result[0],result[1],savedAt);
     }catch(error){
-      if(!isAuthenticated) return;
-      setStatus('โหลดข้อมูลไม่สำเร็จ','error');
+      if(!currentLoad(version,user)) return;
+      var denied=error&&(error.status===401||error.status===403);
+      if(denied){
+        OfflineStore.clear(session);
+        state.fleet=[]; state.ops=[]; state.lastUpdated=null;
+        renderAll();
+      }
+      var snapshot=!denied&&(navigator.onLine===false||error.network===true)?OfflineStore.load(session):null;
+      if(snapshot&&currentLoad(version,user)){showSnapshot(snapshot,navigator.onLine===false?'ออฟไลน์':'เชื่อมต่อไม่ได้');return;}
+      setStatus(navigator.onLine===false?'ออฟไลน์ · ไม่มีข้อมูลที่บันทึกไว้':'โหลดข้อมูลไม่สำเร็จ','error');
       $('error-message').textContent=error&&error.status===401?'เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่':(error&&error.status===403?'บัญชีนี้ไม่มีสิทธิ์อ่านข้อมูล Weekly Off':(error&&error.message?error.message:'เกิดข้อผิดพลาด'));
       $('load-error').hidden=false;
     }
@@ -126,8 +171,20 @@
   $('fleet-search-input').addEventListener('input',function(){renderSearch('fleet');});
   $('ops-search-input').addEventListener('input',function(){renderSearch('ops');});
   $('retry-button').addEventListener('click',load);
+  window.addEventListener('offline',function(){
+    if(isAuthenticated&&state.lastUpdated)setStatus('ออฟไลน์ · ข้อมูลล่าสุด '+OfflineStore.formatTimestamp(state.lastUpdated),'offline');
+  });
+  window.addEventListener('online',function(){
+    if(isAuthenticated){setStatus('ออนไลน์ · กำลังโหลดข้อมูลล่าสุด…','');load();}
+  });
   sb.auth.onAuthStateChange(function(event,session){
-    if(session&&allowed(session)) state.session=session;
+    if(session&&allowed(session)){
+      var previous=state.session;
+      if(previous&&OfflineStore.userId(previous)!==OfflineStore.userId(session)){
+        OfflineStore.clear(previous);loadVersion++;state.fleet=[];state.ops=[];state.lastUpdated=null;
+      }
+      state.session=session;
+    }
     if(event==='SIGNED_OUT') showGate('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่');
   });
   sb.auth.getSession().then(function(result){
