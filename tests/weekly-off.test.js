@@ -39,3 +39,9 @@ test('search matches the specified per-group identity fields', () => {
   assert.deepEqual(Core.search(ops,'hub agent',['ops_id','staff_name','department']),[ops[0]]);
   assert.equal(Core.search(fleet,'missing',['driver_id','employee_id','staff_name']).length,0);
 });
+
+// Month model: M0/M+1 are derived from Thai calendar month, not sync timestamp.
+assert.equal(Core.relativeMonthKey(0,new Date('2026-10-09T00:00:00Z')),'2026-10-01');
+assert.equal(Core.relativeMonthKey(1,new Date('2026-10-09T00:00:00Z')),'2026-11-01');
+assert.equal(Core.relativeMonthKey(0,new Date('2026-11-01T00:00:00Z')),'2026-11-01');
+assert.equal(Core.relativeMonthKey(1,new Date('2026-11-01T00:00:00Z')),'2026-12-01');
