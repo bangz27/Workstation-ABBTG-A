@@ -138,6 +138,8 @@ document.addEventListener('click',function(e){
 });
 var sync=$('hSync');
 if(sync)sync.addEventListener('click',function(){if(window.SPX_DRIVER)window.SPX_DRIVER.reload();});
+var topSync=$('homeTopRefresh');
+if(topSync)topSync.addEventListener('click',function(){if(sync)sync.click();else if(window.SPX_DRIVER)window.SPX_DRIVER.reload();});
 window.SPX_HOME={paint:paint,calculate:calculate,planHC:planHC};
 setInterval(paint,4000);
 })();
