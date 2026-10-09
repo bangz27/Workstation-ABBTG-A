@@ -85,36 +85,45 @@ function paint(){
   if(!root)return;
   renderKpiCards();
   var k=calculate(t),hc=planHC(t&&t.sheet),metrics=homeMetrics();
+  function bar(id,n){var el=$(id);if(el)el.style.width=Math.max(0,Math.min(100,value(n)))+'%';}
+  function share(n,d){return d>0?value(n)/d*100:0;}
+  var planTotal=hc.available?hc.total:0,activeTotal=k.active==null?0:k.active;
+  setText('kpiPlanValue',hc.available?fmt(hc.total):'—');
+  setText('kpiPlan2w',hc.available?fmt(hc.two):'–');setText('kpiPlan4w',hc.available?fmt(hc.four):'–');
+  setText('kpiPlan2p',hc.available?Math.round(share(hc.two,hc.total))+'%':'');
+  setText('kpiPlan4p',hc.available?Math.round(share(hc.four,hc.total))+'%':'');
+  setText('kpiPlanPct',hc.available&&hc.total>0?'100%':'—');
+  bar('kpiPlanBar2',share(hc.two,hc.total));bar('kpiPlanBar4',share(hc.four,hc.total));
+  setText('kpiActiveValue',k.active==null?'—':fmt(k.active));
+  setText('kpiActive2w',k.active2==null?'–':fmt(k.active2));setText('kpiActive4w',k.active4==null?'–':fmt(k.active4));
+  setText('kpiActive2p',k.active!=null?Math.round(share(k.active2,k.active))+'%':'');
+  setText('kpiActive4p',k.active!=null?Math.round(share(k.active4,k.active))+'%':'');
+  setText('kpiActivePct',planTotal>0?decimal(activeTotal/planTotal*100,1)+'%':'—');
+  setText('kpiActiveNote',k.activeUnknown?'ไม่ระบุประเภท '+fmt(k.activeUnknown):'');
+  bar('kpiActiveBar2',share(k.active2,k.active));bar('kpiActiveBar4',share(k.active4,k.active));
+  setText('kpiAllocation2w',pct(k.allocation2));setText('kpiAllocation4w',pct(k.allocation4));
+  bar('kpiAllocation2bar',share(k.allocation2,1));bar('kpiAllocation4bar',share(k.allocation4,1));
+  setText('kpiAllocationGap',k.allocation2==null?'—':decimal(k.allocation2*100-69.8,2)+'%');
+  setText('kpiPdtyValue',decimal(k.pdty,1));
+  var pdtyProgress=k.pdty==null?0:share(k.pdty,196);
+  setText('kpiPdtyPct',k.pdty==null?'—':decimal(pdtyProgress,1)+'%');bar('kpiPdtyBar',pdtyProgress);
+  setText('kpiSlaValue',pct(k.sla));
+  setText('kpiSlaStatus',k.sla!=null&&k.sla>=.95?'On Target':'Below Target');
   setText('kpiTodayVolume',metrics.todayVolume==null?'—':fmt(metrics.todayVolume));
   setText('kpiInboundValue',metrics.inbound==null?'—':fmt(metrics.inbound));
-  if(t){
-    setText('kpiActiveValue',k.active==null?'—':fmt(k.active));
-    setText('kpiActive2w',k.active2==null?'–':fmt(k.active2));
-    setText('kpiActive4w',k.active4==null?'–':fmt(k.active4));
-    setText('kpiActiveNote',k.activeUnknown?'ไม่ระบุประเภท '+fmt(k.activeUnknown):'');
-    setText('kpiAllocation2w',pct(k.allocation2));
-    setText('kpiAllocation4w',pct(k.allocation4));
-    setText('kpiPdtyValue',decimal(k.pdty,1));
-    setText('kpiSlaValue',pct(k.sla));
-  }else{
-    setText('kpiActiveValue','—');setText('kpiActive2w','–');setText('kpiActive4w','–');setText('kpiActiveNote','');
-    setText('kpiAllocation2w','—');setText('kpiAllocation4w','—');setText('kpiPdtyValue','—');setText('kpiSlaValue','—');
-  }
-  if(!hc.ready){setText('kpiPlanValue','—');setText('kpiPlan2w','–');setText('kpiPlan4w','–');}
-  else if(!hc.available){setText('kpiPlanValue','—');setText('kpiPlan2w','–');setText('kpiPlan4w','–');}
-  else{
-    setText('kpiPlanValue',fmt(hc.total));setText('kpiPlan2w',fmt(hc.two));setText('kpiPlan4w',fmt(hc.four));
-  }
   if(!t){
-    setText('hSheet','กำลังโหลดรายงาน…');
-    setText('hnote','กำลังคำนวณจากรายงานที่ซิงก์…');
+    ['kpiOnholdValue','kpiOnholdPct','kpiDeliveredValue','kpiDeliveredPct','kpiRemainValue','kpiRemainPct','kpiOrdersTotal'].forEach(function(id){setText(id,'—');});
+    setText('hSheet','กำลังโหลดรายงาน…');setText('hnote','กำลังคำนวณจากรายงานที่ซิงก์…');
     if($('hFollow'))$('hFollow').innerHTML='<div>ยังไม่มีตัวเลข</div>';
     return;
   }
+  setText('kpiOnholdValue',fmt(t.onhold));
+  setText('kpiOnholdPct',decimal(share(t.onhold,t.assign),1)+'%');
+  setText('kpiDeliveredValue',fmt(t.delivered));setText('kpiDeliveredPct',decimal(share(t.delivered,t.assign),1)+'%');
+  setText('kpiRemainValue',fmt(t.remain));setText('kpiRemainPct',decimal(share(t.remain,t.assign),1)+'%');
+  setText('kpiOrdersTotal','Total '+fmt(t.assign)+' Orders');
+  if($('hminis'))$('hminis').style.display='none';
   $('hnote').textContent='คำนวณจากแท็บ '+(t.sheet||'Daily Report')+' · Active = คนที่มี Assign > 0 · Allocation = Assign 2W/4W ÷ Assign 2W+4W';
-  $('hminis').innerHTML=[
-    ['On-hold',fmt(t.onhold)],['ส่งครบ',fmt(t.done)],['ยังไม่ครบ',fmt(t.drivers-t.done)],['Completion',t.pct+'%']
-  ].map(function(m){return '<article class="hmini"><span>'+m[0]+'</span><b>'+m[1]+'</b></article>';}).join('');
   $('hSheet').textContent=t.sheet||'';
   var max=Math.max(t.assign,t.delivered,t.onhold,1);
   var bars=[['Assign',t.assign,'#F08A5D'],['Delivered',t.delivered,'#3DDC84'],['On-hold',t.onhold,'#F2C14E'],['ค้าง',Math.max(t.remain,0),'#7EB6FF']];
