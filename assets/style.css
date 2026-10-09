@@ -1018,3 +1018,69 @@ body.v-home .tuser{display:none}
   body.v-home .tdate{font-size:10px;padding:4px 7px;max-width:92px;overflow:hidden}
   body.v-home .home-refresh{width:34px;height:34px;flex-basis:34px;padding:6px}
 }
+
+
+/* GROUPED KPI LAYOUT — follows the full-page reference; live values remain sourced by home.js */
+body.v-home .hkpis{display:block;margin:14px 0 16px}
+body.v-home .kpi-section{margin:0 0 17px}
+body.v-home .kpi-section-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 2px;margin:0 0 9px;color:#64748B}
+body.v-home .kpi-section-head h2{margin:0;font-family:'Plus Jakarta Sans','Prompt',sans-serif;font-size:11px;line-height:1.4;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
+body.v-home .kpi-section-head>span{font-family:'Prompt',sans-serif;font-size:10px;color:#94A3B8;white-space:nowrap}
+body.v-home .kpi-section-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+body.v-home .hkpi{display:flex;flex:initial;width:auto;min-width:0;min-height:0;flex-direction:column;gap:0;overflow:hidden;padding:14px 12px;border:2px solid #0F172A;border-radius:28px;box-shadow:4px 4px 0 #0F172A}
+body.v-home .hkpi .hkpi-label{margin:0;color:#0F172A;font-family:'Prompt',sans-serif;font-size:12px;line-height:1.35;font-weight:800}
+body.v-home .hkpi>b{display:block;margin-top:14px;font-family:'Plus Jakarta Sans','Prompt',sans-serif;font-size:35px;line-height:1.05;letter-spacing:-.04em;font-weight:800;color:#0F172A;overflow-wrap:anywhere}
+body.v-home .kpi-card-head{display:flex;align-items:center;justify-content:space-between;gap:5px;min-width:0}
+body.v-home .kpi-pill{display:inline-flex;align-items:center;justify-content:center;max-width:58%;padding:3px 7px;border-radius:8px;background:#D1FAE5;color:#065F46;font-family:'Prompt',sans-serif;font-size:10px;line-height:1.35;font-weight:700;white-space:nowrap}
+body.v-home .kpi-pill.danger{background:#FBCFE8;color:#9F1239}
+body.v-home .kpi-progress{display:flex;width:100%;height:8px;overflow:hidden;margin:13px 0 11px;border-radius:999px;background:#E2E8F0}
+body.v-home .kpi-progress span{display:block;height:100%;width:0}
+body.v-home .kpi-progress span:first-child{background:#0F172A}
+body.v-home .kpi-progress span:last-child{background:#D97706}
+body.v-home .kpi-active .kpi-progress span:first-child{background:#047857}
+body.v-home .kpi-active .kpi-progress span:last-child{background:#34D399}
+body.v-home .hkpi-split{display:flex;justify-content:space-between;gap:6px;margin-top:0;padding-top:9px;border-top:1px solid rgba(15,23,42,.14);font-family:'Prompt',sans-serif;font-size:10px;font-weight:700}
+body.v-home .hkpi-split>span{display:block;min-width:0;flex:1}
+body.v-home .hkpi-split>span+span{border-left:1px solid rgba(15,23,42,.18);padding-left:8px;text-align:right}
+body.v-home .hkpi-split b{display:block;margin-top:3px;font-size:18px;line-height:1.15}
+body.v-home .hkpi-split small{font-size:9px;color:#64748B;margin-left:3px}
+body.v-home .kpi-plan{background:#FFF0B8}
+body.v-home .kpi-active{background:#E2F7EB}
+body.v-home .kpi-allocation{background:#FFF8EE}
+body.v-home .kpi-pdty{background:#EFFBF4}
+body.v-home .kpi-onhold{background:#fff}
+body.v-home .kpi-sla{background:#FFF0E7}
+body.v-home .kpi-done,body.v-home .kpi-working{background:#fff}
+body.v-home .allocation-row{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-top:10px;font-family:'Prompt',sans-serif;font-size:11px;font-weight:700}
+body.v-home .allocation-row span{color:#475569;white-space:nowrap}
+body.v-home .allocation-row b{font-family:'Plus Jakarta Sans','Prompt',sans-serif;font-size:18px;letter-spacing:-.03em;white-space:nowrap}
+body.v-home .kpi-track{height:7px;width:100%;overflow:hidden;margin-top:4px;border-radius:999px;background:#FDE68A}
+body.v-home .kpi-track span{display:block;width:0;height:100%;border-radius:999px;background:#D97706}
+body.v-home .kpi-track.blue{background:#BFDBFE}
+body.v-home .kpi-track.blue span{background:#2563EB}
+body.v-home .kpi-track.green{background:#A7F3D0;margin-top:7px}
+body.v-home .kpi-track.green span{background:#059669}
+body.v-home .kpi-card-foot{display:flex;align-items:center;justify-content:space-between;gap:5px;margin-top:auto;padding-top:12px;border-top:1px solid rgba(15,23,42,.12);font-family:'Prompt',sans-serif;font-size:10px;color:#475569}
+body.v-home .kpi-card-foot b{font-size:11px;color:#047857}
+body.v-home .kpi-sla .kpi-card-foot b{max-width:44%;padding:4px;border:1px solid #FDA4AF;border-radius:7px;background:#fff;color:#BE123C;text-align:center}
+body.v-home .kpi-value-line{display:flex;align-items:baseline;gap:7px;margin:15px 0}
+body.v-home .kpi-value-line>b{font-family:'Plus Jakarta Sans','Prompt',sans-serif;font-size:35px;line-height:1.05;letter-spacing:-.04em}
+body.v-home .kpi-value-line>span{font-family:'Prompt',sans-serif;font-size:11px;color:#94A3B8}
+body.v-home .kpi-status{display:flex;align-items:center;justify-content:space-between;gap:5px;padding:7px 9px;border:1px solid;border-radius:12px;font-family:'Prompt',sans-serif;font-size:10px}
+body.v-home .amber-status{background:#FFFBEB;border-color:#FDE68A;color:#92400E}
+body.v-home .green-status{background:#ECFDF5;border-color:#A7F3D0;color:#047857}
+body.v-home .blue-status{background:#EEF2FF;border-color:#C7D2FE;color:#3730A3}
+body.v-home .kpi-dot{display:inline-block;width:10px;height:10px;flex:0 0 10px;border-radius:50%}
+body.v-home .kpi-dot.amber{background:#FBBF24}
+body.v-home .kpi-dot.green-dot{background:#10B981}
+body.v-home .kpi-dot.blue-dot{background:#6366F1}
+body.v-home .kpi-onhold .kpi-value-line>b,body.v-home .kpi-done .kpi-value-line>b,body.v-home .kpi-working .kpi-value-line>b{font-size:35px}
+body.v-home .hminis{display:none}
+@media(max-width:380px){
+  body.v-home .kpi-section-grid{gap:9px}
+  body.v-home .hkpi{padding:12px 9px;border-radius:24px;box-shadow:3.5px 3.5px 0 #0F172A}
+  body.v-home .hkpi>b,body.v-home .kpi-value-line>b{font-size:29px}
+  body.v-home .hkpi .hkpi-label{font-size:11px}
+  body.v-home .kpi-pill{font-size:9px;padding:3px 5px}
+  body.v-home .allocation-row b{font-size:15px}
+}
