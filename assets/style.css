@@ -1084,3 +1084,21 @@ body.v-home .hminis{display:none}
   body.v-home .kpi-pill{font-size:9px;padding:3px 5px}
   body.v-home .allocation-row b{font-size:15px}
 }
+
+
+/* Fleet Head Count refinement: match reference's compact split rows and bar proportions */
+body.v-home .kpi-plan,body.v-home .kpi-active{min-height:0;aspect-ratio:1/1.02}
+body.v-home .kpi-plan .hkpi-split,body.v-home .kpi-active .hkpi-split{margin-top:0;padding-top:9px}
+body.v-home .kpi-plan .hkpi-split>span,body.v-home .kpi-active .hkpi-split>span{font-size:10px;line-height:1.35}
+body.v-home .kpi-plan .hkpi-split b,body.v-home .kpi-active .hkpi-split b{display:inline-block;margin-top:4px;font-family:'Plus Jakarta Sans','Prompt',sans-serif;font-size:21px;line-height:1.15;letter-spacing:-.035em;vertical-align:baseline}
+body.v-home .kpi-plan .hkpi-split small,body.v-home .kpi-active .hkpi-split small{display:inline-block;margin-left:3px;font-family:'Plus Jakarta Sans','Prompt',sans-serif;font-size:10px;font-weight:700;vertical-align:baseline}
+body.v-home .kpi-plan .hkpi-split>span+span,body.v-home .kpi-active .hkpi-split>span+span{text-align:left;padding-left:10px}
+body.v-home .kpi-plan .hkpi-split>span+span b,body.v-home .kpi-active .hkpi-split>span+span b{margin-left:0}
+body.v-home .kpi-plan .hkpi-split>span+span small,body.v-home .kpi-active .hkpi-split>span+span small{margin-left:3px}
+body.v-home .kpi-plan .kpi-progress,body.v-home .kpi-active .kpi-progress{margin:12px 0 10px}
+body.v-home .kpi-plan .kpi-pill{background:#FDE68A;color:#334155}
+body.v-home .kpi-active .kpi-pill{background:#A7F3D0;color:#065F46}
+@media(max-width:380px){
+  body.v-home .kpi-plan .hkpi-split b,body.v-home .kpi-active .hkpi-split b{font-size:18px}
+  body.v-home .kpi-plan .hkpi-split small,body.v-home .kpi-active .hkpi-split small{font-size:9px}
+}
