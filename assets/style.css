@@ -847,17 +847,13 @@ body.v-leave .vd,body.v-leave .vs,body:not(.v-leave) .vl{display:none!important}
    HOME REFERENCE MATCH — mobile dashboard composition
    Match the Notion 420px mobile mockup without replacing live data or actions.
    ===================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Prompt:wght@400;500;600;700&display=swap');
 
-body.v-home .app{
-  width:min(100%,420px);
-  margin-left:auto;
-  margin-right:auto;
-  min-height:100vh;
-  background:#F8FAFC;
-}
+body.v-home .app{min-height:100vh;background:#F8FAFC;}
 body.v-home .topbar{
   width:100%;
+  max-width:420px;
+  margin-left:auto;
+  margin-right:auto;
   min-height:0;
   padding:18px 16px 12px;
   gap:10px;
@@ -871,8 +867,8 @@ body.v-home .ttl{font-family:'Prompt',sans-serif;font-weight:800}
 body.v-home .tdate{font-family:'Prompt',sans-serif}
 body.v-home .vh{
   width:100%;
-  max-width:none;
-  margin:0;
+  max-width:420px;
+  margin:0 auto;
   padding:16px 16px 24px;
 }
 body.v-home .hgrid.htop{
@@ -999,6 +995,6 @@ body.v-home .hnote{font-family:'Prompt',sans-serif;font-size:11px;line-height:1.
   body.v-home .hkpi>b{font-size:27px}
 }
 @media(min-width:1024px){
-  body.v-home .app{margin-left:auto;margin-right:auto}
+  body.v-home .app{margin-left:264px;margin-right:0}
   body.v-home .topbar{position:relative;top:auto}
 }
