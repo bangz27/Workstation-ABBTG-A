@@ -841,3 +841,164 @@ body.v-leave .vd,body.v-leave .vs,body:not(.v-leave) .vl{display:none!important}
   .hhero h1{font-size:18px}
   .hqg button{min-height:52px;padding:11px 8px;font-size:13px}
 }
+
+
+/* =====================================================================
+   HOME REFERENCE MATCH — mobile dashboard composition
+   Match the Notion 420px mobile mockup without replacing live data or actions.
+   ===================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Prompt:wght@400;500;600;700&display=swap');
+
+body.v-home .app{
+  width:min(100%,420px);
+  margin-left:auto;
+  margin-right:auto;
+  min-height:100vh;
+  background:#F8FAFC;
+}
+body.v-home .topbar{
+  width:100%;
+  min-height:0;
+  padding:18px 16px 12px;
+  gap:10px;
+  background:rgba(248,250,252,.97);
+  border-bottom:1px solid #E2E8F0;
+  box-shadow:none;
+}
+body.v-home .tctx{min-width:0}
+body.v-home .tkick{font-family:'Plus Jakarta Sans','Prompt',sans-serif}
+body.v-home .ttl{font-family:'Prompt',sans-serif;font-weight:800}
+body.v-home .tdate{font-family:'Prompt',sans-serif}
+body.v-home .vh{
+  width:100%;
+  max-width:none;
+  margin:0;
+  padding:16px 16px 24px;
+}
+body.v-home .hgrid.htop{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:14px;
+}
+body.v-home .hhero{
+  min-height:0;
+  padding:18px 14px 18px 18px;
+  gap:10px;
+  background:#fff;
+  border:2px solid #0F172A;
+  border-radius:24px;
+  box-shadow:3.5px 3.5px 0 #0F172A;
+}
+body.v-home .hhero:after{
+  width:130px;height:130px;right:-72px;top:-74px;
+  background:#EBF4FF;border:2px solid #0F172A;
+}
+body.v-home .hhero>div{flex:1 1 auto;min-width:0}
+body.v-home .hhero .hillus{
+  flex:0 0 112px;width:112px;height:88px;
+  border:2px solid #0F172A;border-radius:16px;
+  box-shadow:2.5px 2.5px 0 #1E293B;
+  object-fit:cover;
+}
+body.v-home .hhi{
+  color:#2563EB;font-family:'Prompt',sans-serif;font-size:13px;
+  font-weight:700;line-height:1.4;margin:0 0 3px;
+}
+body.v-home .hhero h1{
+  margin:0 0 6px;font-family:'Prompt',sans-serif;
+  font-size:19px;line-height:1.35;font-weight:800;letter-spacing:-.025em;
+}
+body.v-home .hsub{
+  font-family:'Prompt',sans-serif;font-size:11.5px;
+  line-height:1.55;color:#64748B;
+}
+body.v-home .hqa{
+  padding:14px;
+  background:#FDE68A;
+  border:2px solid #0F172A;
+  border-radius:24px;
+  box-shadow:3.5px 3.5px 0 #0F172A;
+}
+body.v-home .hqa h2{
+  margin:0 0 10px;padding:0 2px;
+  font-family:'Plus Jakarta Sans','Prompt',sans-serif;
+  font-size:18px;font-weight:800;letter-spacing:-.025em;color:#0F172A;
+}
+body.v-home .hqg{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+body.v-home .hqg button{
+  min-height:58px;padding:12px 8px;
+  border:2px solid #0F172A;border-radius:16px;
+  box-shadow:2.5px 2.5px 0 #1E293B;
+  font-family:'Prompt',sans-serif;font-size:13px;font-weight:700;
+  line-height:1.3;background:#EA580C;color:#fff;
+}
+body.v-home .hqg button.lite{background:#fff;color:#0F172A}
+body.v-home .hkpis{
+  display:flex;flex-wrap:wrap;align-items:stretch;gap:12px;
+  margin:14px 0;
+}
+body.v-home .hkpi{
+  flex:0 0 calc(50% - 6px);width:calc(50% - 6px);min-width:0;
+  min-height:116px;padding:14px 12px;
+  border:2px solid #0F172A;border-radius:22px;
+  box-shadow:3.5px 3.5px 0 #0F172A;
+  font-family:'Prompt',sans-serif;overflow:hidden;
+}
+body.v-home .hkpi[data-kpi="plan-hc"]{order:1;background:#FFF0B8!important}
+body.v-home .hkpi[data-kpi="active"]{order:2;background:#E2F7EB!important}
+body.v-home .hkpi[data-kpi="allocation-2w"]{order:3;background:#FFF8EE!important}
+body.v-home .hkpi[data-kpi="allocation-4w"]{order:4;background:#EFF6FF!important}
+body.v-home .hkpi[data-kpi="pdty"]{order:5;background:#E9F9EF!important}
+body.v-home .hkpi[data-kpi="sla"]{order:6;background:#FFF0E7!important}
+body.v-home .hkpi[data-kpi="today-volume"]{order:7;background:#FFE6D8!important}
+body.v-home .hkpi[data-kpi="inbound"]{order:8;background:#E7F4FF!important}
+body.v-home .hkpi-label{
+  display:block;margin-bottom:10px;color:#0F172A;
+  font-family:'Prompt',sans-serif;font-size:12px;font-weight:800;line-height:1.35;
+}
+body.v-home .hkpi>b{
+  display:block;font-family:'Plus Jakarta Sans','Prompt',sans-serif;
+  font-size:30px;line-height:1.05;font-weight:800;letter-spacing:-.04em;color:#0F172A;
+}
+body.v-home .hkpi-split{
+  display:flex;align-items:center;justify-content:space-between;gap:4px;
+  margin-top:12px;padding-top:8px;border-top:1px solid rgba(15,23,42,.16);
+  font-family:'Prompt',sans-serif;font-size:10px;font-weight:700;color:#334155;
+}
+body.v-home .hkpi-split b{font-family:'Plus Jakarta Sans','Prompt',sans-serif;font-size:15px;font-weight:800;color:#0F172A}
+body.v-home .hkpi-note,body.v-home .hkpi-target{
+  display:block;margin-top:8px;font-family:'Prompt',sans-serif;
+  font-size:10px;line-height:1.4;font-weight:600;color:#475569;
+}
+body.v-home .hminis{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0 16px;
+}
+body.v-home .hmini{
+  min-width:0;padding:12px;background:#fff;border:2px solid #0F172A;
+  border-radius:16px;box-shadow:2.5px 2.5px 0 #1E293B;
+  font-family:'Prompt',sans-serif;
+}
+body.v-home .hcard{
+  min-width:0;padding:15px;margin-bottom:12px;background:#fff;
+  border:2px solid #0F172A;border-radius:22px;box-shadow:3.5px 3.5px 0 #0F172A;
+  font-family:'Prompt',sans-serif;
+}
+body.v-home .hcard .hrow{gap:8px;flex-wrap:wrap}
+body.v-home .hcard .hrow>b{font-family:'Prompt',sans-serif;font-size:14px;font-weight:800}
+body.v-home .hnote{font-family:'Prompt',sans-serif;font-size:11px;line-height:1.5}
+@media(max-width:380px){
+  body.v-home .vh{padding:12px 12px 20px}
+  body.v-home .hhero{padding:15px 10px 15px 14px}
+  body.v-home .hhero .hillus{flex-basis:98px;width:98px;height:78px}
+  body.v-home .hhero h1{font-size:17px}
+  body.v-home .hsub{font-size:10.5px}
+  body.v-home .hqa{padding:12px}
+  body.v-home .hqg{gap:8px}
+  body.v-home .hqg button{font-size:12px;min-height:54px}
+  body.v-home .hkpi{padding:12px 10px;min-height:108px}
+  body.v-home .hkpi>b{font-size:27px}
+}
+@media(min-width:1024px){
+  body.v-home .app{margin-left:auto;margin-right:auto}
+  body.v-home .topbar{position:relative;top:auto}
+}
