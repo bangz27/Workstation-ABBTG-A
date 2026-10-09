@@ -5,7 +5,7 @@
    - Weekly Off data is kept separately by the authenticated page, not in Cache Storage.
 */
 'use strict';
-var VERSION = '20261009monthfilter1';
+var VERSION = '20261009homeui-cachefix1';
 var CACHE = 'abbtga-ws-' + VERSION;
 var SCOPE_URL = new URL(self.registration.scope);
 var SUPABASE_SUFFIX = '.supabase.co';
@@ -104,7 +104,7 @@ self.addEventListener('fetch', function (event) {
 
   if (!isStatic(url)) return;
   event.respondWith(caches.open(CACHE).then(function (cache) {
-    return cache.match(request, {ignoreSearch:true}).then(function (cached) {
+    return cache.match(request).then(function (cached) {
       if (cached) return cached;
       return fetch(request).then(function (response) {
         if (!cacheable(response)) return response;
