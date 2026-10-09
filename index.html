@@ -90,10 +90,11 @@
 <div class="topbar">
   <button type="button" class="navtog" id="navTog" aria-label="เปิดเมนู" aria-controls="side" aria-expanded="false"><svg class="ic"><use href="#i-menu"/></svg></button>
   <div class="tctx">
-    <span class="tkick">Workstation ABBTG-A</span>
-    <span class="ttl"><span class="t-home">หน้าแรก</span><span class="t-driver">Fleet Over View</span><span class="t-fleet">กะ Fleet</span><span class="t-ops">กะ Ops</span><span class="t-leave">การลา</span></span>
+    <span class="tkick"><span class="live-dot" aria-hidden="true"></span> Live Operations</span>
+    <span class="ttl"><span class="t-home">ภาพรวมงานจัดส่ง <span class="shift-pill">กะกลางวัน</span></span><span class="t-driver">Fleet Over View</span><span class="t-fleet">กะ Fleet</span><span class="t-ops">กะ Ops</span><span class="t-leave">การลา</span></span>
   </div>
   <span class="tdate" id="tDate"></span>
+  <button type="button" class="home-refresh" id="homeTopRefresh" aria-label="ดึงข้อมูลล่าสุด" title="ดึงข้อมูลล่าสุด"><svg class="ic" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5M5.6 9a7 7 0 0 1 11.8-2L20 12M4 12l2.6 5a7 7 0 0 0 11.8-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   <span class="tuser"><span class="avatar" id="tAvatar" aria-hidden="true">?</span><span class="temail" id="tEmail"></span></span>
 </div>
 <div class="vh" id="home">
