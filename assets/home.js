@@ -67,12 +67,12 @@ function renderKpiCards(){
   box.innerHTML=[
     '<div class="hmetric-heading"><span>♧ FLEET HEAD COUNT</span><small>HC Status</small></div>',
     '<article class="hkpi hkpi-plan" data-kpi="plan-hc" style="background:#FFF0B8"><div class="hkpi-top"><span class="hkpi-label">Plan HC</span><span class="hkpi-badge" id="kpiPlanBadge">—</span></div><b id="kpiPlanValue">–</b><div class="hkpi-progress"><i id="kpiPlan2wBar"></i><i id="kpiPlan4wBar"></i></div><div class="hkpi-split"><span>● 2W <b id="kpiPlan2w">–</b></span><span>● 4W <b id="kpiPlan4w">–</b></span></div></article>',
-    '<article class="hkpi hkpi-active" data-kpi="active" style="background:#E2F7EB"><div class="hkpi-top"><span class="hkpi-label">Active</span><span class="hkpi-badge green">—</span></div><b id="kpiActiveValue">–</b><div class="hkpi-split"><span>● 2W <b id="kpiActive2w">–</b></span><span>● 4W <b id="kpiActive4w">–</b></span></div><small class="hkpi-note" id="kpiActiveNote"></small></article>',
+    '<article class="hkpi hkpi-active" data-kpi="active" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">Active</span><span class="hkpi-badge green">—</span></div><b id="kpiActiveValue">–</b><div class="hkpi-split"><span>● 2W <b id="kpiActive2w">–</b></span><span>● 4W <b id="kpiActive4w">–</b></span></div><small class="hkpi-note" id="kpiActiveNote"></small></article>',
     '<div class="hmetric-heading"><span>↔ FLEET AND PRODUCTIVITY</span><small>Overview</small></div>',
-    '<article class="hkpi" data-kpi="allocation-2w" style="background:#FFF8EE"><span class="hkpi-label">2W AND 4W ALLOCATION · 2W</span><b id="kpiAllocation2w">–</b><small class="hkpi-target">Target 69.80%</small><div class="hkpi-meter"><i id="kpiAllocation2wBar"></i></div></article>',
-    '<article class="hkpi" data-kpi="pdty" style="background:#E2F7EB"><div class="hkpi-top"><span class="hkpi-label">PDTY</span><span class="hkpi-badge green">Productivity</span></div><b id="kpiPdtyValue">–</b><small class="hkpi-target">Target 196</small><div class="hkpi-meter"><i id="kpiPdtyBar"></i></div></article>',
+    '<article class="hkpi hkpi-allocation" data-kpi="allocation" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">2W AND 4W ALLOCATION</span><span class="hkpi-badge" id="kpiAllocationStatus">Target 69.80%</span></div><div class="allocation-row"><div class="allocation-row-label"><span><i class="allocation-dot two"></i>2W</span><b id="kpiAllocation2w">–</b></div><div class="hkpi-meter"><i id="kpiAllocation2wBar"></i></div></div><div class="allocation-row"><div class="allocation-row-label"><span><i class="allocation-dot four"></i>4W</span><b id="kpiAllocation4w">–</b></div><div class="hkpi-meter blue"><i id="kpiAllocation4wBar"></i></div></div><small class="hkpi-target" id="kpiAllocationTarget">Target 2W 69.80% · 4W 30.20%</small></article>',
+    '<article class="hkpi" data-kpi="pdty" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">PDTY</span><span class="hkpi-badge">Productivity</span></div><b id="kpiPdtyValue">–</b><small class="hkpi-target">Target 196</small><div class="hkpi-meter"><i id="kpiPdtyBar"></i></div></article>',
     '<div class="hmetric-heading"><span>⚡ OPERATIONS AND STANDARDS</span><small>Hub KPI</small></div>',
-    '<article class="hkpi" data-kpi="sla" style="background:#FFF0E7"><div class="hkpi-top"><span class="hkpi-label">SLA</span><span class="hkpi-badge coral">Target ≥ 96%</span></div><b id="kpiSlaValue">–</b><small class="hkpi-target">อิงจาก Delivered ÷ Assign</small><div class="hkpi-meter"><i id="kpiSlaBar"></i></div></article>',
+    '<article class="hkpi" data-kpi="sla" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">SLA</span><span class="hkpi-badge coral">Target ≥ 96%</span></div><b id="kpiSlaValue">–</b><small class="hkpi-target">อิงจาก Delivered ÷ Assign</small><div class="hkpi-meter"><i id="kpiSlaBar"></i></div></article>',
     '<article class="hkpi" data-kpi="inbound" style="background:#E7F4FF"><span class="hkpi-label">Inbound</span><b id="kpiInboundValue">—</b><small class="hkpi-target">ข้อมูลจากระบบซิงก์</small></article>',
     '<div class="hmetric-heading"><span>▤ DELIVERY TRACKING</span><small id="homeOrderTotal">Daily Report</small></div>',
     '<article class="hkpi" data-kpi="today-volume" style="background:#FFE6D8"><span class="hkpi-label">Today\'s Volume</span><b id="kpiTodayVolume">—</b><small class="hkpi-target">ปริมาณงานวันนี้</small></article>',
@@ -101,6 +101,16 @@ function paint(){
     var a2=$('kpiAllocation2wBar');if(a2)a2.style.width=Math.min(100,Math.max(0,k.allocation2*100))+'%';
     var a4=$('kpiAllocation4wBar');if(a4)a4.style.width=Math.min(100,Math.max(0,k.allocation4*100))+'%';
     var pdtyBar=$('kpiPdtyBar');if(pdtyBar)pdtyBar.style.width=Math.min(100,Math.max(0,ratio(k.pdty,196)*100))+'%';
+    function setStatus(key,status){var el=document.querySelector('[data-kpi="'+key+'"]');if(el)el.setAttribute('data-status',status);}
+    function thresholdStatus(actual,target,near){if(actual==null||!isFinite(actual)||!target)return 'neutral';var rate=actual/target;return rate>=1?'green':rate>=near?'yellow':'red';}
+    var allocationStatus=k.allocation2==null?'neutral':(k.allocation2>=0.698?'green':k.allocation2>=0.668?'yellow':'red');
+    setStatus('allocation',allocationStatus);
+    var allocationBadge=$('kpiAllocationStatus');if(allocationBadge)allocationBadge.textContent=allocationStatus==='green'?'ถึงเป้าหมาย':allocationStatus==='yellow'?'ใกล้เป้าหมาย':allocationStatus==='red'?'ต่ำกว่าเป้าหมาย':'รอข้อมูล';
+    setText('kpiAllocationTarget','เป้าหมาย 2W 69.80% · 4W 30.20%');
+    setStatus('pdty',thresholdStatus(k.pdty,196,0.9));
+    setStatus('sla',k.sla==null?'neutral':(k.sla>=0.96?'green':k.sla>=0.93?'yellow':'red'));
+    setStatus('active',hc.available&&hc.total?thresholdStatus(k.active/hc.total*100,100,0.9):'neutral');
+    var activeBadge2=document.querySelector('[data-kpi="active"] .hkpi-badge');if(activeBadge2)activeBadge2.textContent=hc.available&&hc.total?decimal(k.active/hc.total*100,1)+'%':'—';
     var activeBadge=document.querySelector('[data-kpi=\"active\"] .hkpi-badge');if(activeBadge)activeBadge.textContent=hc.available&&hc.total?decimal(k.active/hc.total*100,1)+'%':'—';
     var orderTotal=$('homeOrderTotal');if(orderTotal)orderTotal.textContent=fmt(t.assign)+' Assign';
   }else{

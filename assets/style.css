@@ -843,3 +843,31 @@ body.v-home .hmini,.v-home .hcard{border-radius:24px;border:2px solid #111827;bo
  body.v-home .hkpi>b{font-size:26px}
  body.v-home .hkpi-split{flex-wrap:wrap}
 }
+
+
+/* KPI target status colors: red = off target, yellow = near target, green = target met. */
+body.v-home .hkpi[data-status="green"]{background:#DDF7E8!important;border-color:#166534;color:#14532D}
+body.v-home .hkpi[data-status="yellow"]{background:#FFF1B8!important;border-color:#92400E;color:#713F12}
+body.v-home .hkpi[data-status="red"]{background:#FFE4E6!important;border-color:#9F1239;color:#881337}
+body.v-home .hkpi[data-status="green"] .hkpi-badge{background:#A7F3D0;color:#065F46}
+body.v-home .hkpi[data-status="yellow"] .hkpi-badge{background:#FDE68A;color:#92400E}
+body.v-home .hkpi[data-status="red"] .hkpi-badge{background:#FECDD3;color:#9F1239}
+body.v-home .hkpi[data-status="green"] .hkpi-meter i{background:#059669}
+body.v-home .hkpi[data-status="yellow"] .hkpi-meter i{background:#D97706}
+body.v-home .hkpi[data-status="red"] .hkpi-meter i{background:#E11D48}
+body.v-home .hkpi-allocation{gap:12px;background:#FFF8EE}
+body.v-home .allocation-row{display:flex;flex-direction:column;gap:5px}
+body.v-home .allocation-row-label{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;font-weight:800}
+body.v-home .allocation-row-label>span{display:flex;align-items:center;gap:7px}
+body.v-home .allocation-row-label b{font-size:clamp(20px,2.4vw,28px);font-weight:800;line-height:1.1}
+body.v-home .allocation-dot{display:inline-block;width:10px;height:10px;border-radius:50%}
+body.v-home .allocation-dot.two{background:#D97706}
+body.v-home .allocation-dot.four{background:#2563EB}
+body.v-home .hkpi-allocation .hkpi-meter{margin:0;background:#FCDFA0}
+body.v-home .hkpi-allocation .hkpi-meter.blue{background:#BFDBFE}
+body.v-home .hkpi-allocation .hkpi-meter.blue i{background:#2563EB}
+body.v-home .hkpi-allocation .hkpi-target{margin-top:3px}
+@media(max-width:767px){
+ body.v-home .hkpi-allocation{min-height:180px}
+ body.v-home .allocation-row-label b{font-size:22px}
+}
