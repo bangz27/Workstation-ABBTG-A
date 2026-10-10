@@ -11,7 +11,10 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.content.Intent;
 import android.net.Uri;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends Activity {
     private WebView webView;
@@ -21,8 +24,10 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
-            // Keep WebView content below system bars on Android 15+ (target SDK 35).
-            WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
+            // Android 15 enforces edge-to-edge for target SDK 35. Apply the actual
+            // system-bar insets to the WebView so page content starts below status bar
+            // and ends above navigation bar on different device sizes.
+            WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
             getWindow().setStatusBarColor(Color.rgb(248, 248, 245));
             getWindow().setNavigationBarColor(Color.rgb(248, 248, 245));
             getWindow().getDecorView().setSystemUiVisibility(
@@ -31,6 +36,13 @@ public class MainActivity extends Activity {
 
             webView = new WebView(this);
             webView.setBackgroundColor(Color.rgb(248, 248, 245));
+            ViewCompat.setOnApplyWindowInsetsListener(webView, (view, windowInsets) -> {
+                Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+                view.setPadding(0, bars.top, 0, bars.bottom);
+                return windowInsets;
+            });
+            ViewCompat.requestApplyInsets(webView);
+
             WebSettings settings = webView.getSettings();
             settings.setJavaScriptEnabled(true);
             settings.setDomStorageEnabled(true);
@@ -64,8 +76,6 @@ public class MainActivity extends Activity {
                 @Override
                 public void onPageFinished(WebView view, String url) {
                     super.onPageFinished(view, url);
-                    // Weekly Off is a separate PWA at /weekly-off/index.html. Add an
-                    // app-shell-only entry to the existing responsive navigation.
                     String script =
                         "(function(){try{" +
                         "var nav=document.getElementById('views');" +
@@ -75,15 +85,16 @@ public class MainActivity extends Activity {
                         "a.setAttribute('aria-label','Weekly Off');" +
                         "a.innerHTML='<svg class=\"ic\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"3.5\" y=\"5\" width=\"17\" height=\"15.5\" rx=\"3\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M3.5 10h17M8 3v4M16 3v4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg><span>Weekly Off</span>';" +
                         "var css=document.createElement('style');css.id='weeklyOffEntryStyle';" +
-                        "css.textContent='body:not(.auth-out) #views .weekly-off-entry{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;border:2px solid transparent;border-radius:12px;background:transparent;color:inherit;text-decoration:none;box-sizing:border-box;font:inherit;cursor:pointer;}'+" +
-                        "'@media(max-width:767px){body:not(.auth-out) #views .weekly-off-entry{flex:1 1 0;min-width:0;min-height:0;height:64px;flex-direction:column;gap:2px;padding:3px 1px;font-size:10px;line-height:1.1;white-space:nowrap;overflow:hidden;}body:not(.auth-out) #views .weekly-off-entry .ic{width:30px;height:30px;flex:0 0 30px;padding:5px;box-sizing:border-box;}body:not(.auth-out) #views .weekly-off-entry span{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;}}'+" +
-                        "'@media(min-width:768px){body:not(.auth-out) #views .weekly-off-entry{min-height:46px;justify-content:flex-start;gap:12px;padding:10px 14px;}body:not(.auth-out) #views .weekly-off-entry .ic{width:22px;height:22px;}}';" +
-                        "document.head.appendChild(css);nav.appendChild(a);" +
-                        "}catch(e){}})();";
+                        "css.textContent='body:not(.auth-out) #views .weekly-off-entry{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;border:2px solid transparent;border-radius:12px;background:transparent;color:inherit;text-decoration:none;box-sizing:border-box;font:inherit;cursor:pointer;}'+"
+                        + "'@media(max-width:767px){body:not(.auth-out) #views .weekly-off-entry{flex:1 1 0;min-width:0;min-height:0;height:64px;flex-direction:column;gap:2px;padding:3px 1px;font-size:10px;line-height:1.1;white-space:nowrap;overflow:hidden;}body:not(.auth-out) #views .weekly-off-entry .ic{width:30px;height:30px;flex:0 0 30px;padding:5px;box-sizing:border-box;}body:not(.auth-out) #views .weekly-off-entry span{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;}}'+"
+                        + "'@media(min-width:768px){body:not(.auth-out) #views .weekly-off-entry{min-height:46px;justify-content:flex-start;gap:12px;padding:10px 14px;}body:not(.auth-out) #views .weekly-off-entry .ic{width:22px;height:22px;}}';"
+                        + "document.head.appendChild(css);nav.appendChild(a);"
+                        + "}catch(e){}})();";
                     view.evaluateJavascript(script, null);
                 }
             });
             setContentView(webView);
+            ViewCompat.requestApplyInsets(webView);
             if (savedInstanceState != null) {
                 webView.restoreState(savedInstanceState);
                 if (webView.getUrl() == null) webView.loadUrl(HOME_URL);
