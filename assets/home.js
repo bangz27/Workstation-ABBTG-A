@@ -96,7 +96,13 @@ function paint(){
     setText('kpiAllocation2w',pct(k.allocation2));
     setText('kpiAllocation4w',pct(k.allocation4));
     setText('kpiPdtyValue',decimal(k.pdty,1));
-    setText('kpiSlaValue',pct(k.sla));\n    var slaBar=$('kpiSlaBar');if(slaBar)slaBar.style.width=Math.min(100,Math.max(0,k.sla*100))+'%';\n    var a2=$('kpiAllocation2wBar');if(a2)a2.style.width=Math.min(100,Math.max(0,k.allocation2*100))+'%';\n    var a4=$('kpiAllocation4wBar');if(a4)a4.style.width=Math.min(100,Math.max(0,k.allocation4*100))+'%';\n    var pdtyBar=$('kpiPdtyBar');if(pdtyBar)pdtyBar.style.width=Math.min(100,Math.max(0,ratio(k.pdty,196)*100))+'%';\n    var activeBadge=document.querySelector('[data-kpi=\"active\"] .hkpi-badge');if(activeBadge)activeBadge.textContent=hc.available&&hc.total?decimal(k.active/hc.total*100,1)+'%':'—';\n    var orderTotal=$('homeOrderTotal');if(orderTotal)orderTotal.textContent=fmt(t.assign)+' Assign';
+    setText('kpiSlaValue',pct(k.sla));
+    var slaBar=$('kpiSlaBar');if(slaBar)slaBar.style.width=Math.min(100,Math.max(0,k.sla*100))+'%';
+    var a2=$('kpiAllocation2wBar');if(a2)a2.style.width=Math.min(100,Math.max(0,k.allocation2*100))+'%';
+    var a4=$('kpiAllocation4wBar');if(a4)a4.style.width=Math.min(100,Math.max(0,k.allocation4*100))+'%';
+    var pdtyBar=$('kpiPdtyBar');if(pdtyBar)pdtyBar.style.width=Math.min(100,Math.max(0,ratio(k.pdty,196)*100))+'%';
+    var activeBadge=document.querySelector('[data-kpi=\"active\"] .hkpi-badge');if(activeBadge)activeBadge.textContent=hc.available&&hc.total?decimal(k.active/hc.total*100,1)+'%':'—';
+    var orderTotal=$('homeOrderTotal');if(orderTotal)orderTotal.textContent=fmt(t.assign)+' Assign';
   }else{
     setText('kpiActiveValue','—');setText('kpiActive2w','–');setText('kpiActive4w','–');setText('kpiActiveNote','');
     setText('kpiAllocation2w','—');setText('kpiAllocation4w','—');setText('kpiPdtyValue','—');setText('kpiSlaValue','—');
@@ -104,7 +110,10 @@ function paint(){
   if(!hc.ready){setText('kpiPlanValue','—');setText('kpiPlan2w','–');setText('kpiPlan4w','–');}
   else if(!hc.available){setText('kpiPlanValue','—');setText('kpiPlan2w','–');setText('kpiPlan4w','–');}
   else{
-    setText('kpiPlanValue',fmt(hc.total));setText('kpiPlan2w',fmt(hc.two));setText('kpiPlan4w',fmt(hc.four));\n    var planBadge=$('kpiPlanBadge');if(planBadge)planBadge.textContent=hc.total?'100%':'—';\n    var plan2bar=$('kpiPlan2wBar');if(plan2bar)plan2bar.style.width=(hc.total?hc.two/hc.total*100:0)+'%';\n    var plan4bar=$('kpiPlan4wBar');if(plan4bar)plan4bar.style.width=(hc.total?hc.four/hc.total*100:0)+'%';
+    setText('kpiPlanValue',fmt(hc.total));setText('kpiPlan2w',fmt(hc.two));setText('kpiPlan4w',fmt(hc.four));
+    var planBadge=$('kpiPlanBadge');if(planBadge)planBadge.textContent=hc.total?'100%':'—';
+    var plan2bar=$('kpiPlan2wBar');if(plan2bar)plan2bar.style.width=(hc.total?hc.two/hc.total*100:0)+'%';
+    var plan4bar=$('kpiPlan4wBar');if(plan4bar)plan4bar.style.width=(hc.total?hc.four/hc.total*100:0)+'%';
   }
   if(!t){
     setText('hSheet','กำลังโหลดรายงาน…');
