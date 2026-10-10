@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#FFF6DF"/>
+  <rect x="75" y="101" width="362" height="337" rx="58" fill="#191919"/>
+  <rect x="65" y="83" width="362" height="337" rx="58" fill="#FFFFFF" stroke="#191919" stroke-width="16"/>
+  <path d="M65 141Q65 83 123 83H369Q427 83 427 141V194H65Z" fill="#FF6255"/>
+  <path d="M151 58V119M341 58V119" stroke="#173A5E" stroke-width="30" stroke-linecap="round"/>
+  <text x="246" y="159" font-family="Arial,sans-serif" font-size="49" font-weight="800" text-anchor="middle" fill="#FFFFFF" letter-spacing="3">OFF</text>
+  <g fill="#E8E8E8">
+    <rect x="104" y="226" width="80" height="72" rx="16"/>
+    <rect x="204" y="226" width="80" height="72" rx="16"/>
+    <rect x="304" y="226" width="80" height="72" rx="16"/>
+    <rect x="104" y="318" width="80" height="65" rx="16"/>
+    <rect x="204" y="318" width="80" height="65" rx="16"/>
+  </g>
+  <rect x="292" y="302" width="103" height="92" rx="20" fill="#FFC928" stroke="#191919" stroke-width="8"/>
+  <path d="M343 318l12 24 27 4-20 19 5 26-24-13-24 13 5-26-20-19 27-4z" fill="#FF6255" stroke="#191919" stroke-width="5" stroke-linejoin="round"/>
+</svg>
