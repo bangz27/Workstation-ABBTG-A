@@ -871,3 +871,28 @@ body.v-home .hkpi-allocation .hkpi-target{margin-top:3px}
  body.v-home .hkpi-allocation{min-height:180px}
  body.v-home .allocation-row-label b{font-size:22px}
 }
+
+
+/* Homepage KPI order and Top 5 drivers under 80% completion */
+body.v-home .htop-card{margin:8px 0 20px;padding:18px 20px;border:2px solid #111827;border-radius:28px;background:#fff;box-shadow:4px 4px 0 #0F172A}
+body.v-home .htop-card .hrow{align-items:flex-start;gap:12px;margin-bottom:12px}
+body.v-home .htop-card .hrow b{font-size:14px;font-weight:800;color:#334155}
+body.v-home .htop-card .hrow span{font-size:11px;color:#64748B;text-align:right}
+body.v-home .htop-content{width:100%;overflow-x:auto}
+body.v-home .htop-table{display:flex;flex-direction:column;min-width:0}
+body.v-home .htop-row{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(100px,1fr) minmax(72px,.55fr);gap:10px;align-items:center;padding:12px 4px;border-bottom:1px solid #E2E8F0;font-size:13px;color:#334155}
+body.v-home .htop-row:last-child{border-bottom:0}
+body.v-home .htop-head{padding-top:6px;padding-bottom:8px;font-size:11px;font-weight:800;color:#64748B}
+body.v-home .htop-person{display:flex;flex-direction:column;gap:2px;min-width:0}
+body.v-home .htop-person b{overflow-wrap:anywhere;color:#0F172A}
+body.v-home .htop-person small{font-size:11px;color:#64748B}
+body.v-home .htop-rate{justify-self:start;border-radius:999px;padding:5px 8px;background:#FECDD3;color:#9F1239;font-size:12px;white-space:nowrap}
+body.v-home .htop-empty{margin:0;padding:12px 0;font-size:13px;color:#64748B}
+@media(max-width:420px){
+ body.v-home .htop-card{padding:15px 12px}
+ body.v-home .htop-card .hrow{flex-direction:column}
+ body.v-home .htop-card .hrow span{text-align:left}
+ body.v-home .htop-row{grid-template-columns:minmax(0,1fr) minmax(90px,.85fr) 66px;gap:6px;font-size:11px}
+ body.v-home .htop-head{font-size:10px}
+ body.v-home .htop-rate{font-size:11px;padding:4px 6px}
+}
