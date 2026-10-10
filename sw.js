@@ -5,7 +5,7 @@
    - Weekly Off data is kept separately by the authenticated page, not in Cache Storage.
 */
 'use strict';
-var VERSION = '20261010workforceicon1';
+var VERSION = '20261011homeref1';
 var CACHE = 'abbtga-ws-' + VERSION;
 var SCOPE_URL = new URL(self.registration.scope);
 var SUPABASE_SUFFIX = '.supabase.co';
