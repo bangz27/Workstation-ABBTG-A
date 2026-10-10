@@ -5,7 +5,7 @@
    - Weekly Off data is kept separately by the authenticated page, not in Cache Storage.
 */
 'use strict';
-var VERSION = '20261010weeklyofficon1';
+var VERSION = '20261010weeklyoffiosicon1';
 var CACHE = 'abbtga-ws-' + VERSION;
 var SCOPE_URL = new URL(self.registration.scope);
 var SUPABASE_SUFFIX = '.supabase.co';
@@ -15,7 +15,7 @@ var CORE = [
   'icons/apple-touch-icon.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png',
   'assets/style.css', 'assets/config.js', 'assets/api.js', 'assets/driver.js', 'assets/roster.js',
   'assets/leave.js', 'assets/auth.js', 'assets/home.js', 'assets/shell.js', 'assets/pwa.js',
-  'weekly-off/index.html', 'weekly-off/manifest.webmanifest', 'weekly-off/weekly-off.css', 'weekly-off/core.js',
+  'weekly-off/index.html', 'weekly-off/manifest.webmanifest', 'weekly-off/weekly-off-apple-touch-icon.png', 'weekly-off/weekly-off.css', 'weekly-off/core.js',
   'weekly-off/weekly-off.js', 'weekly-off/offline-store.js'
 ].map(function (path) { return new URL(path, SCOPE_URL).href; });
 var OPTIONAL = [
