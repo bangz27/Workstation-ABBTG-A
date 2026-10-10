@@ -1,7 +1,7 @@
 {
   "id": "./",
   "name": "Workstation ABBTG-A",
-  "short_name": "Workstation",
+  "short_name": "Workstation ABBTG-A",
   "description": "SPX Express ABBTG-A บางบัวทอง — Fleet Over View, ตารางกะ Fleet / Ops, การลา และตารางวันหยุด",
   "lang": "th",
   "dir": "ltr",
@@ -13,16 +13,28 @@
   "theme_color": "#F8F8F5",
   "icons": [
     {
-      "src": "icons/workforce-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "icons/workforce-icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "maskable"
+      "purpose": "any"
     }
   ],
   "shortcuts": [
@@ -32,9 +44,9 @@
       "url": "./weekly-off/",
       "icons": [
         {
-          "src": "icons/workforce-icon.svg",
-          "sizes": "any",
-          "type": "image/svg+xml"
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
         }
       ]
     }
