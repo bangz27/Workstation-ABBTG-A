@@ -143,33 +143,6 @@ function paint(){
     var plan4bar=$('kpiPlan4wBar');if(plan4bar)plan4bar.style.width=(hc.total?hc.four/hc.total*100:0)+'%';
   }
   renderTopDelivered(t);
-  if(!t){
-    setText('hSheet','กำลังโหลดรายงาน…');
-    setText('hnote','กำลังคำนวณจากรายงานที่ซิงก์…');
-    if($('hFollow'))$('hFollow').innerHTML='<div>ยังไม่มีตัวเลข</div>';
-    return;
-  }
-  $('hnote').textContent='คำนวณจากแท็บ '+(t.sheet||'Daily Report')+' · Active = คนที่มี Assign > 0 · Allocation = Assign 2W/4W ÷ Assign 2W+4W';
-  $('hminis').innerHTML=[
-    ['On-hold',fmt(t.onhold)],['ส่งครบ',fmt(t.done)],['ยังไม่ครบ',fmt(t.drivers-t.done)],['Completion',t.pct+'%']
-  ].map(function(m){return '<article class="hmini"><span>'+m[0]+'</span><b>'+m[1]+'</b></article>';}).join('');
-  $('hSheet').textContent=t.sheet||'';
-  var max=Math.max(t.assign,t.delivered,t.onhold,1);
-  var bars=[['Assign',t.assign,'#F08A5D'],['Delivered',t.delivered,'#3DDC84'],['On-hold',t.onhold,'#F2C14E'],['ค้าง',Math.max(t.remain,0),'#7EB6FF']];
-  $('hChart').innerHTML=bars.map(function(b,i){
-    var h=Math.round((b[1]/max)*140),x=40+i*150,y=160-h;
-    return '<rect x="'+x+'" y="'+y+'" width="70" height="'+h+'" rx="8" fill="'+b[2]+'"/><text x="'+(x+35)+'" y="178" text-anchor="middle" font-size="13" fill="#6E675E">'+b[0]+'</text><text x="'+(x+35)+'" y="'+(y-6)+'" text-anchor="middle" font-size="13" font-weight="700">'+fmt(b[1])+'</text>';
-  }).join('');
-  var whole=t.assign||1,del=t.delivered/whole*100,oh=t.onhold/whole*100;
-  $('hDonut').innerHTML='<svg width="140" height="140" viewBox="0 0 42 42" aria-hidden="true"><circle cx="21" cy="21" r="15.9" fill="none" stroke="#E9EEF2" stroke-width="6"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="#3DDC84" stroke-width="6" stroke-dasharray="'+del.toFixed(1)+' '+(100-del).toFixed(1)+'" stroke-dashoffset="25"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="#F2C14E" stroke-width="6" stroke-dasharray="'+oh.toFixed(1)+' '+(100-oh).toFixed(1)+'" stroke-dashoffset="'+(25-del).toFixed(1)+'"/></svg><div class="hfollow"><div>Delivered '+t.pct+'%</div><div>On-hold '+fmt(t.onhold)+'</div><div>ค้าง '+fmt(t.remain)+'</div></div>';
-  var follow=[];
-  if(t.remain>0)follow.push('<div><b>ค้างส่ง '+fmt(t.remain)+' ชิ้น</b><br><small>ยังไม่ครบ '+(t.drivers-t.done)+' คน · เปิดรายงานเพื่อดูรายชื่อ</small></div>');
-  if(t.onhold>=5)follow.push('<div><b>On-hold รวม '+fmt(t.onhold)+'</b><br><small>กรอง On-hold ≥ 5 ได้ใน Fleet Over View</small></div>');
-  if(!follow.length)follow.push('<div>ไม่มีรายการค้างจากยอดรวมวันนี้</div>');
-  $('hFollow').innerHTML=follow.join('');
-  var L=window.SPX_LEAVE&&window.SPX_LEAVE.state;
-  if(!L||!L.perm||!L.perm.view)$('hLeave').innerHTML='<div>บัญชีนี้ยังไม่มีสิทธิ์ดูการลา</div>';
-  else $('hLeave').innerHTML='<div>มีรายการลาในระบบ '+((L.rows&&L.rows.length)||0)+' รายการ</div><small>ไม่แสดงชื่อบนหน้าแรก</small>';
 }
 renderKpiCards();
 document.addEventListener('click',function(e){
