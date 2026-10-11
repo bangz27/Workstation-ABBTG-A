@@ -898,7 +898,6 @@ body.v-home .htop-empty{margin:0;padding:12px 0;font-size:13px;color:#64748B}
 }
 
 /* OpenCode-inspired flat monochrome dashboard — homepage only; data and other tabs untouched */
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap');
 body.v-home{--oc-ink:#201d1d;--oc-canvas:#fdfcfc;--oc-soft:#f8f7f7;--oc-card:#f1eeee;--oc-muted:#646262;--oc-line:rgba(15,0,0,.16);background:var(--oc-canvas);color:var(--oc-ink);font-family:'IBM Plex Mono','Prompt',monospace}
 body.v-home *{font-family:'IBM Plex Mono','Prompt',monospace}
 body.v-home .topbar{background:var(--oc-canvas);border-bottom:1px solid var(--oc-line);box-shadow:none;color:var(--oc-ink)}
