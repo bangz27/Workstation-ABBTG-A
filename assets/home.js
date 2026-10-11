@@ -90,11 +90,10 @@ function renderTopDelivered(t){
   }).filter(function(p){return p.assign>0&&p.rate!=null&&p.rate<80;})
     .sort(function(a,b){return b.delivered-a.delivered;}).slice(0,5);
   if(!people.length){box.innerHTML='<p class="htop-empty">ไม่มีพนักงานที่มี Completion ต่ำกว่า 80% ในข้อมูลชุดนี้</p>';return;}
-  box.innerHTML='<div class="htop-table"><div class="htop-row htop-head"><span>พนักงาน</span><span>Delivered / Assign</span><span>Completion</span></div>'+
+  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  box.innerHTML='<div class="htop-table"><div class="htop-row htop-head"><span>#</span><span>พนักงาน</span><span>ตำแหน่ง</span><span>Delivered / Assign</span><span>Completion</span></div>'+
     people.map(function(p,i){
-      var name=String(p.name).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
-      var pos=String(p.position).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
-      return '<div class="htop-row"><span class="htop-person"><b>'+name+'</b><small>'+pos+'</small></span><span>'+fmt(p.delivered)+' / '+fmt(p.assign)+'</span><strong class="htop-rate">'+p.rate.toFixed(1)+'%</strong></div>';
+      return '<div class="htop-row"><span class="htop-index">'+(i+1)+'</span><span class="htop-person"><b>'+esc(p.name)+'</b></span><span>'+esc(p.position||'—')+'</span><span>'+fmt(p.delivered)+' / '+fmt(p.assign)+'</span><strong class="htop-rate">'+p.rate.toFixed(1)+'%</strong></div>';
     }).join('')+'</div>';
 }
 function paint(){
