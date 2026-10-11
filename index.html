@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=20261011opencode1">
+<link rel="stylesheet" href="assets/style.css?v=20261011fleetreview2">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap">
 </head>
 <body class="v-home auth-out">
@@ -75,7 +75,7 @@
   <div class="slbl">เมนู</div>
   <nav class="views v4" id="views" role="tablist" aria-orientation="vertical">
     <button type="button" data-v="home" role="tab" class="von"><svg class="ic" aria-hidden="true"><use href="#i-dash"/></svg><span>หน้าแรก</span></button>
-    <button type="button" data-v="driver" role="tab" class="vdrv"><svg class="ic" aria-hidden="true"><use href="#i-truck"/></svg><span>Fleet Over View</span></button>
+    <button type="button" data-v="driver" role="tab" class="vdrv"><svg class="ic" aria-hidden="true"><use href="#i-truck"/></svg><span>Fleet Overview</span></button>
     <button type="button" data-v="fleet" role="tab"><svg class="ic" aria-hidden="true"><use href="#i-cal"/></svg><span>กะ Fleet</span></button>
     <button type="button" data-v="ops" role="tab"><svg class="ic" aria-hidden="true"><use href="#i-team"/></svg><span>กะ Ops</span></button>
     <button type="button" data-v="leave" role="tab" class="vlv" hidden><svg class="ic" aria-hidden="true"><use href="#i-cal"/></svg><span>การลา</span></button>
@@ -92,7 +92,7 @@
   <button type="button" class="navtog" id="navTog" aria-label="เปิดเมนู" aria-controls="side" aria-expanded="false"><svg class="ic"><use href="#i-menu"/></svg></button>
   <div class="tctx">
     <span class="tkick">Workstation ABBTG-A</span>
-    <span class="ttl"><span class="t-home">หน้าแรก</span><span class="t-driver">Fleet Over View</span><span class="t-fleet">กะ Fleet</span><span class="t-ops">กะ Ops</span><span class="t-leave">การลา</span></span>
+    <span class="ttl"><span class="t-home">หน้าแรก</span><span class="t-driver">Fleet Overview</span><span class="t-fleet">กะ Fleet</span><span class="t-ops">กะ Ops</span><span class="t-leave">การลา</span></span>
   </div>
   <span class="tdate" id="tDate"></span>
   <span class="tuser"><span class="avatar" id="tAvatar" aria-hidden="true">?</span><span class="temail" id="tEmail"></span></span>
@@ -197,7 +197,7 @@
       <option value="delivered">Delivered</option>
       <option value="assign">Assign</option>
       <option value="onhold">On-hold</option>
-      <option value="remain">ค้าง</option>
+      <option value="remain">Delivering</option>
       <option value="first">First Del</option>
       <option value="progress">Progress %</option>
       <option value="name">ชื่อ</option>
@@ -216,8 +216,8 @@
     <span data-k="first" class="num">First Del</span>
     <span data-k="assign" class="num">Assign</span>
     <span data-k="delivered" class="num">Delivered</span>
+    <span data-k="remain" class="num">Delivering</span>
     <span data-k="onhold" class="num">On-hold</span>
-    <span data-k="remain" class="num">ค้าง</span>
     <span data-k="progress">Progress</span>
     <span data-k="status">สถานะ</span>
   </div>
@@ -251,12 +251,12 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" integrity="sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok" crossorigin="anonymous"></script>
 <script src="assets/config.js?v=20261004home"></script>
 <script src="assets/api.js?v=20261004home"></script>
-<script src="assets/driver.js?v=20261011topnamesfix"></script>
+<script src="assets/driver.js?v=20261011fleetreview2"></script>
 <script src="assets/roster.js?v=20261005leaveinhub"></script>
 <script src="assets/leave.js?v=20261004home"></script>
 <script src="assets/auth.js?v=20261004home"></script>
 <script src="assets/home.js?v=20261011opencode1"></script>
-<script src="assets/shell.js?v=20261004hi"></script>
+<script src="assets/shell.js?v=20261011deliverside1"></script>
 <script src="assets/pwa.js?v=20261004home"></script>
 </body>
 </html>

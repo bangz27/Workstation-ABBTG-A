@@ -54,7 +54,7 @@ test('the existing worker caches route-correct shells for /, /weekly-off, and /w
   assert.match(sw, /path === 'weekly-off' \|\| path === 'weekly-off\/' \|\| path === 'weekly-off\/index\.html'/);
   assert.match(sw, /Response\.redirect\(new URL\('weekly-off\/'/);
   assert.match(sw, /weekly-off\/index\.html/);
-  assert.match(sw, /var VERSION = '20261009pwaidentity1'/);
+  assert.match(sw, /var VERSION = '20261011fleetreview2'/);
 });
 
 test('service worker bypasses Supabase, credentials, tokens and non-GET data requests before caching', () => {
