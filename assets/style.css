@@ -987,3 +987,52 @@ body.v-home .views button.on{background:var(--oc-ink);color:var(--oc-canvas);box
  body.v-home #home .htop-head{font-size:8px}
  body.v-home #home .htop-rate{font-size:9px;padding:2px 3px}
 }
+
+
+/* Homepage-only: softer, low-glare card palette */
+body.v-home #home .hhero,
+body.v-home #home .hqa,
+body.v-home #home .hcard,
+body.v-home #home .htop-card{
+  border-color:#D8D8D2;
+  background:#FFFFFF;
+  color:#292827;
+}
+body.v-home #home .hhero{background:#F3F7F5}
+body.v-home #home .hqa{background:#F5F7FA}
+body.v-home #home .hcard{background:#FFFFFF}
+body.v-home #home .hkpi{
+  border-color:#DCDDD8;
+  background:#FFFFFF;
+  color:#292827;
+}
+body.v-home #home .hkpi[data-kpi="today-volume"]{background:#FFF4EE!important;border-color:#E8D3C6}
+body.v-home #home .hkpi[data-kpi="inbound"]{background:#F0F7FC!important;border-color:#CBDDE9}
+body.v-home #home .hkpi[data-kpi="plan-hc"]{background:#FFF8DF!important;border-color:#E7DDB6}
+body.v-home #home .hkpi[data-kpi="active"]{background:#EFF8F0!important;border-color:#C8E0CC}
+body.v-home #home .hkpi[data-kpi="allocation"]{background:#F2F5FB!important;border-color:#D0D9E8}
+body.v-home #home .hkpi[data-kpi="pdty"]{background:#F5F2FA!important;border-color:#DAD1E8}
+body.v-home #home .hkpi[data-kpi="sla"]{background:#FFF2EF!important;border-color:#E8D0CA}
+body.v-home #home .hkpi[data-kpi="onhold"]{background:#FFF8E7!important;border-color:#E7DDBF}
+body.v-home #home .hkpi-label{color:#494744}
+body.v-home #home .hkpi>b{color:#242321}
+body.v-home #home .hkpi-target,
+body.v-home #home .hkpi-note,
+body.v-home #home .hkpi-split span{color:#696761}
+body.v-home #home .hkpi-badge{
+  background:rgba(255,255,255,.7);
+  border-color:#D8D8D2;
+  color:#494744;
+}
+body.v-home #home .hkpi[data-status="green"]{background:#EFF8F0!important;border-color:#BFD9C4;color:#254D31}
+body.v-home #home .hkpi[data-status="yellow"]{background:#FFF8DF!important;border-color:#E5D7A6;color:#67551C}
+body.v-home #home .hkpi[data-status="red"]{background:#FFF1EF!important;border-color:#E8C7C3;color:#713B38}
+body.v-home #home .hkpi[data-status] .hkpi-badge{background:rgba(255,255,255,.65);color:inherit}
+body.v-home #home .hkpi-progress,
+body.v-home #home .hkpi-meter{background:#E7E7E2}
+body.v-home #home .hkpi-progress i:first-child{background:#7C9D89}
+body.v-home #home .hkpi-progress i:last-child{background:#D6B36A}
+body.v-home #home .hkpi-meter i{background:#82A9C2}
+body.v-home #home .allocation-dot.two{background:#C6A35A}
+body.v-home #home .allocation-dot.four{background:#82A9C2}
+body.v-home #home .htop-rate{background:#FBE9E7;color:#874D48}
