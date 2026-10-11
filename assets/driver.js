@@ -35,7 +35,7 @@ function enrich(d){
 }
 function status(d){
   if(d.done)return {c:"done",t:"ส่งครบ",o:3};
-  var t='ค้าง '+fmt(d.remain);
+  var t='Delivering '+fmt(d.remain);
   if(d.progress<50)return {c:"major",t:t,o:0};
   if(d.progress<70)return {c:"minor",t:t,o:1};
   return {c:"active",t:t,o:2};
@@ -120,7 +120,7 @@ function renderCards(){
     ['Assign รวม',fmt(a),'ชิ้น',''],
     ['Delivered รวม',fmt(del),pct.toFixed(1)+'% ของ Assign','o'],
     ['On-hold รวม',fmt(oh),'ชิ้น','r'],
-    ['ค้างรวม',fmt(rem),'ยังส่งไม่ครบ '+(n-done)+' คน','y'],
+    ['Delivering รวม',fmt(rem),'ยังส่งไม่ครบ '+(n-done)+' คน','y'],
     ['ส่งครบ',fmt(done),'จาก '+n+' คน','g']
   ].map(function(c){return '<div class="card"><div class="k">'+c[0]+'</div><div class="v '+c[3]+'">'+c[1]+'</div><div class="s">'+c[2]+'</div></div>';}).join('');
   window.__SPX_TOTALS={sheet:state.sheet,drivers:n,done:done,assign:a,delivered:del,onhold:oh,remain:rem,trips:trips,pct:+pct.toFixed(1),people:DATA.map(function(d){return {id:d.id,name:d.name,position:d.position,first:d.first,assign:d.assign,delivered:d.delivered};})};
@@ -177,7 +177,7 @@ function rowHTML(d,i){
   var ohCls=d.onhold>=10?'hot':d.onhold>=5?'warn':'';
   var p=d.progress;
   var note='';
-  if(!d.done&&p<50)note+='<div class="note r">ส่งได้ต่ำกว่า 50% — ค้างอีก '+fmt(d.remain)+' ชิ้น ควรติดต่อคนขับ</div>';
+  if(!d.done&&p<50)note+='<div class="note r">ส่งได้ต่ำกว่า 50% — เหลืออีก '+fmt(d.remain)+' ชิ้น ควรติดต่อคนขับ</div>';
   else if(!d.done&&p<70)note+='<div class="note y">ส่งได้ '+p.toFixed(1)+'% — ติดตามความคืบหน้า</div>';
   if(d.onhold>=10)note+='<div class="note r">On-hold สูง ('+d.onhold+' ชิ้น) — ตรวจสอบเหตุผลพัสดุตีกลับ</div>';
   if(d.remainRaw<0)note+='<div class="note y">ข้อมูลเกิน: Delivered + On-hold มากกว่า Assign '+fmt(-d.remainRaw)+' ชิ้น</div>';
@@ -195,7 +195,7 @@ function rowHTML(d,i){
       '<div><div class="k">Assign</div><div class="v">'+fmt(d.assign)+'</div></div>'+
       '<div><div class="k">Delivered</div><div class="v del">'+fmt(d.delivered)+'</div></div>'+
       '<div class="'+(d.onhold>=10?'hotbg':'')+'"><div class="k">On-hold</div><div class="v oh '+ohCls+'">'+fmt(d.onhold)+'</div></div>'+
-      '<div><div class="k">ค้าง</div><div class="v rem'+(d.remain?'':' zero')+'">'+fmt(d.remain)+'</div></div>'+
+      '<div><div class="k">Delivering</div><div class="v rem'+(d.remain?'':' zero')+'">'+fmt(d.remain)+'</div></div>'+
     '</div>'+
     '<div class="pbar"><span style="display:flex;align-items:center;gap:8px;flex:1"><span class="track"><span class="fill '+fillCls(p)+'" style="display:block;width:'+Math.min(100,p).toFixed(2)+'%"></span></span><span class="pct">'+p.toFixed(1)+'%</span></span>'+
     '<span class="d-only"><span class="badge sb '+st.c+'">'+st.t+'</span></span></div>'+
@@ -208,7 +208,7 @@ function rowHTML(d,i){
      '<dt>Assign</dt><dd>'+fmt(d.assign)+' ชิ้น</dd>'+
      '<dt>Delivered</dt><dd>'+fmt(d.delivered)+' ชิ้น</dd>'+
      '<dt>On-hold</dt><dd>'+fmt(d.onhold)+' ชิ้น</dd>'+
-     '<dt>ค้าง (Assign − Delivered − On-hold)</dt><dd>'+fmt(d.remainRaw)+' ชิ้น</dd>'+
+     '<dt>Delivering (Assign − Delivered − On-hold)</dt><dd>'+fmt(d.remainRaw)+' ชิ้น</dd>'+
      '<dt>Progress (Delivered ÷ Assign)</dt><dd>'+p.toFixed(2)+'%</dd>'+
      '<dt>สถานะ</dt><dd>'+st.t+'</dd>'+
    '</dl>'+note+'</div>'+
