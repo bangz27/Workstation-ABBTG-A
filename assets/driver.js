@@ -34,7 +34,7 @@ function enrich(d){
     remainRaw:raw,remain:Math.max(0,raw),done:raw<=0,progress:a?del/a*100:0};
 }
 function status(d){
-  if(d.done)return {c:"done",t:"ส่งครบ",o:3};
+  if(d.done)return {c:"done",t:"จบงาน",o:3};
   var t='Delivering '+fmt(d.remain);
   if(d.progress<50)return {c:"major",t:t,o:0};
   if(d.progress<70)return {c:"minor",t:t,o:1};
@@ -44,7 +44,7 @@ function status(d){
 var FILTERS=[
   {k:"all",t:"ทั้งหมด",f:function(){return true;}},
   {k:"notdone",t:"ยังส่งไม่ครบ",f:function(d){return d.remainRaw>0;}},
-  {k:"done",t:"ส่งครบ",f:function(d){return d.remainRaw<=0;}},
+  {k:"done",t:"จบงาน",f:function(d){return d.remainRaw<=0;}},
   {k:"oh5",t:"On-hold ≥ 5",f:function(d){return d.onhold>=5;}}
 ];
 var SORTS={
@@ -121,7 +121,7 @@ function renderCards(){
     ['Delivered รวม',fmt(del),pct.toFixed(1)+'% ของ Assign','o'],
     ['On-hold รวม',fmt(oh),'ชิ้น','r'],
     ['Delivering รวม',fmt(rem),'ยังส่งไม่ครบ '+(n-done)+' คน','y'],
-    ['ส่งครบ',fmt(done),'จาก '+n+' คน','g']
+    ['จบงาน',fmt(done),'จาก '+n+' คน','g']
   ].map(function(c){return '<div class="card"><div class="k">'+c[0]+'</div><div class="v '+c[3]+'">'+c[1]+'</div><div class="s">'+c[2]+'</div></div>';}).join('');
   window.__SPX_TOTALS={sheet:state.sheet,drivers:n,done:done,assign:a,delivered:del,onhold:oh,remain:rem,trips:trips,pct:+pct.toFixed(1),people:DATA.map(function(d){return {id:d.id,name:d.name,position:d.position,first:d.first,assign:d.assign,delivered:d.delivered};})};
   if(window.SPX_HOME)window.SPX_HOME.paint();
@@ -181,7 +181,7 @@ function rowHTML(d,i){
   else if(!d.done&&p<70)note+='<div class="note y">ส่งได้ '+p.toFixed(1)+'% — ติดตามความคืบหน้า</div>';
   if(d.onhold>=10)note+='<div class="note r">On-hold สูง ('+d.onhold+' ชิ้น) — ตรวจสอบเหตุผลพัสดุตีกลับ</div>';
   if(d.remainRaw<0)note+='<div class="note y">ข้อมูลเกิน: Delivered + On-hold มากกว่า Assign '+fmt(-d.remainRaw)+' ชิ้น</div>';
-  if(d.done)note+='<div class="note g">ส่งครบแล้ว'+(d.onhold>0?' (On-hold '+d.onhold+' ชิ้น)':'')+'</div>';
+  if(d.done)note+='<div class="note g">จบงานแล้ว'+(d.onhold>0?' (On-hold '+d.onhold+' ชิ้น)':'')+'</div>';
   return '<div class="row st-'+st.c+(state.open[d.id]?' open':'')+'" data-id="'+esc(d.id)+'">'+
    '<div class="rmain">'+
     '<div class="l1">'+
@@ -194,8 +194,8 @@ function rowHTML(d,i){
       '<div class="d-only"><div class="v">'+esc(d.first)+'</div></div>'+
       '<div><div class="k">Assign</div><div class="v">'+fmt(d.assign)+'</div></div>'+
       '<div><div class="k">Delivered</div><div class="v del">'+fmt(d.delivered)+'</div></div>'+
-      '<div class="'+(d.onhold>=10?'hotbg':'')+'"><div class="k">On-hold</div><div class="v oh '+ohCls+'">'+fmt(d.onhold)+'</div></div>'+
       '<div><div class="k">Delivering</div><div class="v rem'+(d.remain?'':' zero')+'">'+fmt(d.remain)+'</div></div>'+
+      '<div class="'+(d.onhold>=10?'hotbg':'')+'"><div class="k">On-hold</div><div class="v oh '+ohCls+'">'+fmt(d.onhold)+'</div></div>'+
     '</div>'+
     '<div class="pbar"><span style="display:flex;align-items:center;gap:8px;flex:1"><span class="track"><span class="fill '+fillCls(p)+'" style="display:block;width:'+Math.min(100,p).toFixed(2)+'%"></span></span><span class="pct">'+p.toFixed(1)+'%</span></span>'+
     '<span class="d-only"><span class="badge sb '+st.c+'">'+st.t+'</span></span></div>'+
