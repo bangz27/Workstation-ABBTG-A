@@ -143,6 +143,12 @@ body:not(.auth-out) #auth{display:none}
 .scrim[hidden]{display:none}
 
 .app{margin-left:var(--side-w);min-width:0}
+@media (min-width:1024px){
+  .navtog{display:grid}
+  body.nav-collapsed .side{transform:translateX(-105%);visibility:hidden;transition:transform .22s ease,visibility 0s linear .22s}
+  body.nav-collapsed .app{margin-left:0}
+  body:not(.nav-collapsed) .side{transform:none;visibility:visible}
+}
 .topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:12px;height:var(--tb-h);padding:0 var(--gut);
   background:var(--ui-bg);border-bottom:var(--bd)}
 .navtog{display:none;flex:0 0 auto;width:42px;height:42px;place-items:center;border:var(--bd);border-radius:12px;background:#fff;cursor:pointer;box-shadow:var(--ui-sh2)}
