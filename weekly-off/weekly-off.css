@@ -16,3 +16,61 @@
 .month-tab{border:1px solid transparent;background:transparent;color:var(--ink);font:inherit;font-weight:800;padding:7px 14px;border-radius:8px;cursor:pointer}
 .month-tab.active{background:var(--ink);color:var(--paper)}
 @media(max-width:650px){.month-switcher{margin-top:8px}.month-tab{padding:6px 12px;font-size:12px}}
+
+
+/* Unified with the homepage's cream canvas and low-glare pastel card palette. */
+:root{
+  --bg:#FDFCFB;
+  --surface:#FFFFFF;
+  --ink:#292827;
+  --muted:#696761;
+  --line:#D8D8D2;
+  --cyan:#82A9C2;
+  --cyan-soft:#F0F7FC;
+  --orange:#D8A18B;
+  --orange-soft:#FFF4EE;
+  --yellow:#D6B36A;
+  --yellow-soft:#FFF8DF;
+  --green:#7C9D89;
+  --green-soft:#EFF8F0;
+  --red:#C98C84;
+  --border:1px solid var(--line);
+  --radius-lg:10px;
+  --radius-md:8px;
+  --radius-sm:7px;
+  --shadow:none;
+}
+body{background:var(--bg);color:var(--ink)}
+.brand-mark,.auth-mark{background:#F3F7F5;border:1px solid var(--line);border-radius:10px;box-shadow:none}
+.source-state,.summary-card,.panel,.day-card,.auth-card,.auth-card input,.auth-card button,.search-input,.load-error button{
+  border:1px solid var(--line);
+  border-radius:8px;
+  box-shadow:none;
+}
+.source-state{background:#F5F7FA}
+.source-state.ready{background:var(--green-soft)}
+.source-state.offline{background:var(--yellow-soft);border-color:#E5D7A6}
+.source-state.error,.load-error{background:#FFF1EF;border-color:#E8C7C3}
+.summary-card{background:#FFFFFF}
+.fleet-summary{background:var(--cyan-soft)}
+.ops-summary{background:var(--orange-soft)}
+.total-summary{background:var(--yellow-soft)}
+.panel{background:#FFFFFF}
+.day-card{background:#FFFFFF}
+.day-card[aria-pressed=true]{background:var(--yellow-soft);border-color:#E5D7A6;box-shadow:none;transform:none}
+.day-card:hover{box-shadow:none;transform:none;background:#F5F7FA}
+.detail-total,.source-month{border-color:var(--line);background:var(--yellow-soft)}
+.detail-group,.person-card{border-color:var(--line);background:#FFFFFF}
+.person-card{background:#FAFAF7}
+.fleet-group h3,.search-panel.fleet-search{border-color:#CBDDE9}
+.ops-group h3,.search-panel.ops-search{border-color:#E8D3C6}
+.tag{border-color:var(--line);background:#F5F7FA}
+.tag.fleet{background:var(--cyan-soft)}
+.tag.ops{background:var(--orange-soft)}
+.search-input,.auth-card input{background:#FFFFFF}
+.auth-card button{background:var(--yellow-soft);font-weight:700}
+.month-switcher{border-color:var(--line);background:#F5F7FA}
+.month-tab{border-radius:6px}
+.month-tab.active{background:#E5EDE8;color:#294A38}
+button:focus-visible,input:focus-visible{outline-color:#82A9C2}
+.data-note{border-color:#E5D7A6;background:var(--yellow-soft)}
