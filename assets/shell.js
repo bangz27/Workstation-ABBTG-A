@@ -8,22 +8,42 @@ var body=document.body,side=$('side'),tog=$('navTog'),scrim=$('scrim');
 if(!side||!tog||!scrim)return;
 
 /* ---------- drawer (below 1024px the sidebar slides in) ---------- */
-function isOpen(){return body.classList.contains('nav-open');}
+var mq=window.matchMedia?window.matchMedia('(max-width:1023px)'):null;
+function isMobile(){return mq?mq.matches:window.innerWidth<1024;}
+function isOpen(){return isMobile()?!body.classList.contains('nav-collapsed')&&body.classList.contains('nav-open'):!body.classList.contains('nav-collapsed');}
 function setNav(open,focusBack){
-  body.classList.toggle('nav-open',open);
+  if(isMobile()){
+    body.classList.remove('nav-collapsed');
+    body.classList.toggle('nav-open',open);
+    scrim.hidden=!open;
+  }else{
+    body.classList.remove('nav-open');
+    body.classList.toggle('nav-collapsed',!open);
+    scrim.hidden=true;
+  }
   tog.setAttribute('aria-expanded',open?'true':'false');
-  scrim.hidden=!open;
+  tog.setAttribute('aria-label',open?'ปิดเมนู':'เปิดเมนู');
   if(open){var b=side.querySelector('#views button.on')||side.querySelector('button');if(b)setTimeout(function(){b.focus();},30);}
   else if(focusBack)tog.focus();
 }
+tog.setAttribute('aria-expanded',isOpen()?'true':'false');
+tog.setAttribute('aria-label',isOpen()?'ปิดเมนู':'เปิดเมนู');
 tog.addEventListener('click',function(){setNav(!isOpen());});
 $('navClose').addEventListener('click',function(){setNav(false,true);});
 scrim.addEventListener('click',function(){setNav(false);});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&isOpen())setNav(false,true);});
-/* picking a menu item closes the drawer; the click itself is handled by roster.js / leave.js as before */
-side.addEventListener('click',function(e){if(e.target.closest('#views button,#gearBtn'))setNav(false);});
-var mq=window.matchMedia?window.matchMedia('(min-width:1024px)'):null;
-if(mq){var onMq=function(){if(mq.matches&&isOpen())setNav(false);};if(mq.addEventListener)mq.addEventListener('change',onMq);else if(mq.addListener)mq.addListener(onMq);}
+/* Selecting a menu item closes the overlay on narrow screens only. */
+side.addEventListener('click',function(e){if(isMobile()&&e.target.closest('#views button,#gearBtn'))setNav(false);});
+if(mq){var onMq=function(){
+  if(!mq.matches){
+    body.classList.remove('nav-open');
+    scrim.hidden=true;
+    tog.setAttribute('aria-expanded',body.classList.contains('nav-collapsed')?'false':'true');
+    tog.setAttribute('aria-label',body.classList.contains('nav-collapsed')?'เปิดเมนู':'ปิดเมนู');
+  }else if(body.classList.contains('nav-collapsed')){
+    body.classList.remove('nav-collapsed');
+  }
+};if(mq.addEventListener)mq.addEventListener('change',onMq);else if(mq.addListener)mq.addListener(onMq);}
 
 /* ---------- header date (display only, Asia/Bangkok) ---------- */
 try{
