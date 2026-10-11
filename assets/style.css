@@ -896,3 +896,89 @@ body.v-home .htop-empty{margin:0;padding:12px 0;font-size:13px;color:#64748B}
  body.v-home .htop-head{font-size:10px}
  body.v-home .htop-rate{font-size:11px;padding:4px 6px}
 }
+
+/* OpenCode-inspired flat monochrome dashboard — homepage only; data and other tabs untouched */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap');
+body.v-home{--oc-ink:#201d1d;--oc-canvas:#fdfcfc;--oc-soft:#f8f7f7;--oc-card:#f1eeee;--oc-muted:#646262;--oc-line:rgba(15,0,0,.16);background:var(--oc-canvas);color:var(--oc-ink);font-family:'IBM Plex Mono','Prompt',monospace}
+body.v-home *{font-family:'IBM Plex Mono','Prompt',monospace}
+body.v-home .topbar{background:var(--oc-canvas);border-bottom:1px solid var(--oc-line);box-shadow:none;color:var(--oc-ink)}
+body.v-home .topbar .tkick{color:var(--oc-muted);letter-spacing:.04em}
+body.v-home .topbar .ttl{font-weight:700}
+body.v-home #home{background:var(--oc-canvas);color:var(--oc-ink)}
+body.v-home #home .hgrid{gap:12px}
+body.v-home #home .hhero,body.v-home #home .hqa,body.v-home #home .hcard,body.v-home #home .htop-card{border:1px solid var(--oc-ink);border-radius:4px;box-shadow:none;background:var(--oc-canvas);color:var(--oc-ink)}
+body.v-home #home .hhero{min-height:0;padding:16px;gap:16px}
+body.v-home #home .hhero:after{display:none}
+body.v-home #home .hhero .hhi{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--oc-muted);font-weight:600}
+body.v-home #home .hhero h1{font-size:clamp(21px,3vw,30px);line-height:1.4;letter-spacing:0;color:var(--oc-ink)}
+body.v-home #home .hhero .hsub{font-size:13px;color:var(--oc-muted)}
+body.v-home #home .hhero .hillus{border:1px solid var(--oc-line);border-radius:4px;box-shadow:none;background:var(--oc-soft);max-width:34%}
+body.v-home #home .hqa{padding:12px}
+body.v-home #home .hqa h2{font-size:14px;text-transform:uppercase;letter-spacing:.06em;margin:0 0 10px}
+body.v-home #home .hqg{gap:8px}
+body.v-home #home .hqg button{border:1px solid var(--oc-ink);border-radius:4px;box-shadow:none;background:var(--oc-canvas);color:var(--oc-ink);font-size:13px;min-height:42px}
+body.v-home #home .hqg button:not(.lite){background:var(--oc-ink);color:var(--oc-canvas)}
+body.v-home #home .hqg button:active{background:#0f0000;color:#fff}
+body.v-home #home .hkpis{gap:8px;margin:12px 0}
+body.v-home #home .hmetric-heading{padding:6px 0 4px;border-bottom:1px solid var(--oc-line);color:var(--oc-ink);font-size:12px;letter-spacing:.03em}
+body.v-home #home .hmetric-heading small{font-size:11px;color:var(--oc-muted)}
+body.v-home #home .hkpi{border:1px solid var(--oc-line);border-radius:4px;box-shadow:none;min-height:128px;padding:12px;background:var(--oc-canvas);color:var(--oc-ink);gap:8px}
+body.v-home #home .hkpi-label{font-size:12px;letter-spacing:.01em}
+body.v-home #home .hkpi>b{font-size:clamp(26px,3vw,38px);line-height:1.35;color:var(--oc-ink)}
+body.v-home #home .hkpi-top{gap:6px}
+body.v-home #home .hkpi-badge{border:1px solid var(--oc-line);border-radius:4px;background:var(--oc-card);color:var(--oc-ink);padding:2px 6px;font-size:10px}
+body.v-home #home .hkpi-progress,body.v-home #home .hkpi-meter{border-radius:2px;background:#e5e3e3;height:7px}
+body.v-home #home .hkpi-progress i:first-child{background:var(--oc-ink)}
+body.v-home #home .hkpi-progress i:last-child{background:#ff9f0a}
+body.v-home #home .hkpi-meter i{border-radius:0;background:#007aff}
+body.v-home #home .hkpi-split{border-color:var(--oc-line);padding-top:7px}
+body.v-home #home .hkpi-split span{font-size:11px;color:var(--oc-muted)}
+body.v-home #home .hkpi-split b{font-size:15px;color:var(--oc-ink)}
+body.v-home #home .hkpi-target,body.v-home #home .hkpi-note{font-size:11px;color:var(--oc-muted)}
+body.v-home #home .hkpi[data-status="green"]{background:#eaf8ee!important;border-color:#30d158;color:var(--oc-ink)}
+body.v-home #home .hkpi[data-status="yellow"]{background:#fff6df!important;border-color:#ff9f0a;color:var(--oc-ink)}
+body.v-home #home .hkpi[data-status="red"]{background:#fff0ef!important;border-color:#ff3b30;color:var(--oc-ink)}
+body.v-home #home .hkpi[data-status] .hkpi-badge{background:transparent;color:var(--oc-ink)}
+body.v-home #home .hkpi-allocation{grid-column:span 1;background:#fffaf0;gap:8px}
+body.v-home #home .allocation-row{gap:4px}
+body.v-home #home .allocation-row-label b{font-size:15px;color:var(--oc-ink)}
+body.v-home #home .allocation-row-label span{font-size:11px}
+body.v-home #home .allocation-dot.two{background:#ff9f0a}
+body.v-home #home .allocation-dot.four{background:#007aff}
+body.v-home #home .htop-card{margin:8px 0 20px;padding:12px}
+body.v-home #home .htop-card .hrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+body.v-home #home .htop-card .hrow b{font-size:12px;font-weight:700;color:var(--oc-ink)}
+body.v-home #home .htop-card .hrow span{font-size:10px;color:var(--oc-muted)}
+body.v-home #home .htop-content{width:100%;overflow-x:auto}
+body.v-home #home .htop-table{display:flex;flex-direction:column;min-width:0}
+body.v-home #home .htop-row{display:grid;grid-template-columns:24px minmax(110px,1.2fr) minmax(42px,.45fr) minmax(110px,1fr) 76px;gap:8px;align-items:center;padding:7px 2px;border-bottom:1px solid var(--oc-line);font-size:11px;color:var(--oc-ink)}
+body.v-home #home .htop-row:last-child{border-bottom:0}
+body.v-home #home .htop-head{font-size:10px;font-weight:700;color:var(--oc-muted);border-bottom:1px solid var(--oc-muted)}
+body.v-home #home .htop-person{display:block;min-width:0}
+body.v-home #home .htop-person b{display:block;overflow-wrap:anywhere;color:var(--oc-ink);font-weight:500}
+body.v-home #home .htop-index{color:var(--oc-muted)}
+body.v-home #home .htop-rate{justify-self:start;border-radius:4px;padding:2px 5px;background:#ffe2e0;color:#a50011;font-size:10px;white-space:nowrap}
+body.v-home #home .htop-empty{margin:0;padding:12px 0;font-size:12px;color:var(--oc-muted)}
+body.v-home .views{background:var(--oc-canvas);border-color:var(--oc-line);box-shadow:none}
+body.v-home .views button{border-radius:0;box-shadow:none;font-family:'IBM Plex Mono','Prompt',monospace}
+body.v-home .views button.on{background:var(--oc-ink);color:var(--oc-canvas);box-shadow:none}
+@media(max-width:640px){
+ body.v-home #home .hhero{padding:12px;gap:8px}
+ body.v-home #home .hhero .hillus{width:94px;flex:0 0 94px;height:88px;max-width:34%}
+ body.v-home #home .hhero h1{font-size:19px}
+ body.v-home #home .hqa{padding:10px}
+ body.v-home #home .hqa h2{font-size:12px}
+ body.v-home #home .hqg button{font-size:11px;padding:8px 5px;min-height:40px}
+ body.v-home #home .hkpis{gap:7px}
+ body.v-home #home .hkpi{min-height:116px;padding:9px 8px}
+ body.v-home #home .hkpi-label{font-size:11px}
+ body.v-home #home .hkpi>b{font-size:clamp(23px,7vw,32px)}
+ body.v-home #home .hkpi-split{flex-wrap:wrap;gap:4px}
+ body.v-home #home .hkpi-split span{font-size:10px}
+ body.v-home #home .hkpi-split b{font-size:13px}
+ body.v-home #home .hmetric-heading{font-size:10px}
+ body.v-home #home .htop-card .hrow{align-items:flex-start;flex-direction:column}
+ body.v-home #home .htop-row{grid-template-columns:18px minmax(82px,1.2fr) 36px minmax(80px,1fr) 58px;gap:4px;font-size:9px;padding:8px 0}
+ body.v-home #home .htop-head{font-size:8px}
+ body.v-home #home .htop-rate{font-size:9px;padding:2px 3px}
+}
