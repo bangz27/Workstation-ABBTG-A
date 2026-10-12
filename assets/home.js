@@ -65,18 +65,21 @@ function renderKpiCards(){
   if(cardsReady)return;
   var box=$('hkpis');if(!box)return;
   box.innerHTML=[
-    '<div class="hmetric-heading"><span>▤ DELIVERY TRACKING</span><small id="homeOrderTotal">Daily Report</small></div>',
-    '<article class="hkpi" data-kpi="today-volume" style="background:#FFE6D8"><span class="hkpi-label">Today\'s Volume</span><b id="kpiTodayVolume">—</b><small class="hkpi-target">ปริมาณงานวันนี้</small></article>',
-    '<article class="hkpi" data-kpi="inbound" style="background:#E7F4FF"><span class="hkpi-label">Inbound</span><b id="kpiInboundValue">—</b><small class="hkpi-target">ข้อมูลจากระบบซิงก์</small></article>',
     '<div class="hmetric-heading"><span>♧ FLEET HEAD COUNT</span><small>HC Status</small></div>',
-    '<article class="hkpi hkpi-plan" data-kpi="plan-hc" style="background:#FFF0B8"><div class="hkpi-top"><span class="hkpi-label">Plan HC</span><span class="hkpi-badge" id="kpiPlanBadge">—</span></div><b id="kpiPlanValue">–</b><div class="hkpi-progress"><i id="kpiPlan2wBar"></i><i id="kpiPlan4wBar"></i></div><div class="hkpi-split"><span>● 2W <b id="kpiPlan2w">–</b></span><span>● 4W <b id="kpiPlan4w">–</b></span></div></article>',
-    '<article class="hkpi hkpi-active" data-kpi="active" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">Active</span><span class="hkpi-badge green">—</span></div><b id="kpiActiveValue">–</b><div class="hkpi-split"><span>● 2W <b id="kpiActive2w">–</b></span><span>● 4W <b id="kpiActive4w">–</b></span></div><small class="hkpi-note" id="kpiActiveNote"></small></article>',
+    '<article class="hkpi hkpi-plan" data-kpi="plan-hc" style="background:#FFF0B8"><div class="hkpi-top"><span class="hkpi-label">Plan HC</span><span class="hkpi-badge" id="kpiPlanBadge">—</span></div><b id="kpiPlanValue">–</b><div class="hkpi-progress"><i id="kpiPlan2wBar"></i><i id="kpiPlan4wBar"></i></div><div class="hkpi-split"><span>● 2W <b id="kpiPlan2w">–</b></span><span>● 4W <b id="kpiPlan4w">–</b></span></div><small class="hkpi-target">แผนกำลังคนจาก Fleet shift roster</small></article>',
+    '<article class="hkpi hkpi-active" data-kpi="active" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">Active</span><span class="hkpi-badge green">—</span></div><b id="kpiActiveValue">–</b><div class="hkpi-split"><span>● 2W <b id="kpiActive2w">–</b></span><span>● 4W <b id="kpiActive4w">–</b></span></div><small class="hkpi-note" id="kpiActiveNote"></small><small class="hkpi-target">คนขับที่มี Assign มากกว่า 0</small></article>',
+    '<div class="hmetric-heading"><span>▤ ASSIGN & DELIVERED</span><small id="homeOrderTotal">Daily Report</small></div>',
+    '<article class="hkpi" data-kpi="assign" style="background:#DDF3FB"><span class="hkpi-label">Assign</span><b id="kpiAssignValue">—</b><small class="hkpi-target">ยอดงานที่มอบหมาย · Daily Report</small></article>',
+    '<article class="hkpi" data-kpi="delivered" style="background:#FFE3D9"><span class="hkpi-label">Delivered</span><b id="kpiDeliveredValue">—</b><small class="hkpi-target">ยอดจัดส่งสำเร็จ · Daily Report</small></article>',
     '<div class="hmetric-heading"><span>↔ ALLOCATION & PRODUCTIVITY</span><small>Overview</small></div>',
-    '<article class="hkpi hkpi-allocation" data-kpi="allocation" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">2W / 4W ALLOCATION</span><span class="hkpi-badge" id="kpiAllocationStatus">Target 69.80%</span></div><div class="allocation-row"><div class="allocation-row-label"><span><i class="allocation-dot two"></i>2W</span><b id="kpiAllocation2w">–</b></div><div class="hkpi-meter"><i id="kpiAllocation2wBar"></i></div></div><div class="allocation-row"><div class="allocation-row-label"><span><i class="allocation-dot four"></i>4W</span><b id="kpiAllocation4w">–</b></div><div class="hkpi-meter blue"><i id="kpiAllocation4wBar"></i></div></div><small class="hkpi-target" id="kpiAllocationTarget">Target 2W 69.80% · 4W 30.20%</small></article>',
-    '<article class="hkpi" data-kpi="pdty" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">PDTY</span><span class="hkpi-badge">Productivity</span></div><b id="kpiPdtyValue">–</b><small class="hkpi-target">Target 196</small><div class="hkpi-meter"><i id="kpiPdtyBar"></i></div></article>',
-    '<div class="hmetric-heading"><span>⚡ OPERATIONS & STANDARDS</span><small>Hub KPI</small></div>',
+    '<article class="hkpi hkpi-allocation" data-kpi="allocation" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">2W / 4W ALLOCATION</span><span class="hkpi-badge" id="kpiAllocationStatus">Target 69.80%</span></div><div class="allocation-row"><div class="allocation-row-label"><span><i class="allocation-dot two"></i>2W</span><b id="kpiAllocation2w">–</b></div><div class="hkpi-meter"><i id="kpiAllocation2wBar"></i></div></div><div class="allocation-row"><div class="allocation-row-label"><span><i class="allocation-dot four"></i>4W</span><b id="kpiAllocation4w">–</b></div><div class="hkpi-meter blue"><i id="kpiAllocation4wBar"></i></div></div><small class="hkpi-target" id="kpiAllocationTarget">Target 2W 69.80% · 4W 30.20%</small><small class="hkpi-target">สัดส่วน Assign ของ 2W/4W เทียบกับ Assign รวม</small></article>',
+    '<article class="hkpi" data-kpi="pdty" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">PDTY</span><span class="hkpi-badge">Productivity</span></div><b id="kpiPdtyValue">–</b><small class="hkpi-target">Target 196</small><div class="hkpi-meter"><i id="kpiPdtyBar"></i></div><small class="hkpi-target">Delivered รวม ÷ จำนวน Active Drivers</small></article>',
+    '<div class="hmetric-heading"><span>⚡ SLA & ON-HOLD</span><small>Hub KPI</small></div>',
     '<article class="hkpi" data-kpi="sla" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">SLA</span><span class="hkpi-badge coral">Target ≥ 96%</span></div><b id="kpiSlaValue">–</b><small class="hkpi-target">อิงจาก Delivered ÷ Assign</small><div class="hkpi-meter"><i id="kpiSlaBar"></i></div></article>',
-    '<article class="hkpi" data-kpi="onhold" style="background:#FFF1B8"><span class="hkpi-label">On-hold</span><b id="kpiOnholdValue">—</b><small class="hkpi-target">พัสดุที่พักการจัดส่ง</small></article>'
+    '<article class="hkpi" data-kpi="onhold" style="background:#FFF1B8"><span class="hkpi-label">On-hold</span><b id="kpiOnholdValue">—</b><small class="hkpi-target">พัสดุที่พักการจัดส่ง</small></article>',
+    '<div class="hmetric-heading"><span>▤ DELIVERY TRACKING</span><small>ข้อมูลประกอบ</small></div>',
+    '<article class="hkpi" data-kpi="today-volume" style="background:#FFE6D8"><span class="hkpi-label">Today\'s Volume</span><b id="kpiTodayVolume">—</b><small class="hkpi-target">ปริมาณงานวันนี้</small></article>',
+    '<article class="hkpi" data-kpi="inbound" style="background:#E7F4FF"><span class="hkpi-label">Inbound</span><b id="kpiInboundValue">—</b><small class="hkpi-target">ข้อมูลจากระบบซิงก์</small></article>'
   ].join('');
   cardsReady=true;
 }
@@ -104,6 +107,8 @@ function paint(){
   setText('kpiTodayVolume',metrics.todayVolume==null?'—':fmt(metrics.todayVolume));
   setText('kpiInboundValue',metrics.inbound==null?'—':fmt(metrics.inbound));
   setText('kpiOnholdValue',t&&t.onhold!=null?fmt(t.onhold):'—');
+  setText('kpiAssignValue',t&&t.assign!=null?fmt(t.assign):'—');
+  setText('kpiDeliveredValue',t&&t.delivered!=null?fmt(t.delivered):'—');
   if(t){
     setText('kpiActiveValue',k.active==null?'—':fmt(k.active));
     setText('kpiActive2w',k.active2==null?'–':fmt(k.active2));
@@ -128,7 +133,7 @@ function paint(){
     setStatus('active',hc.available&&hc.total?thresholdStatus(k.active/hc.total*100,100,0.9):'neutral');
     var activeBadge2=document.querySelector('[data-kpi="active"] .hkpi-badge');if(activeBadge2)activeBadge2.textContent=hc.available&&hc.total?decimal(k.active/hc.total*100,1)+'%':'—';
     var activeBadge=document.querySelector('[data-kpi=\"active\"] .hkpi-badge');if(activeBadge)activeBadge.textContent=hc.available&&hc.total?decimal(k.active/hc.total*100,1)+'%':'—';
-    var orderTotal=$('homeOrderTotal');if(orderTotal)orderTotal.textContent=fmt(t.assign)+' Assign';
+    var orderTotal=$('homeOrderTotal');if(orderTotal)orderTotal.textContent='Daily Report';
   }else{
     setText('kpiActiveValue','—');setText('kpiActive2w','–');setText('kpiActive4w','–');setText('kpiActiveNote','');
     setText('kpiAllocation2w','—');setText('kpiAllocation4w','—');setText('kpiPdtyValue','—');setText('kpiSlaValue','—');
