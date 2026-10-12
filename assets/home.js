@@ -13,7 +13,7 @@ function wheelOf(func){
   if(/2\s*w|2w|สองล้อ|bike|motor|มอเตอร์/.test(s))return 2;
   return 0;
 }
-function calculate(t){
+function calculate(t,metrics){
   var hasPeople=!!(t&&Array.isArray(t.people)),active=hasPeople?0:null,active2=0,active4=0,activeUnknown=0;
   var assign2=0,assign4=0;
   if(hasPeople)t.people.forEach(function(p){
@@ -21,12 +21,12 @@ function calculate(t){
     if(a>0){active++;if(type===2)active2++;else if(type===4)active4++;else activeUnknown++;}
     if(type===2)assign2+=a;else if(type===4)assign4+=a;
   });
-  var assignTotal=assign2+assign4,delivered=t?value(t.delivered):null,assign=t?value(t.assign):null;
+  var assignTotal=assign2+assign4,delivered=t&&t.delivered!=null?value(t.delivered):null,assign=t&&t.assign!=null?value(t.assign):null,activeKnown=active2+active4;
   return {
     active:active,active2:hasPeople?active2:null,active4:hasPeople?active4:null,activeUnknown:activeUnknown,
     assign2:hasPeople?assign2:null,assign4:hasPeople?assign4:null,assignTotal:hasPeople?assignTotal:null,
     allocation2:hasPeople?ratio(assign2,assignTotal):null,allocation4:hasPeople?ratio(assign4,assignTotal):null,
-    pdty:active==null?null:ratio(delivered,active),sla:t?ratio(delivered,assign):null
+    pdty:!hasPeople||activeKnown<=0||assign==null?null:ratio(assign,activeKnown),sla:!t||delivered==null||!metrics||metrics.todayVolume==null||metrics.todayVolume<=0?null:ratio(delivered,metrics.todayVolume)
   };
 }
 function sheetISO(name){
@@ -73,9 +73,9 @@ function renderKpiCards(){
     '<article class="hkpi" data-kpi="delivered" style="background:#FFE3D9"><span class="hkpi-label">Delivered</span><b id="kpiDeliveredValue">—</b><small class="hkpi-target">ยอดจัดส่งสำเร็จ · Daily Report</small></article>',
     '<div class="hmetric-heading"><span>↔ ALLOCATION & PRODUCTIVITY</span><small>Overview</small></div>',
     '<article class="hkpi hkpi-allocation" data-kpi="allocation" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">2W / 4W ALLOCATION</span><span class="hkpi-badge" id="kpiAllocationStatus">Target 69.80%</span></div><div class="allocation-row"><div class="allocation-row-label"><span><i class="allocation-dot two"></i>2W</span><b id="kpiAllocation2w">–</b></div><div class="hkpi-meter"><i id="kpiAllocation2wBar"></i></div></div><div class="allocation-row"><div class="allocation-row-label"><span><i class="allocation-dot four"></i>4W</span><b id="kpiAllocation4w">–</b></div><div class="hkpi-meter blue"><i id="kpiAllocation4wBar"></i></div></div><small class="hkpi-target" id="kpiAllocationTarget">Target 2W 69.80% · 4W 30.20%</small><small class="hkpi-target">สัดส่วน Assign ของ 2W/4W เทียบกับ Assign รวม</small></article>',
-    '<article class="hkpi" data-kpi="pdty" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">PDTY</span><span class="hkpi-badge">Productivity</span></div><b id="kpiPdtyValue">–</b><small class="hkpi-target">Target 196</small><div class="hkpi-meter"><i id="kpiPdtyBar"></i></div><small class="hkpi-target">Delivered รวม ÷ จำนวน Active Drivers</small></article>',
+    '<article class="hkpi" data-kpi="pdty" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">PDTY</span><span class="hkpi-badge">Productivity</span></div><b id="kpiPdtyValue">–</b><small class="hkpi-target">Target 196</small><div class="hkpi-meter"><i id="kpiPdtyBar"></i></div><small class="hkpi-target">Assign ÷ (Active 2W + Active 4W)</small></article>',
     '<div class="hmetric-heading"><span>⚡ SLA & ON-HOLD</span><small>Hub KPI</small></div>',
-    '<article class="hkpi" data-kpi="sla" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">SLA</span><span class="hkpi-badge coral">Target ≥ 96%</span></div><b id="kpiSlaValue">–</b><small class="hkpi-target">อิงจาก Delivered ÷ Assign</small><div class="hkpi-meter"><i id="kpiSlaBar"></i></div></article>',
+    '<article class="hkpi" data-kpi="sla" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">SLA</span><span class="hkpi-badge coral">Target ≥ 96%</span></div><b id="kpiSlaValue">–</b><small class="hkpi-target">Delivered ÷ Today's Volume × 100</small><div class="hkpi-meter"><i id="kpiSlaBar"></i></div></article>',
     '<article class="hkpi" data-kpi="onhold" style="background:#FFF1B8"><span class="hkpi-label">On-hold</span><b id="kpiOnholdValue">—</b><small class="hkpi-target">พัสดุที่พักการจัดส่ง</small></article>',
     '<div class="hmetric-heading"><span>▤ DELIVERY TRACKING</span><small>ข้อมูลประกอบ</small></div>',
     '<article class="hkpi" data-kpi="today-volume" style="background:#FFE6D8"><span class="hkpi-label">Today\'s Volume</span><b id="kpiTodayVolume">—</b><small class="hkpi-target">ปริมาณงานวันนี้</small></article>',
@@ -103,7 +103,7 @@ function paint(){
   var t=window.__SPX_TOTALS,root=$('home');
   if(!root)return;
   renderKpiCards();
-  var k=calculate(t),hc=planHC(t&&t.sheet),metrics=homeMetrics();
+  var hc=planHC(t&&t.sheet),metrics=homeMetrics(),k=calculate(t,metrics);
   setText('kpiTodayVolume',metrics.todayVolume==null?'—':fmt(metrics.todayVolume));
   setText('kpiInboundValue',metrics.inbound==null?'—':fmt(metrics.inbound));
   setText('kpiOnholdValue',t&&t.onhold!=null?fmt(t.onhold):'—');

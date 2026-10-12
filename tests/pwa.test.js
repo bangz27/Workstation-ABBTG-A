@@ -54,7 +54,7 @@ test('the worker refreshes cached shells and Email Login after auth rollback', (
   assert.match(sw, /path === 'weekly-off' \|\| path === 'weekly-off\/' \|\| path === 'weekly-off\/index\.html'/);
   assert.match(sw, /Response\.redirect\(new URL\('weekly-off\/'/);
   assert.match(sw, /weekly-off\/index\.html/);
-  assert.match(sw, /var VERSION = '20261012emailrestore1'/);
+  assert.match(sw, /var VERSION = '20261012kpisla1'/);
   assert.match(sw, /assets\/auth\.js\?v=20261012emailrestore1/);
   assert.match(rootHtml, /assets\/auth\.js\?v=20261012emailrestore1/);
   assert.match(read('assets/auth.js'), /signInWithPassword\(\{email:em,password:pw\}\)/);
