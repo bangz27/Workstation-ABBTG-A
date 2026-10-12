@@ -64,8 +64,52 @@
     var id=group==='fleet'?person.driver_id:person.ops_id;
     var emp=group==='fleet'?person.employee_id:'';
     var dept=group==='ops'?person.department:'';
-    var compensatory= ['compensatory_1','compensatory_2','compensatory_3'].map(function(key,i){return person[key]?'<span>วันหยุดชดเชย#'+(i+1)+' <strong>'+esc(person[key])+'</strong></span>':'';}).join(''); return '<article class="person-card"><div class="person-top"><div><div class="person-name">'+esc(person.staff_name)+'</div><div class="person-id">'+(group==='fleet'?'Driver ID':'Ops ID')+': '+esc(id||'—')+'</div></div><span class="tag '+group+'">'+(group==='fleet'?'Fleet':'Ops')+'</span></div><div class="person-meta">'+(emp?'<span>Employee ID <strong>'+esc(emp)+'</strong></span>':'')+(dept?'<span>แผนก <strong>'+esc(dept)+'</strong></span>':'')+'<span>กะ <strong>'+esc(person.shift||'—')+'</strong></span><span>Weekly Off <strong>'+esc(person.weekly_off||'—')+'</strong></span>'+compensatory+'</div></article>';
+    var compensatory= ['compensatory_1','compensatory_2','compensatory_3'].map(function(key,i){return person[key]?'<span>วันหยุดชดเชย#'+(i+1)+' <strong>'+esc(person[key])+'</strong></span>':'';}).join(''); return '<article class="person-card" role="button" tabindex="0" data-person-group="'+group+'" data-person-id="'+esc(id||'')+'" data-person-name="'+esc(person.staff_name||'')+'" aria-label="ดูรายละเอียด '+esc(person.staff_name||'')+'"><div class="person-top"><div><div class="person-name">'+esc(person.staff_name)+'</div><div class="person-id">'+(group==='fleet'?'Driver ID':'Ops ID')+': '+esc(id||'—')+'</div></div><span class="tag '+group+'">'+(group==='fleet'?'Fleet':'Ops')+'</span></div><div class="person-meta">'+(emp?'<span>Employee ID <strong>'+esc(emp)+'</strong></span>':'')+(dept?'<span>แผนก <strong>'+esc(dept)+'</strong></span>':'')+'<span>กะ <strong>'+esc(person.shift||'—')+'</strong></span><span>Weekly Off <strong>'+esc(person.weekly_off||'—')+'</strong></span>'+compensatory+'</div></article>';
   }
+  function detailRow(label,value){ return '<div class="reference-row"><dt>'+esc(label)+'</dt><dd>'+esc(value||'—')+'</dd></div>'; }
+  function openPersonReference(group,id,name){
+    var records=group==='fleet'?state.fleet:state.ops;
+    var person=records.find(function(p){
+      var personId=String(group==='fleet'?p.driver_id:p.ops_id||'');
+      return personId===String(id||'') && String(p.staff_name||'')===String(name||'');
+    });
+    if(!person)return;
+    var rows=[];
+    rows.push(detailRow('ชื่อ-นามสกุล',person.staff_name));
+    if(group==='fleet'){
+      rows.push(detailRow('Driver ID',person.driver_id));
+      rows.push(detailRow('Employee ID',person.employee_id));
+    }else{
+      rows.push(detailRow('Ops ID',person.ops_id));
+      rows.push(detailRow('แผนก',person.department));
+    }
+    rows.push(detailRow('กะ',person.shift));
+    rows.push(detailRow('Weekly Off',person.weekly_off));
+    ['compensatory_1','compensatory_2','compensatory_3'].forEach(function(key,index){
+      if(person[key])rows.push(detailRow('วันหยุดชดเชย #'+(index+1),person[key]));
+    });
+    rows.push(detailRow('เดือนอ้างอิง',Core.monthLabel(selectedMonthKey())));
+    $('person-reference-title').textContent=person.staff_name||'รายละเอียดรายชื่อ';
+    $('person-reference-subtitle').textContent=(group==='fleet'?'Fleet':'Ops')+' · ข้อมูลอ้างอิงจาก Owner Source';
+    $('person-reference-content').innerHTML=rows.join('');
+    $('person-reference-modal').hidden=false;
+    document.body.classList.add('reference-modal-open');
+    $('person-reference-close').focus();
+  }
+  function closePersonReference(){
+    $('person-reference-modal').hidden=true;
+    document.body.classList.remove('reference-modal-open');
+  }
+  document.addEventListener('click',function(event){
+    var card=event.target.closest('.person-card[data-person-group]');
+    if(card){openPersonReference(card.getAttribute('data-person-group'),card.getAttribute('data-person-id'),card.getAttribute('data-person-name'));return;}
+    if(event.target.closest('#person-reference-close')||event.target.id==='person-reference-modal')closePersonReference();
+  });
+  document.addEventListener('keydown',function(event){
+    var card=event.target.closest&&event.target.closest('.person-card[data-person-group]');
+    if(card&&(event.key==='Enter'||event.key===' ')){event.preventDefault();openPersonReference(card.getAttribute('data-person-group'),card.getAttribute('data-person-id'),card.getAttribute('data-person-name'));return;}
+    if(event.key==='Escape'&&!$('person-reference-modal').hidden)closePersonReference();
+  });
   function renderCalendar(){
     var summary=Core.summarize(state.fleet,state.ops);
     $('fleet-total').textContent=summary.totalFleet;
