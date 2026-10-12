@@ -43,7 +43,7 @@ begin
    chosen:=left(base_name,31)||'-'||substr(replace(new.id::text,'-',''),1,6);
  end if;
  insert into public.workstation_accounts(user_id,username,is_active,can_home,can_fleet_overview,can_fleet,can_ops,can_leave)
- values(new.id,chosen,true,true,true,true,true,exists(select 1 from private.app_admins ad where ad.user_id=new.id))
+ values(new.id,chosen,true,false,false,false,false,false)
  on conflict(user_id) do nothing;
  return new;
 end; $$;
