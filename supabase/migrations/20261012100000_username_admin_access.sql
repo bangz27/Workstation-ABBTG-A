@@ -19,9 +19,10 @@ create table if not exists public.workstation_accounts (
 create unique index if not exists workstation_accounts_username_lower_uidx on public.workstation_accounts(lower(username));
 alter table public.workstation_accounts enable row level security;
 revoke all on public.workstation_accounts from anon, authenticated, public;
+grant all on public.workstation_accounts to service_role;
 -- Current accounts preserve existing page-read access during rollout.
 with source_users as (
- select u.*, lower(left(regexp_replace(split_part(u.email,'@',1),'[^A-Za-z0-9._-]','','g'),32)) as base_name
+ select u.*, case when length(lower(left(regexp_replace(split_part(u.email,'@',1),'[^A-Za-z0-9._-]','','g'),32)))<3 then 'user'||substr(replace(u.id::text,'-',''),1,8) else lower(left(regexp_replace(split_part(u.email,'@',1),'[^A-Za-z0-9._-]','','g'),32)) end as base_name
  from auth.users u where u.email is not null
 ), ranked_users as (
  select s.*, row_number() over(partition by s.base_name order by s.created_at,s.id) as name_rank
