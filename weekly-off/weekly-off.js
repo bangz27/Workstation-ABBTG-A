@@ -15,7 +15,8 @@
   function todayBangkok(){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Bangkok',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}
   function dateWeekday(dateValue){var d=new Date(String(dateValue)+'T12:00:00+07:00');return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][d.getDay()];}
   function dateForWeekday(day, offset){var key=Core.relativeMonthKey(offset);var parts=key.split('-').map(Number);var d=new Date(Date.UTC(parts[0],parts[1]-1,1,12));var target=Core.dayIndex(day);while(d.getUTCMonth()===parts[1]-1 && ((d.getUTCDay()+6)%7)!==target)d.setUTCDate(d.getUTCDate()+1);return d.getUTCMonth()===parts[1]-1?d.toISOString().slice(0,10):key;}
-  function setSelectedDate(value){if(!/^\d{4}-\d{2}-\d{2}$/.test(value||''))return;state.selectedDate=value;state.selected=dateWeekday(value);state.otRecords=[];$('ot-date').value=value;renderCalendar();loadOT();}
+  function configureDateRange(){var current=Core.relativeMonthKey(0),next=Core.relativeMonthKey(1),parts=next.split('-').map(Number);var last=new Date(Date.UTC(parts[0],parts[1],0)).toISOString().slice(0,10);$('ot-date').min=current;$('ot-date').max=last;}
+  function setSelectedDate(value){if(!/^\d{4}-\d{2}-\d{2}$/.test(value||''))return;var current=Core.relativeMonthKey(0),next=Core.relativeMonthKey(1),month=value.slice(0,7)+'-01';if(month!==current&&month!==next){$('ot-date').value=state.selectedDate;setStatus('เลือกวันที่ได้เฉพาะเดือนปัจจุบันและเดือนถัดไป','error');return;}state.monthOffset=month===next?1:0;state.selectedDate=value;state.selected=dateWeekday(value);state.otRecords=[];$('ot-date').value=value;configureDateRange();renderAll();loadOT();}
   function isOT(group, person){var id=String(group==='fleet'?person.driver_id:person.ops_id||'');return state.otRecords.some(function(r){return r.staff_type===group&&String(r.person_id)===id;});}
   function otPersonCard(record){return '<article class="person-card ot-person-card"><div class="person-top"><div><div class="person-name">'+esc(record.person_name)+'</div><div class="person-id">'+(record.staff_type==='fleet'?'Driver ID':'Ops ID')+': '+esc(record.person_id)+'</div></div><span class="tag ot-tag">OT · '+(record.staff_type==='fleet'?'Fleet':'Ops')+'</span></div><button type="button" class="ot-action ot-remove" data-ot-action="remove" data-ot-group="'+esc(record.staff_type)+'" data-ot-id="'+esc(record.person_id)+'">ยกเลิก OT · กลับไปคนหยุด</button></article>';}
   async function loadOT(){if(!isAuthenticated||!state.session||!state.session.access_token)return;var date=state.selectedDate;try{var result=await sb.from('weekly_off_ot').select('shift_date,staff_type,person_id,person_name').eq('shift_date',date).order('staff_type').order('person_name');if(result.error)throw result.error;if(date!==state.selectedDate)return;state.otRecords=result.data||[];renderDayDetail();}catch(error){setStatus('โหลดข้อมูล OT ไม่สำเร็จ','error');$('error-message').textContent='อ่านข้อมูล OT ไม่สำเร็จ: '+(error.message||'เกิดข้อผิดพลาด');$('load-error').hidden=false;}}
@@ -24,7 +25,7 @@
   function esc(value){ return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]; }); }
   function allowed(session){ return !!(session && session.user && session.user.is_anonymous !== true); }
   function selectedMonthKey(){ return Core.relativeMonthKey(state.monthOffset); }
-  function setMonthTab(offset){ state.monthOffset=offset; state.selected='Monday'; state.selectedDate=dateForWeekday('Monday',offset); state.otRecords=[]; $('ot-date').value=state.selectedDate; renderAll(); loadOT(); }
+  function setMonthTab(offset){ state.monthOffset=offset; state.selected='Monday'; state.selectedDate=dateForWeekday('Monday',offset); state.otRecords=[]; $('ot-date').value=state.selectedDate; configureDateRange(); renderAll(); loadOT(); }
   function renderMonthHeader(){ var key=selectedMonthKey(); $('source-month').textContent=(state.monthOffset===0?'M0':'M+1')+' · '+Core.monthLabel(key); Array.prototype.forEach.call(document.querySelectorAll('.month-tab'),function(btn){var active=Number(btn.getAttribute('data-month-offset'))===state.monthOffset;btn.classList.toggle('active',active);btn.setAttribute('aria-selected',active?'true':'false');}); }
   function showGate(message){
     loadVersion++;
@@ -39,6 +40,7 @@
     state.session=session; isAuthenticated=true;
     $('auth-gate').hidden=true; $('weekly-app').hidden=false;
     $('ot-date').value=state.selectedDate;
+    configureDateRange();
     load();
   }
   function setStatus(text, kind){ var el=$('source-state'); el.textContent=text; el.className='source-state'+(kind?' '+kind:''); }
@@ -196,6 +198,7 @@
     state.selectedDate=dateForWeekday(state.selected,state.monthOffset);
     state.otRecords=[];
     $('ot-date').value=state.selectedDate;
+    configureDateRange();
     renderDayDetail();
     loadOT();
   });
