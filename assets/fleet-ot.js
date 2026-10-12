@@ -57,9 +57,9 @@ function updateStats(){
   if(!isFleet())return;
   var s=state();if(!s||!s.res)return;
   var i=s.res.dates.indexOf(s.date);if(i<0)return;
-  var work=0,off=0;
-  s.people.forEach(function(p){var c=p.cells[i];if(c&&c.k==='work')work++;else if(c&&c.k==='off')off++;});
-  var ot=records.length;
+  var work=0,off=0,offKeys={};
+  s.people.forEach(function(p){var c=p.cells[i];if(c&&c.k==='work')work++;else if(c&&c.k==='off'){off++;offKeys[String(p.key)]=true;}});
+  var ot=records.filter(function(r){return !!offKeys[String(r.person_id)];}).length;
   var w=$('scards').querySelector('.scard.work .v'),o=$('scards').querySelector('.scard.off .v');
   if(w&&w.textContent!==String(work+ot)+'คน')w.innerHTML=(work+ot)+'<small>คน</small>';
   if(o&&o.textContent!==String(Math.max(0,off-ot))+'คน')o.innerHTML=Math.max(0,off-ot)+'<small>คน</small>';
