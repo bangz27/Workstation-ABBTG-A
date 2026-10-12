@@ -50,12 +50,14 @@ sb.auth.getSession().then(function(r){
 /* ---------- login ---------- */
 $('loginForm').addEventListener('submit',function(e){
   e.preventDefault();
-  var em=$('username').value.trim(),pw=$('pw').value,btn=$('loginBtn');
-  if(!em||!pw){msg('loginMsg','กรุณากรอก Username หรืออีเมล และรหัสผ่าน');return;}
+  var em=$('email').value.trim(),pw=$('pw').value,btn=$('loginBtn');
+  if(!em||!pw){msg('loginMsg','กรุณากรอกอีเมลและรหัสผ่าน');return;}
   btn.disabled=true;btn.textContent='กำลังเข้าสู่ระบบ…';msg('loginMsg','');
-  api.usernameLogin(em,pw).then(function(){
-    btn.disabled=false;btn.textContent='เข้าสู่ระบบ';$('pw').value='';showApp();
-  },function(err){btn.disabled=false;btn.textContent='เข้าสู่ระบบ';msg('loginMsg',err.message||api.thErr(err));$('pw').select();});
+  sb.auth.signInWithPassword({email:em,password:pw}).then(function(r){
+    btn.disabled=false;btn.textContent='เข้าสู่ระบบ';
+    if(r.error){msg('loginMsg',api.thErr(r.error));$('pw').select();return;}
+    $('pw').value='';showApp();
+  },function(err){btn.disabled=false;btn.textContent='เข้าสู่ระบบ';msg('loginMsg',api.thErr(err));});
 });
 
 /* ---------- set new password (recovery / invite link) ---------- */
