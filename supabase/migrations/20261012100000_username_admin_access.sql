@@ -63,7 +63,7 @@ as $$
  select exists(select 1 from public.workstation_accounts a where a.user_id=(select auth.uid()) and a.is_active
  and (exists(select 1 from private.app_admins ad where ad.user_id=(select auth.uid()))
  or case p_access when 'home' then a.can_home when 'fleet_overview' then a.can_fleet_overview
- when 'fleet' then a.can_fleet when 'ops' then a.can_ops when 'leave' then a.can_leave
+ when 'fleet' then (a.can_fleet or a.can_manage_fleet) when 'ops' then (a.can_ops or a.can_manage_ops) when 'leave' then (a.can_leave or a.can_manage_leave or private.leave_can('view'))
  when 'manage_fleet' then a.can_manage_fleet when 'manage_ops' then a.can_manage_ops
  when 'manage_leave' then a.can_manage_leave else false end));
 $$;
@@ -109,14 +109,14 @@ create policy weekly_off_ot_workstation_delete on public.weekly_off_ot for delet
 
 drop policy if exists "view leave (admin or can_view)" on public.leave_records;
 create policy "view leave (admin or can_view)" on public.leave_records for select to authenticated
-using(private.has_workstation_access('leave') and (private.is_admin() or exists(select 1 from private.leave_permissions lp where lower(lp.email)=lower((select auth.jwt()->>'email')) and lp.can_view)));
+using(private.has_workstation_access('leave'));
 drop policy if exists "add leave (admin or can_add)" on public.leave_records;
 create policy "add leave (admin or can_add)" on public.leave_records for insert to authenticated
-with check(private.has_workstation_access('leave') and (private.is_admin() or private.leave_can('add')));
+with check(private.has_workstation_access('leave') and (private.is_admin() or private.has_workstation_access('manage_leave') or private.leave_can('add')));
 drop policy if exists "edit leave (admin or can_edit)" on public.leave_records;
 create policy "edit leave (admin or can_edit)" on public.leave_records for update to authenticated
-using(private.has_workstation_access('leave') and (private.is_admin() or private.leave_can('edit')))
-with check(private.has_workstation_access('leave') and (private.is_admin() or private.leave_can('edit')));
+using(private.has_workstation_access('leave') and (private.is_admin() or private.has_workstation_access('manage_leave') or private.leave_can('edit')))
+with check(private.has_workstation_access('leave') and (private.is_admin() or private.has_workstation_access('manage_leave') or private.leave_can('edit')));
 drop policy if exists "delete leave (admin or can_delete)" on public.leave_records;
 create policy "delete leave (admin or can_delete)" on public.leave_records for delete to authenticated
-using(private.has_workstation_access('leave') and (private.is_admin() or private.leave_can('delete')));
+using(private.has_workstation_access('leave') and (private.is_admin() or private.has_workstation_access('manage_leave') or private.leave_can('delete')));
