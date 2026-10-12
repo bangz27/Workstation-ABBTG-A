@@ -12,8 +12,7 @@ var baseStart=window.SPX_START;\nfunction apply(a){
  if(!allowed.length){document.body.classList.add('auth-out');alert('บัญชีนี้ยังไม่ได้รับสิทธิ์เข้าใช้งาน กรุณาติดต่อผู้ดูแลระบบ');api.client.auth.signOut({scope:'local'});return;}
  var current=location.hash.match(/view=(home|driver|fleet|ops|leave)/);var chosen=current&&allowed.indexOf(current[1])>=0?current[1]:allowed[0];
  try{localStorage.setItem('spxView2',chosen);}catch(e){}
- var original=window.SPX_START;
- if(original){original();if(chosen!=='home'||!a.home){setTimeout(function(){if(window.SPX_VIEW)window.SPX_VIEW.set(chosen);},0);}}
+ if(baseStart){baseStart();if(chosen!=='home'||!a.home){setTimeout(function(){if(window.SPX_VIEW)window.SPX_VIEW.set(chosen);},0);}}
  var adminBtn=document.getElementById('userAdminBtn');if(adminBtn)adminBtn.hidden=!a.is_admin;
  var gear=document.getElementById('gearBtn');if(gear)gear.hidden=!(a.is_admin||a.manage_leave);
 }
