@@ -6,7 +6,7 @@
   var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_KEY, {
     auth: {persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, flowType:'implicit', storageKey:'abbtga-ws-auth'}
   });
-  var state = {fleet:[], ops:[], selected:'Monday', session:null, lastUpdated:null, months:{}, monthOffset:0, selectedDate:todayBangkok(), otRecords:[]};
+  var state = {fleet:[], ops:[], selected:dateWeekday(todayBangkok()), session:null, lastUpdated:null, months:{}, monthOffset:0, selectedDate:todayBangkok(), otRecords:[]};
   var PAGE_SIZE = 500;
   var WEEKDAY_LABELS = ['จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์','อาทิตย์'];
   var isAuthenticated = false;
