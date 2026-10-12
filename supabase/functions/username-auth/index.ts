@@ -13,7 +13,7 @@ Deno.serve(async(req:Request)=>{
  let email=identity.toLowerCase();
  if(!identity.includes("@")){
   if(!/^[A-Za-z0-9._-]{3,40}$/.test(identity))return reply(401,{error:"Username หรือรหัสผ่านไม่ถูกต้อง"});
-  const {data,error}=await root.from("workstation_accounts_lookup").select("email,is_active").ilike("username",identity).maybeSingle();
+  const {data,error}=await root.from("workstation_accounts_lookup").select("email,is_active").eq("username",identity.toLowerCase()).maybeSingle();
   if(error||!data||!data.is_active)return reply(401,{error:"Username หรือรหัสผ่านไม่ถูกต้อง"});email=String(data.email);
  }
  const client=createClient(url,anon,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
