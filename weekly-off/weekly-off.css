@@ -74,15 +74,3 @@ body{background:var(--bg);color:var(--ink)}
 .month-tab.active{background:#E5EDE8;color:#294A38}
 button:focus-visible,input:focus-visible{outline-color:#82A9C2}
 .data-note{border-color:#E5D7A6;background:var(--yellow-soft)}
-
-/* Daily OT controls: additive UI only; source roster remains read-only. */
-.ot-date-label{display:block;margin-top:10px;font-size:12px;font-weight:700;color:var(--muted)}
-.ot-date-input{display:block;margin-top:4px;min-height:40px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font:inherit}
-.ot-group{margin-top:14px;background:#FFFDF7}
-.ot-group h3{padding-bottom:8px;border-bottom:2px solid #E5D7A6}
-.ot-help{margin:-5px 0 12px;color:var(--muted);font-size:12px}
-.ot-action{display:inline-flex;align-items:center;justify-content:center;min-height:34px;margin-top:10px;padding:6px 10px;border:1px solid var(--line);border-radius:7px;background:var(--yellow-soft);color:var(--ink);font:inherit;font-size:12px;font-weight:700;cursor:pointer}
-.ot-action:disabled{opacity:.6;cursor:wait}
-.ot-remove{background:var(--green-soft)}
-.ot-tag{background:var(--yellow-soft)}
-@media(max-width:650px){.ot-date-input{width:100%;max-width:260px}.ot-group{margin-top:10px}}

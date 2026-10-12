@@ -1,0 +1,20 @@
+.fleet-ot-panel{margin:0 0 16px;padding:16px;border:2px solid var(--ui-border,#171717);border-radius:16px;background:#FFF8D9;box-shadow:3px 3px 0 #171717}
+.fleet-ot-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.fleet-ot-head h2{margin:0;font-size:17px;font-weight:800}
+.fleet-ot-head p{margin:4px 0 0;color:var(--ui-muted,#666);font-size:12px}
+.fleet-ot-count,.fleet-ot-tag{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;border:1px solid #171717;border-radius:999px;padding:4px 9px;background:#FFC928;font-size:11px;font-weight:800}
+.fleet-ot-message{min-height:0;margin:0 0 8px;color:#555;font-size:12px}
+.fleet-ot-message:empty{display:none}
+.fleet-ot-message.error{padding:8px 10px;border:1px solid #B42318;border-radius:8px;background:#FDE0DF;color:#B42318}
+.fleet-ot-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.fleet-ot-empty{grid-column:1/-1;padding:14px;text-align:center;border:1px dashed #C7B66D;border-radius:10px;color:#666;font-size:13px}
+.fleet-ot-card{display:flex;align-items:center;gap:9px;min-width:0;padding:10px;border:1px solid #171717;border-radius:10px;background:#fff}
+.fleet-ot-person{display:flex;flex:1;flex-direction:column;min-width:0;gap:2px}
+.fleet-ot-person b{font-size:13px;overflow-wrap:anywhere}
+.fleet-ot-person small{font-size:11px;color:#666;overflow-wrap:anywhere}
+.fleet-ot-remove,.fleet-ot-add,.fleet-ot-retry{min-height:34px;padding:6px 10px;border:1px solid #171717;border-radius:8px;font:inherit;font-size:12px;font-weight:800;cursor:pointer}
+.fleet-ot-remove{background:#DFF6E1;white-space:nowrap}
+.fleet-ot-add{margin-left:8px;background:#FFF3C4}
+.fleet-ot-retry{background:#fff}
+.fleet-ot-add:disabled,.fleet-ot-remove:disabled{opacity:.55;cursor:wait}
+@media(max-width:650px){.fleet-ot-panel{padding:12px}.fleet-ot-list{grid-template-columns:1fr}.fleet-ot-card{flex-wrap:wrap}.fleet-ot-person{flex-basis:calc(100% - 100px)}.fleet-ot-add{display:block;margin:8px 0 0}.fleet-ot-head h2{font-size:15px}}
