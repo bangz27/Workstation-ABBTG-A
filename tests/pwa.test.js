@@ -49,12 +49,16 @@ test('root and standalone Weekly Off use the same root manifest and shared worke
   assert.ok(fs.existsSync(path.join(root, 'weekly-off/index.html'))); // /weekly-off, /weekly-off/, and /weekly-off/index.html share this shell
 });
 
-test('the existing worker caches route-correct shells for /, /weekly-off, and /weekly-off/index.html', () => {
+test('the worker refreshes cached shells and Email Login after auth rollback', () => {
   assert.match(sw, /path === '' \|\| path === 'index\.html'/);
   assert.match(sw, /path === 'weekly-off' \|\| path === 'weekly-off\/' \|\| path === 'weekly-off\/index\.html'/);
   assert.match(sw, /Response\.redirect\(new URL\('weekly-off\/'/);
   assert.match(sw, /weekly-off\/index\.html/);
-  assert.match(sw, /var VERSION = '20261012fleetsoftcards'/);
+  assert.match(sw, /var VERSION = '20261012emailrestore1'/);
+  assert.match(sw, /assets\/auth\.js\?v=20261012emailrestore1/);
+  assert.match(rootHtml, /assets\/auth\.js\?v=20261012emailrestore1/);
+  assert.match(read('assets/auth.js'), /signInWithPassword\(\{email:em,password:pw\}\)/);
+  assert.doesNotMatch(rootHtml + read('assets/auth.js') + read('assets/api.js'), /username-auth|workstation_accounts_lookup|usernameLogin/);
 });
 
 test('service worker bypasses Supabase, credentials, tokens and non-GET data requests before caching', () => {
