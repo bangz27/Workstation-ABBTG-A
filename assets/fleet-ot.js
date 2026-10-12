@@ -61,11 +61,11 @@ function updateStats(){
   s.people.forEach(function(p){var c=p.cells[i];if(c&&c.k==='work')work++;else if(c&&c.k==='off')off++;});
   var ot=records.length;
   var w=$('scards').querySelector('.scard.work .v'),o=$('scards').querySelector('.scard.off .v');
-  if(w)w.innerHTML=(work+ot)+'<small>คน</small>';
-  if(o)o.innerHTML=Math.max(0,off-ot)+'<small>คน</small>';
+  if(w&&w.textContent!==String(work+ot)+'คน')w.innerHTML=(work+ot)+'<small>คน</small>';
+  if(o&&o.textContent!==String(Math.max(0,off-ot))+'คน')o.innerHTML=Math.max(0,off-ot)+'<small>คน</small>';
   var wc=$('schips').querySelector('.chip[data-f="work"] .n'),oc=$('schips').querySelector('.chip[data-f="off"] .n');
-  if(wc)wc.textContent=work+ot;
-  if(oc)oc.textContent=Math.max(0,off-ot);
+  if(wc&&wc.textContent!==String(work+ot))wc.textContent=work+ot;
+  if(oc&&oc.textContent!==String(Math.max(0,off-ot)))oc.textContent=Math.max(0,off-ot);
   var rows=$('slist').querySelectorAll('.prow:not([hidden])');
   var visible=0;Array.prototype.forEach.call(rows,function(r){if(r.style.display!=='none')visible++;});
   var cnt=$('scnt');if(cnt)cnt.textContent='แสดง '+visible+' / '+s.people.length+' คน';
