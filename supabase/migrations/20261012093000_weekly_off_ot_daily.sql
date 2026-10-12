@@ -33,7 +33,6 @@ create policy weekly_off_ot_signed_in_update
   using (coalesce(((select auth.jwt()) ->> 'is_anonymous')::boolean, false) = false)
   with check (
     coalesce(((select auth.jwt()) ->> 'is_anonymous')::boolean, false) = false
-    and created_by = (select auth.uid())
   );
 
 create policy weekly_off_ot_signed_in_delete
