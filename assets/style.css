@@ -1123,3 +1123,25 @@ body:not(.v-home) button:not(.views button):not(.gear){
   box-shadow:none;
 }
 body:not(.v-home) .err{background:#FFF1EF;color:#713B38}
+
+/* Fleet Overview — match the homepage's restrained monochrome surface system. */
+body.v-driver{--oc-ink:#201d1d;--oc-canvas:#fdfcfc;--oc-soft:#f8f7f7;--oc-card:#f1eeee;--oc-muted:#646262;--oc-line:rgba(15,0,0,.16);background:var(--oc-canvas);color:var(--oc-ink);font-family:'IBM Plex Mono','Prompt',monospace}
+body.v-driver *{font-family:'IBM Plex Mono','Prompt',monospace}
+body.v-driver .topbar{background:var(--oc-canvas);border-bottom:1px solid var(--oc-line);box-shadow:none;color:var(--oc-ink)}
+body.v-driver .topbar .tkick{color:var(--oc-muted)}
+body.v-driver .toolbar{background:var(--oc-canvas);box-shadow:0 0 0 100vmax var(--oc-canvas)}
+body.v-driver .search input{border:1px solid var(--oc-ink);border-radius:4px;box-shadow:none;background:#fff}
+body.v-driver .chip{border:1px solid var(--oc-ink);border-radius:4px;box-shadow:none;background:var(--oc-canvas);font-size:12px}
+body.v-driver .chip.on{background:var(--oc-ink);color:var(--oc-canvas);box-shadow:none}
+body.v-driver .chip .n{border-radius:2px;background:var(--oc-card);color:var(--oc-ink)}
+body.v-driver .chip.on .n{background:var(--oc-canvas);color:var(--oc-ink)}
+body.v-driver .sortbar select,body.v-driver .dirbtn{border:1px solid var(--oc-ink);border-radius:4px;box-shadow:none;background:var(--oc-canvas)}
+body.v-driver #cards .card{border:1px solid var(--oc-line);border-radius:4px;box-shadow:none;background:var(--oc-canvas);color:var(--oc-ink)}
+body.v-driver #cards .card:nth-child(n){background:var(--oc-canvas);border-color:var(--oc-line)}
+body.v-driver #cards .card:before{border:1px solid var(--oc-ink);border-radius:3px;box-shadow:none;background-color:var(--oc-card)}
+body.v-driver #cards .card .k,body.v-driver #cards .card .s{color:var(--oc-muted)}
+body.v-driver #cards .card .v{color:var(--oc-ink)}
+body.v-driver .thead{border-color:var(--oc-line);background:var(--oc-card);color:var(--oc-muted)}
+body.v-driver .rmain{border-color:var(--oc-line);background:var(--oc-canvas)}
+body.v-driver .rmain .badge{border-radius:3px}
+body.v-driver .err,body.v-driver .warn{border-radius:4px;box-shadow:none}
