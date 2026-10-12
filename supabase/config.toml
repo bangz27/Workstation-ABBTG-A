@@ -1,0 +1,10 @@
+project_id = "bkmvwgoldyrzmgvmeskp"
+
+[functions.username-auth]
+verify_jwt = false
+
+[functions.user-admin]
+verify_jwt = true
+
+[functions.invite-user]
+verify_jwt = true
