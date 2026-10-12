@@ -23,6 +23,7 @@ Deno.serve(async(req:Request)=>{
  const username=String(b.username??"").trim().toLowerCase();
  if(!/^[a-z0-9._-]{3,40}$/.test(username))return reply(400,{error:"Username ต้องเป็น a-z, 0-9, จุด, _ หรือ - และยาว 3–40 ตัว"});
  const patch:any={};for(const f of fields)patch[f]=b[f]===true;
+ if(b.action==="update"&&typeof b.password==="string"&&b.password.length>0&&b.password.length<10)return reply(400,{error:"รหัสผ่านต้องมีอย่างน้อย 10 ตัวอักษร"});
  if(b.action==="create"){
   const password=String(b.password??"");if(password.length<10)return reply(400,{error:"รหัสผ่านเริ่มต้นต้องมีอย่างน้อย 10 ตัวอักษร"});
   const {data:exists,error:lookupErr}=await root.from("workstation_accounts_lookup").select("username").ilike("username",username).maybeSingle();
