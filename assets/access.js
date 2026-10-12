@@ -2,8 +2,8 @@
 (function(){
 "use strict";
 var api=window.SPX_API;
-function apply(a){
- if(!a||a.active===false){document.body.classList.add('auth-out');return;}
+var baseStart=window.SPX_START;\nfunction apply(a){
+ if(!a||a.active===false){document.body.classList.add('auth-out');api.client.auth.signOut({scope:'local'}).then(function(){location.reload();});return;}
  if(a.is_admin){['home','fleet_overview','fleet','ops','leave'].forEach(function(k){a[k]=true;});a.manage_fleet=a.manage_ops=a.manage_leave=true;}
  window.SPX_ACCESS=a;
  var map={home:'home',driver:'fleet_overview',fleet:'fleet',ops:'ops',leave:'leave'};
@@ -17,7 +17,7 @@ function apply(a){
  var adminBtn=document.getElementById('userAdminBtn');if(adminBtn)adminBtn.hidden=!a.is_admin;
  var gear=document.getElementById('gearBtn');if(gear)gear.hidden=!(a.is_admin||a.manage_leave);
 }
-var original=window.SPX_START,wrapped=false;
+var wrapped=false;
 window.SPX_START=function(){
  if(wrapped)return;wrapped=true;
  api.getWorkstationAccess().then(apply).catch(function(e){
