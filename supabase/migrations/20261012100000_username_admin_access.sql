@@ -93,9 +93,9 @@ create policy "workstation access can read daily report" on public.daily_report 
 drop policy if exists "signed-in users can read" on public.fleet_roster;
 create policy "workstation access can read fleet roster" on public.fleet_roster for select to authenticated using(private.has_workstation_access('fleet') or private.has_workstation_access('fleet_overview') or private.has_workstation_access('leave'));
 drop policy if exists "signed-in users can read" on public.fleet_shifts;
-create policy "workstation access can read fleet shifts" on public.fleet_shifts for select to authenticated using(private.has_workstation_access('fleet') or private.has_workstation_access('leave'));
+create policy "workstation access can read fleet shifts" on public.fleet_shifts for select to authenticated using(private.has_workstation_access('fleet'));
 drop policy if exists "signed-in users can read" on public.ops_roster;
-create policy "workstation access can read ops roster" on public.ops_roster for select to authenticated using(private.has_workstation_access('ops') or private.has_workstation_access('leave'));
+create policy "workstation access can read ops roster" on public.ops_roster for select to authenticated using(private.has_workstation_access('ops'));
 drop policy if exists "signed-in users can read" on public.ops_shifts;
 create policy "workstation access can read ops shifts" on public.ops_shifts for select to authenticated using(private.has_workstation_access('ops') or private.has_workstation_access('leave'));
 drop policy if exists "signed-in users can read" on public.sheet_snapshot;
