@@ -99,7 +99,7 @@ create policy "workstation access can read ops roster" on public.ops_roster for 
 drop policy if exists "signed-in users can read" on public.ops_shifts;
 create policy "workstation access can read ops shifts" on public.ops_shifts for select to authenticated using(private.has_workstation_access('ops') or private.has_workstation_access('leave'));
 drop policy if exists "signed-in users can read" on public.sheet_snapshot;
-create policy "workstation access can read snapshots" on public.sheet_snapshot for select to authenticated using(private.has_workstation_access('home') or private.has_workstation_access('fleet_overview') or private.has_workstation_access('fleet') or private.has_workstation_access('ops'));
+create policy "workstation access can read snapshots" on public.sheet_snapshot for select to authenticated using(private.has_workstation_access('home') or private.has_workstation_access('fleet_overview') or private.has_workstation_access('fleet') or private.has_workstation_access('ops') or private.has_workstation_access('leave'));
 drop policy if exists weekly_off_signed_in_read on public.fleet_weekly_off;
 create policy weekly_off_workstation_read on public.fleet_weekly_off for select to authenticated using(private.has_workstation_access('fleet') or private.has_workstation_access('leave'));
 drop policy if exists weekly_off_signed_in_read on public.ops_weekly_off;
