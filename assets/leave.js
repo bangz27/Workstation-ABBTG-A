@@ -23,7 +23,7 @@ function init(){
   L.date=L.date||today();L.form.start=L.form.end=today();
   api.getMyLeavePerms().then(function(p){
     p=p||{};
-    L.perm={known:true,email:p.email||'',admin:!!p.is_admin,view:!!p.can_view,add:!!p.can_add,edit:!!p.can_edit,del:!!p.can_delete};
+    L.perm={known:true,email:p.email||'',admin:!!p.is_admin,view:!!p.can_view||!!(window.SPX_ACCESS&&window.SPX_ACCESS.leave),add:!!p.can_add||!!(window.SPX_ACCESS&&window.SPX_ACCESS.manage_leave),edit:!!p.can_edit||!!(window.SPX_ACCESS&&window.SPX_ACCESS.manage_leave),del:!!p.can_delete||!!(window.SPX_ACCESS&&window.SPX_ACCESS.manage_leave)};
     applyPerm();
   },function(){L.perm.known=true;applyPerm();});
 }
@@ -34,7 +34,7 @@ function applyPerm(){
   var tab=document.querySelector('#views button[data-v="leave"]');if(tab)tab.hidden=!P.view;
   if(!P.view){
     L.rows.length=0;L.loaded=false;L.formOpen=false;
-    if(isView())V().set('driver');
+    if(isView()){var A=window.SPX_ACCESS||{};V().set(A.home?'home':A.fleet_overview?'driver':A.fleet?'fleet':A.ops?'ops':'home');}
     V().leavesChanged();
     return;
   }
