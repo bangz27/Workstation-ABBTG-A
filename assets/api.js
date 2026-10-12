@@ -52,7 +52,7 @@ window.SPX_API={
     return sb.functions.invoke('username-auth',{body:{username:username,password:password}}).then(function(r){
       if(r.error){var ctx=r.error.context,p=ctx&&typeof ctx.json==='function'?ctx.json().catch(function(){return null;}):Promise.resolve(null);return p.then(function(j){throw new Error(j&&j.error?j.error:thErr(r.error));});}
       if(!r.data||!r.data.session)throw new Error('เข้าสู่ระบบไม่สำเร็จ');
-      return sb.auth.setSession({access_token:r.data.session.access_token,refresh_token:r.data.session.refresh_token});
+      return sb.auth.setSession({access_token:r.data.session.access_token,refresh_token:r.data.session.refresh_token}).then(function(s){if(s.error)throw new Error(thErr(s.error));return s;});
     });
   },
   thErr:thErr,
