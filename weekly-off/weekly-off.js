@@ -154,21 +154,18 @@
   }
   $('login-form').addEventListener('submit',async function(event){
     event.preventDefault();
-    var username=$('login-email').value.trim(), password=$('login-password').value, button=$('login-button');
-    if(!username||!password){$('login-message').textContent='กรุณากรอก Username หรืออีเมล และรหัสผ่าน';return;}
+    var email=$('login-email').value.trim(), password=$('login-password').value, button=$('login-button');
+    if(!email||!password){$('login-message').textContent='กรุณากรอกอีเมลและรหัสผ่าน';return;}
     button.disabled=true; button.textContent='กำลังเข้าสู่ระบบ…'; $('login-message').textContent='';
     try{
-      var result=await sb.functions.invoke('username-auth',{body:{username:username,password:password}});
-      if(result.error){var ctx=result.error.context,detail=ctx&&typeof ctx.json==='function'?await ctx.json().catch(function(){return null;}):null;throw new Error(detail&&detail.error?detail.error:'เข้าสู่ระบบไม่สำเร็จ');}
-      if(!result.data||!result.data.session)throw new Error('เข้าสู่ระบบไม่สำเร็จ');
-      var sessionResult=await sb.auth.setSession({access_token:result.data.session.access_token,refresh_token:result.data.session.refresh_token});
-      if(sessionResult.error)throw sessionResult.error;
+      var result=await sb.auth.signInWithPassword({email:email,password:password});
+      if(result.error) throw result.error;
       $('login-password').value='';
-      if(!allowed(sessionResult.data.session)) throw new Error('บัญชีนี้ไม่มีสิทธิ์เข้าสู่ระบบ');
-      showApp(sessionResult.data.session);
+      if(!allowed(result.data.session)) throw new Error('บัญชีนี้ไม่มีสิทธิ์เข้าสู่ระบบ');
+      showApp(result.data.session);
     }catch(error){
       var message=String(error&&(error.message||error)||'');
-      $('login-message').textContent=/invalid login credentials/i.test(message)?'Username หรือรหัสผ่านไม่ถูกต้อง':(message||'เข้าสู่ระบบไม่สำเร็จ');
+      $('login-message').textContent=/invalid login credentials/i.test(message)?'อีเมลหรือรหัสผ่านไม่ถูกต้อง':(message||'เข้าสู่ระบบไม่สำเร็จ');
     }finally{button.disabled=false;button.textContent='เข้าสู่ระบบ';}
   });
   Array.prototype.forEach.call(document.querySelectorAll('.month-tab'),function(button){button.addEventListener('click',function(){setMonthTab(Number(button.getAttribute('data-month-offset')));});});
