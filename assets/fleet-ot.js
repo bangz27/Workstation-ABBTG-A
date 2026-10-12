@@ -23,12 +23,12 @@ function setMessage(s,kind){
   el.textContent=s||'';el.className='fleet-ot-message'+(kind?' '+kind:'');
 }
 function getClient(){return api&&api.client;}
-function loadRecords(date,force){
+function loadRecords(date,force,silent){
   var client=getClient();
   if(!date||!client)return;
   if(loading&&requestedDate===date)return;
   if(!force&&requestedDate===date&&activeDate===date)return;
-  requestedDate=date;loading=true;setMessage('กำลังโหลดรายการ OT…');
+  requestedDate=date;loading=true;if(!silent)setMessage('กำลังโหลดรายการ OT…');
   client.from('weekly_off_ot').select('shift_date,staff_type,person_id,person_name').eq('shift_date',date).eq('staff_type','fleet').order('person_name')
     .then(function(r){
       if(date!==currentDate())return;
@@ -141,5 +141,8 @@ function observe(){
   bodyObserver.observe(document.body,{attributes:true,attributeFilter:['class']});
   sync();
 }
+window.setInterval(function(){if(isFleet()&&currentDate()&&!loading)loadRecords(currentDate(),true,true);},30000);
+window.addEventListener('focus',function(){if(isFleet()&&currentDate()&&!loading)loadRecords(currentDate(),true,true);});
+document.addEventListener('visibilitychange',function(){if(!document.hidden&&isFleet()&&currentDate()&&!loading)loadRecords(currentDate(),true,true);});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',observe);else observe();
 })();
