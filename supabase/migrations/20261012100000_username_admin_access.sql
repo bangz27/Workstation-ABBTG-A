@@ -20,15 +20,21 @@ create unique index if not exists workstation_accounts_username_lower_uidx on pu
 alter table public.workstation_accounts enable row level security;
 revoke all on public.workstation_accounts from anon, authenticated, public;
 -- Current accounts preserve existing page-read access during rollout.
+with source_users as (
+ select u.*, lower(left(regexp_replace(split_part(u.email,'@',1),'[^A-Za-z0-9._-]','','g'),32)) as base_name
+ from auth.users u where u.email is not null
+), ranked_users as (
+ select s.*, row_number() over(partition by s.base_name order by s.created_at,s.id) as name_rank
+ from source_users s
+)
 insert into public.workstation_accounts(user_id,username,is_active,can_home,can_fleet_overview,can_fleet,can_ops,can_leave)
 select u.id,
- lower(left(regexp_replace(split_part(u.email,'@',1),'[^A-Za-z0-9._-]','','g'),32)) ||
- case when exists(select 1 from public.workstation_accounts a where lower(a.username)=lower(left(regexp_replace(split_part(u.email,'@',1),'[^A-Za-z0-9._-]','','g'),32)))
- then '-'||substr(replace(u.id::text,'-',''),1,6) else '' end,
+ case when u.name_rank=1 and not exists(select 1 from public.workstation_accounts a where lower(a.username)=u.base_name)
+      then u.base_name else left(u.base_name,31)||'-'||substr(replace(u.id::text,'-',''),1,6) end,
  true,true,true,true,true,
  exists(select 1 from private.app_admins ad where ad.user_id=u.id)
  or exists(select 1 from private.leave_permissions lp where lower(lp.email)=lower(u.email) and lp.can_view)
-from auth.users u where u.email is not null on conflict(user_id) do nothing;
+from ranked_users u on conflict(user_id) do nothing;
 
 create or replace function private.seed_workstation_account()
 returns trigger language plpgsql security definer set search_path=''
