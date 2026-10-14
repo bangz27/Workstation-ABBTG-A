@@ -1,25 +1,37 @@
 {
-  "id": "/weekly-off/",
+  "id": "./",
   "name": "Weekly Off — ABBTG-A",
   "short_name": "Weekly Off",
   "description": "ตารางวันหยุดประจำสัปดาห์ของ SPX Express Hub ABBTG-A",
   "lang": "th",
   "dir": "ltr",
-  "start_url": "/weekly-off/index.html",
-  "scope": "/weekly-off/",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#FFF6DF",
   "theme_color": "#FFF6DF",
   "icons": [
     {
-      "src": "/weekly-off/weekly-off-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "weekly-off-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/weekly-off/weekly-off-apple-touch-icon.png",
+      "src": "weekly-off-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "weekly-off-icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "weekly-off-apple-touch-icon.png",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
