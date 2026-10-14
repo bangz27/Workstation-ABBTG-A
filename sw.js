@@ -1,11 +1,14 @@
 /* ABBTG-A Workstation service worker
    - Network-first for the root and Weekly Off HTML shells, with route-correct offline fallback.
+   - Network-first (4s timeout, then cache) for same-origin JS/CSS/manifests, so a deploy reaches
+     users on the next load without relying on a VERSION bump. Images, fonts and CDN stay cache-first.
    - Cache only static same-origin assets and approved public CDN assets.
    - Never cache Supabase/auth requests, requests carrying Authorization, or token-bearing URLs.
    - Weekly Off data is kept separately by the authenticated page, not in Cache Storage.
 */
 'use strict';
-var VERSION = '20261015homefix1';
+var VERSION = '20261015fresh1';
+var NETWORK_TIMEOUT_MS = 4000;
 var CACHE = 'abbtga-ws-' + VERSION;
 var SCOPE_URL = new URL(self.registration.scope);
 var SUPABASE_SUFFIX = '.supabase.co';
@@ -58,6 +61,31 @@ function isStatic(url) {
 function cacheable(response) {
   return !!response && (response.ok || response.type === 'opaque');
 }
+function isFreshFirst(url) {
+  return url.origin === SCOPE_URL.origin && /\.(css|js|webmanifest)$/i.test(url.pathname);
+}
+/* Network-first with revalidation; falls back to the cached copy when offline or slow.
+   Cached under the path without the ?v= query so each file keeps a single entry. */
+function networkFirst(event, request, url) {
+  var key = url.origin + url.pathname;
+  return caches.open(CACHE).then(function (cache) {
+    function fromCache() { return cache.match(key, {ignoreSearch:true}); }
+    var network = fetch(request, {cache:'no-cache'}).then(function (response) {
+      if (!response.ok) return response;
+      return cache.put(key, response.clone()).catch(function () {}).then(function () { return response; });
+    });
+    event.waitUntil(network.catch(function () {}));
+    return new Promise(function (resolve) {
+      var done = false;
+      function finish(response) { if (!done && response) { done = true; resolve(response); } }
+      var timer = setTimeout(function () { fromCache().then(finish); }, NETWORK_TIMEOUT_MS);
+      network.then(function (response) { clearTimeout(timer); finish(response); }, function () {
+        clearTimeout(timer);
+        fromCache().then(function (cached) { finish(cached || Response.error()); });
+      });
+    });
+  });
+}
 
 self.addEventListener('install', function (event) {
   event.waitUntil(caches.open(CACHE).then(function (cache) {
@@ -103,6 +131,10 @@ self.addEventListener('fetch', function (event) {
   }
 
   if (!isStatic(url)) return;
+  if (isFreshFirst(url)) {
+    event.respondWith(networkFirst(event, request, url));
+    return;
+  }
   event.respondWith(caches.open(CACHE).then(function (cache) {
     return cache.match(request, {ignoreSearch:true}).then(function (cached) {
       if (cached) return cached;
