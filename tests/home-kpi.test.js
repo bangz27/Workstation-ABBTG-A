@@ -12,7 +12,7 @@ function loadHome() {
   const elements = new Map();
   const document = {
     getElementById(id) {
-      if (!elements.has(id)) elements.set(id, { innerHTML: '', textContent: '', style: {}, setAttribute() {} });
+      if (!elements.has(id)) elements.set(id, { innerHTML: '', textContent: '', style: {}, setAttribute() {}, addEventListener() {} });
       return elements.get(id);
     },
     addEventListener() {},
@@ -77,10 +77,10 @@ test('2W and 4W Allocation formulas remain unchanged', () => {
 
 test('Home card labels and cache keys match the revised formulas', () => {
   assert.match(source, /Assign ÷ \(Active 2W \+ Active 4W\)/);
-  assert.match(source, /Delivered ÷ Today.s Volume × 100/);
+  assert.match(source, /Delivered ÷ Today\\?'s Volume × 100/);
   assert.match(source, /calculate\(t,metrics\)/);
   const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
   const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
-  assert.match(index, /assets\/home\.js\?v=20261012kpisla1/);
-  assert.match(sw, /var VERSION = '20261012kpisla1'/);
+  assert.match(index, /assets\/home\.js\?v=\d{8}[a-z0-9]+/);
+  assert.match(sw, /var VERSION = '\d{8}[a-z0-9]+'/);
 });

@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Catches parse errors (e.g. an unescaped quote) before they reach the browser.
+      - name: Syntax check JavaScript
+        run: |
+          set -e
+          for f in $(git ls-files '*.js'); do
+            node --check "$f"
+          done
+
+      - name: Validate manifests
+        run: |
+          for f in manifest.webmanifest weekly-off/manifest.webmanifest; do
+            node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" || { echo "Invalid JSON: $f"; exit 1; }
+          done
+
+      - name: Run tests
+        run: node --test tests/*.test.js
