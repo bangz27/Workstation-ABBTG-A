@@ -137,3 +137,85 @@ body.theme-a #home .ha-top .htop-rate{padding:2px 6px;border-radius:4px;backgrou
   body.theme-a #home .ha-kpi>b{font-size:26px}
 }
 @media (prefers-reduced-motion:reduce){body.theme-a *{transition:none!important}}
+
+/* =====================================================================
+   Other app pages (Fleet Overview, กะ Fleet, กะ Ops, การลา)
+   1) re-point the older themes' tokens at the A palette,
+   2) flatten shared components (plates, chips, buttons, date strip),
+   3) drop decoration that the A design does not have.
+   ===================================================================== */
+body.theme-a{
+  --ui-bg:#FFFFFF;--ui-surface:#FFFFFF;--ui-text:var(--a-ink);--ui-muted:var(--a-muted);--ui-border:var(--a-ink);
+  --ui-yellow:var(--a-signal);--ui-cyan:#FFFFFF;--acc:var(--a-signal);
+  --ui-cyan-2:#FFFFFF;--ui-orange-2:#F2F3F5;--ui-yellow-2:var(--a-warn-bg);--ui-green-2:#E3F2EA;--ui-red-2:#F8E1DF;
+  --ui-line:var(--a-line);--ui-soft:#F2F3F5;--oth:#F2F3F5;
+  --ui-shadow:none;--ui-sh3:none;--ui-sh2:none;
+  --ui-radius-lg:10px;--ui-radius-md:10px;--ui-radius-sm:8px;
+  --theme-ink:var(--a-ink);--theme-muted:var(--a-muted);--theme-canvas:#FFFFFF;--theme-surface:#FFFFFF;--theme-line:var(--a-line);
+  --theme-blue:#FFFFFF;--theme-green:#FFFFFF;--theme-gold:#FFFFFF;--theme-coral:#FFFFFF;
+  --oc-ink:var(--a-ink);--oc-canvas:#FFFFFF;--oc-soft:#F2F3F5;--oc-card:#F2F3F5;--oc-muted:var(--a-muted);--oc-line:var(--a-line);
+  background:#FFFFFF;
+}
+body.theme-a:not(.v-home),body.theme-a:not(.v-home) *{font-family:var(--font)}
+body.theme-a:not(.v-home) .toolbar{background:#FFFFFF;box-shadow:none}
+
+/* page headers: keep the update time and date box, drop the second greeting and ornaments */
+body.theme-a .welcome,body.theme-a .phead{background:#FFFFFF;border:2px solid var(--a-ink);border-radius:10px;box-shadow:none}
+body.theme-a .welcome:before,body.theme-a .welcome:after,body.theme-a .phead:before,body.theme-a .wart{display:none}
+body.theme-a .welcome h1,body.theme-a .welcome .wsub,body.theme-a .welcome .whi{display:none}
+body.theme-a .phead h1{font-size:22px;font-weight:700}
+body.theme-a .upd{color:var(--a-muted);font-weight:500}
+body.theme-a .datebox{border:2px solid var(--a-ink);border-radius:8px;box-shadow:none;background:var(--a-signal)}
+
+/* summary plates */
+body.theme-a .card,body.theme-a #cards .card,body.theme-a #cards .card:nth-child(n),
+body.theme-a .scards .card,body.theme-a .scards:not(.opsx) .card:nth-child(n),
+body.theme-a .scard,body.theme-a .stile,body.theme-a .lcard,body.theme-a .tmr{
+  background:#FFFFFF;border:2px solid var(--a-ink);border-radius:10px;box-shadow:none;color:var(--a-ink);transform:none}
+body.theme-a .card:before,body.theme-a #cards .card:before{display:none}
+body.theme-a .card .k,body.theme-a #cards .card .k,body.theme-a .scard .k,body.theme-a .lcard .k{font-size:13px;font-weight:600;color:var(--a-ink)}
+body.theme-a .card .v,body.theme-a #cards .card .v,body.theme-a .scard .v{font-size:28px;font-weight:700;color:var(--a-ink);letter-spacing:-.5px}
+body.theme-a .card .s,body.theme-a #cards .card .s,body.theme-a .scard .s{color:var(--a-muted)}
+body.theme-a .scard.off .v,body.theme-a .scard.off .v small{color:var(--a-bad)}
+body.theme-a .scard.on,body.theme-a .stile.on,body.theme-a .lcard.on{background:var(--a-signal)!important;transform:none!important;box-shadow:none!important}
+body.theme-a .scard:hover,body.theme-a .stile:hover,body.theme-a .lcard:hover,body.theme-a .tmr:not(.dis):hover{transform:none;box-shadow:none;background:#F2F3F5}
+
+/* chips, segmented controls, sort controls */
+body.theme-a .chip,body.theme-a.v-driver .chip{border:2px solid var(--a-ink);border-radius:20px;background:#FFFFFF;box-shadow:none;color:var(--a-ink);font-size:13px;font-weight:600}
+body.theme-a .chip.on,body.theme-a.v-driver .chip.on{background:var(--a-ink);color:#FFFFFF;box-shadow:none}
+body.theme-a .chip .n,body.theme-a.v-driver .chip .n{background:var(--a-ink);color:#FFFFFF;border-radius:10px}
+body.theme-a .chip.on .n,body.theme-a.v-driver .chip.on .n{background:#FFFFFF;color:var(--a-ink)}
+body.theme-a .sortbar select,body.theme-a .dirbtn,body.theme-a.v-driver .sortbar select,body.theme-a.v-driver .dirbtn{border:2px solid var(--a-ink);border-radius:8px;box-shadow:none;background:#FFFFFF}
+body.theme-a .search input,body.theme-a.v-driver .search input{border:2px solid var(--a-ink);border-radius:8px;box-shadow:none}
+body.theme-a .search input:focus{box-shadow:0 0 0 3px var(--a-signal)}
+body.theme-a .selwrap select{border:2px solid var(--a-ink);border-radius:8px;box-shadow:none}
+
+/* buttons: plain outline; the add action is the one filled button */
+body.theme-a .refbtn,body.theme-a .tbtn,body.theme-a .arw,body.theme-a .ledit,body.theme-a .psave,body.theme-a .lvgo,body.theme-a .abtn{
+  background:#FFFFFF;border:2px solid var(--a-ink);border-radius:8px;box-shadow:none;color:var(--a-ink);transform:none}
+body.theme-a .refbtn svg{fill:var(--a-ink)}
+body.theme-a .ladd,body.theme-a .psave{background:var(--a-ink);border:2px solid var(--a-ink);border-radius:8px;color:#FFFFFF;box-shadow:none}
+body.theme-a .ldel{background:#FFFFFF;border:2px solid var(--a-bad);border-radius:8px;color:var(--a-bad);box-shadow:none}
+body.theme-a :is(.refbtn,.tbtn,.arw,.ledit,.lvgo,.abtn,.ladd,.ldel,.psave):hover{transform:none;box-shadow:none}
+body.theme-a :is(.refbtn,.tbtn,.arw,.ledit,.lvgo,.abtn):hover{background:#F2F3F5}
+
+/* date strip (กะ Fleet / กะ Ops) */
+body.theme-a .dchip{border:2px solid var(--a-ink);border-radius:8px;background:#FFFFFF;box-shadow:none;transform:none}
+body.theme-a .dchip:hover{transform:none;box-shadow:none;background:#F2F3F5}
+body.theme-a .dchip.wkend{background:#F2F3F5}
+body.theme-a .dchip .doff{background:transparent;color:var(--a-ink);font-weight:600}
+body.theme-a .dchip.sel{background:var(--a-signal);transform:none}
+body.theme-a .dchip.today:after{background:var(--a-ink);border-color:var(--a-ink)}
+
+/* list rows and badges */
+body.theme-a .list,body.theme-a .slist{border-color:var(--a-ink);box-shadow:none;border-radius:10px}
+body.theme-a .row,body.theme-a .prow,body.theme-a .lrow{border-bottom-color:var(--a-line)}
+body.theme-a .row.st-done{--stc:var(--a-good)}
+body.theme-a .row.st-active{--stc:var(--a-signal)}
+body.theme-a .badge,body.theme-a .sbdg,body.theme-a.v-driver .rmain .badge{border-radius:4px;border-width:1.5px;border-color:var(--a-ink)}
+body.theme-a .pbar .track{background:var(--a-soft);border-radius:4px}
+body.theme-a .pbar .fill{background:var(--a-ink);border-radius:4px}
+body.theme-a .ghdr{border-bottom:2px solid var(--a-ink)}
+body.theme-a .thead,body.theme-a.v-driver .thead{background:#F2F3F5;border-color:var(--a-ink);color:var(--a-ink)}
+body.theme-a .fleet-ot-panel{border:2px solid var(--a-ink);border-radius:10px;box-shadow:none;background:#FFFFFF}
+body.theme-a .err,body.theme-a .warn{border-radius:8px;box-shadow:none}
