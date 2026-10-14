@@ -28,7 +28,7 @@ jobs:
 
       - name: Validate manifests
         run: |
-          for f in manifest.webmanifest weekly-off/manifest.webmanifest; do
+          for f in $(git ls-files "*.webmanifest"); do
             node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" || { echo "Invalid JSON: $f"; exit 1; }
           done
 

@@ -36,7 +36,7 @@ test('manifest is installable and references real 192/512 PNG and maskable icons
 });
 
 test('no manifest uses SVG "any" icons (Android WebAPK) or root-absolute paths (GitHub Pages subpath)', () => {
-  for (const file of ['manifest.webmanifest', 'weekly-off/manifest.webmanifest']) {
+  for (const file of ['manifest.webmanifest']) {
     const m = JSON.parse(read(file));
     for (const icon of m.icons) {
       assert.notEqual(icon.type, 'image/svg+xml', `${file}: SVG icon ${icon.src}`);
@@ -46,24 +46,23 @@ test('no manifest uses SVG "any" icons (Android WebAPK) or root-absolute paths (
   }
 });
 
-test('Weekly Off manifest references real 192/512 PNG and maskable icons', () => {
-  const weekly = JSON.parse(read('weekly-off/manifest.webmanifest'));
-  assert.equal(weekly.display, 'standalone');
-  for (const [size, purpose] of [[192, 'any'], [512, 'any'], [512, 'maskable']]) {
-    const icon = weekly.icons.find((candidate) => candidate.sizes === `${size}x${size}` && candidate.purpose === purpose);
-    assert.ok(icon, `missing Weekly Off ${size}x${size} ${purpose} icon`);
-    assert.equal(icon.type, 'image/png');
-    assert.deepEqual(pngDimensions(path.join('weekly-off', icon.src)), [size, size]);
-  }
+test('Weekly Off is part of the main app: one manifest, menu entry and a way back', () => {
+  assert.equal(fs.existsSync(path.join(root, 'weekly-off/manifest.webmanifest')), false);
+  assert.match(weeklyHtml, /rel="manifest" href="\.\.\/manifest\.webmanifest"/);
+  assert.match(weeklyHtml, /name="application-name" content="Workstation ABBTG-A"/);
+  assert.match(weeklyHtml, /class="back-link" href="\.\.\/"/);
+  assert.match(rootHtml, /data-href="weekly-off\/"/);
+  assert.match(read('assets/roster.js'), /button\[data-href\]/);
+  assert.doesNotMatch(sw, /weekly-off\/manifest\.webmanifest/);
 });
 
-test('root uses the root manifest; Weekly Off keeps its own manifest and shares the root worker bootstrap', () => {
+test('root and Weekly Off use the root manifest and the shared worker bootstrap', () => {
   assert.match(rootHtml, /rel="manifest" href="manifest\.webmanifest"/);
   assert.match(rootHtml, /name="apple-mobile-web-app-title" content="Workstation ABBTG-A"/);
   assert.match(rootHtml, /name="application-name" content="Workstation ABBTG-A"/);
   assert.match(rootHtml, /assets\/pwa\.js/);
-  assert.match(weeklyHtml, /rel="manifest" href="manifest\.webmanifest"/);
-  assert.match(weeklyHtml, /name="application-name" content="Weekly Off — ABBTG-A"/);
+  assert.match(weeklyHtml, /rel="manifest" href="\.\.\/manifest\.webmanifest"/);
+  assert.match(weeklyHtml, /name="application-name" content="Workstation ABBTG-A"/);
   assert.match(weeklyHtml, /\.\.\/assets\/pwa\.js/);
   assert.match(weeklyHtml, /offline-store\.js/);
   assert.match(pwa, /new URL\('sw\.js', appRoot\)/);

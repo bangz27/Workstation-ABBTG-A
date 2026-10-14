@@ -187,6 +187,8 @@ function setView(v,save){
   window.scrollTo(0,0);
 }
 $('views').addEventListener('click',function(e){var b=e.target.closest('button[data-v]');if(b&&b.getAttribute('data-v')!==view)setView(b.getAttribute('data-v'),true);});
+/* Menu items that open a separate page in the same app (e.g. Weekly Off) */
+$('views').addEventListener('click',function(e){var b=e.target.closest('button[data-href]');if(b)location.href=new URL(b.getAttribute('data-href'),location.href).href;});
 
 /* ---------- rendering ---------- */
 function cur(){return RS[view];}

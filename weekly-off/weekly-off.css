@@ -118,3 +118,4 @@ body.reference-modal-open{overflow:hidden}
 .reference-legend i{display:inline-block;width:12px;height:12px;border:1px solid var(--line);border-radius:3px}
 .reference-legend .legend-weekly{background:var(--cyan-soft);border-color:#7DCBE6}
 .reference-legend .legend-comp{background:var(--orange-soft);border-color:#F5A58B}
+.back-link{display:inline-flex;align-items:center;gap:6px;min-height:40px;margin:0 0 14px;padding:6px 12px;border:var(--border);border-radius:999px;background:#fff;box-shadow:2px 2px 0 var(--ink);color:var(--ink);font-size:13px;font-weight:700;text-decoration:none}.back-link:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
