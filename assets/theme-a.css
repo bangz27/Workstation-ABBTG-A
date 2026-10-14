@@ -219,3 +219,47 @@ body.theme-a .ghdr{border-bottom:2px solid var(--a-ink)}
 body.theme-a .thead,body.theme-a.v-driver .thead{background:#F2F3F5;border-color:var(--a-ink);color:var(--a-ink)}
 body.theme-a .fleet-ot-panel{border:2px solid var(--a-ink);border-radius:10px;box-shadow:none;background:#FFFFFF}
 body.theme-a .err,body.theme-a .warn{border-radius:8px;box-shadow:none}
+body.theme-a .welcome{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;min-height:0}
+body.theme-a .ghdr .dot,body.theme-a .ghdr.g-off .dot,body.theme-a .ghdr.g-other .dot,body.theme-a .ghdr.g-blank .dot{border-radius:3px;border:1.5px solid var(--a-ink)}
+body.theme-a .ghdr .dot{background:var(--a-ink)}
+body.theme-a .ghdr.g-off .dot{background:var(--a-bad)}
+body.theme-a .ghdr.g-other .dot{background:var(--a-signal)}
+body.theme-a .ghdr.g-blank .dot{background:#FFFFFF}
+body.theme-a .tmr .tg{background:var(--a-ink);border-color:var(--a-ink);color:#FFFFFF;border-radius:4px}
+
+/* =====================================================================
+   Weekly Off (weekly-off/index.html, own stylesheet with :root tokens)
+   ===================================================================== */
+body.theme-a.wo{
+  --bg:#FFFFFF;--surface:#FFFFFF;--ink:var(--a-ink);--muted:var(--a-muted);--line:var(--a-line);
+  --cyan:var(--a-ink);--cyan-soft:#FFFFFF;--orange:var(--a-muted);--orange-soft:#FFFFFF;
+  --yellow:var(--a-signal);--yellow-soft:var(--a-warn-bg);--green-soft:#E3F2EA;--red:var(--a-bad);
+  --border:2px solid var(--a-ink);--radius-lg:10px;--radius-md:10px;--radius-sm:8px;--shadow:none;
+  font-family:var(--font);
+}
+body.theme-a.wo *{font-family:var(--font)}
+body.theme-a.wo .brand-mark{background:var(--a-signal);box-shadow:none;border-radius:10px}
+body.theme-a.wo .eyebrow{letter-spacing:0;text-transform:none;font-weight:600}
+body.theme-a.wo .summary-card{box-shadow:none;background:#FFFFFF}
+body.theme-a.wo .summary-card.total-summary{background:var(--a-signal)}
+body.theme-a.wo .panel{box-shadow:none}
+body.theme-a.wo .day-card{box-shadow:none;border-radius:8px}
+body.theme-a.wo .day-card:hover{transform:none;box-shadow:none;background:#F2F3F5}
+body.theme-a.wo .day-card[aria-pressed=true]{background:var(--a-signal);box-shadow:none;transform:none}
+body.theme-a.wo .month-tab{border:2px solid var(--a-ink);border-radius:8px;background:#FFFFFF;color:var(--a-ink);box-shadow:none}
+body.theme-a.wo .month-tab.active,body.theme-a.wo .month-tab[aria-selected=true]{background:var(--a-ink);color:#FFFFFF}
+body.theme-a.wo .source-state{border:2px solid var(--a-ink)}
+body.theme-a.wo .source-state.ready{background:#E3F2EA}
+body.theme-a.wo .person-card{background:#FFFFFF;border-color:var(--a-line)}
+body.theme-a.wo .fleet-group h3{border-bottom-color:var(--a-ink)}
+body.theme-a.wo .ops-group h3{border-bottom-color:var(--a-muted)}
+body.theme-a.wo .search-panel.fleet-search{border-top-color:var(--a-ink)}
+body.theme-a.wo .search-panel.ops-search{border-top-color:var(--a-muted)}
+body.theme-a.wo .search-input{box-shadow:none}
+body.theme-a.wo .search-input:focus{outline:3px solid var(--a-signal);outline-offset:1px}
+body.theme-a.wo .detail-total{background:var(--a-signal);border-color:var(--a-ink)}
+body.theme-a.wo .load-error button{box-shadow:none}
+body.theme-a.wo .auth-card{box-shadow:none;border-radius:12px}
+body.theme-a.wo .auth-mark{background:var(--a-signal);box-shadow:none}
+body.theme-a.wo .auth-card button{background:var(--a-ink);color:#FFFFFF;box-shadow:none}
+body.theme-a.wo .back-link{box-shadow:none;border-radius:8px}
