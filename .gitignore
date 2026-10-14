@@ -13,3 +13,5 @@ node_modules/
 # PWA icons are public assets (exception to *.png above)
 !icons/
 !icons/*.png
+!weekly-off/
+!weekly-off/*.png

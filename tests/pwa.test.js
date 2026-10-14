@@ -35,6 +35,28 @@ test('manifest is installable and references real 192/512 PNG and maskable icons
   assert.ok(manifest.shortcuts.some((item) => item.url === './weekly-off/'));
 });
 
+test('no manifest uses SVG "any" icons (Android WebAPK) or root-absolute paths (GitHub Pages subpath)', () => {
+  for (const file of ['manifest.webmanifest', 'weekly-off/manifest.webmanifest']) {
+    const m = JSON.parse(read(file));
+    for (const icon of m.icons) {
+      assert.notEqual(icon.type, 'image/svg+xml', `${file}: SVG icon ${icon.src}`);
+      assert.ok(!icon.src.startsWith('/'), `${file}: absolute icon path ${icon.src}`);
+    }
+    for (const key of ['id', 'start_url', 'scope']) assert.ok(!String(m[key]).startsWith('/'), `${file}: absolute ${key}`);
+  }
+});
+
+test('Weekly Off manifest references real 192/512 PNG and maskable icons', () => {
+  const weekly = JSON.parse(read('weekly-off/manifest.webmanifest'));
+  assert.equal(weekly.display, 'standalone');
+  for (const [size, purpose] of [[192, 'any'], [512, 'any'], [512, 'maskable']]) {
+    const icon = weekly.icons.find((candidate) => candidate.sizes === `${size}x${size}` && candidate.purpose === purpose);
+    assert.ok(icon, `missing Weekly Off ${size}x${size} ${purpose} icon`);
+    assert.equal(icon.type, 'image/png');
+    assert.deepEqual(pngDimensions(path.join('weekly-off', icon.src)), [size, size]);
+  }
+});
+
 test('root uses the root manifest; Weekly Off keeps its own manifest and shares the root worker bootstrap', () => {
   assert.match(rootHtml, /rel="manifest" href="manifest\.webmanifest"/);
   assert.match(rootHtml, /name="apple-mobile-web-app-title" content="Workstation ABBTG-A"/);
