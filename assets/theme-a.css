@@ -79,6 +79,8 @@ body.theme-a #home .ha-kpi .hkpi-meter i{display:block;height:100%;border-radius
 body.theme-a #home .ha-kpi .hkpi-meter.four i{background:var(--a-muted)}
 body.theme-a #home .ha-kpi[data-status="red"] .hkpi-meter i{background:var(--a-bad)}
 body.theme-a #home .ha-kpi[data-status="green"] .hkpi-meter i{background:var(--a-good)}
+/* the status describes the 2W share; the 4W bar is context and stays neutral */
+body.theme-a #home .ha-kpi[data-status] .hkpi-meter.four i{background:var(--a-muted)}
 body.theme-a #home .ha-kpi .hkpi-progress i{display:block;height:100%}
 body.theme-a #home .ha-kpi .hkpi-progress i:first-child{background:var(--a-ink)}
 body.theme-a #home .ha-kpi .hkpi-progress i:last-child{background:var(--a-muted)}
