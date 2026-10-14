@@ -21,8 +21,10 @@
 <link rel="stylesheet" href="assets/style.css?v=20261012homeweeklyui1">
 <link rel="stylesheet" href="assets/fleet-ot.css?v=20261012fleetot1">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="assets/theme-a.css?v=20261015themea4">
 </head>
-<body class="v-home auth-out">
+<body class="v-home auth-out theme-a">
 <svg class="svgdefs" aria-hidden="true" focusable="false" width="0" height="0">
   <symbol id="i-logo" viewBox="0 0 24 24"><path d="M12 2.8 20 7v10l-8 4.2L4 17V7z"/><path d="M4 7l8 4.2L20 7M12 11.2v10M8 4.9l8 4.2"/></symbol>
   <symbol id="i-dash" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="8" rx="2"/><rect x="13.5" y="3.5" width="7" height="5" rx="2"/><rect x="13.5" y="11.5" width="7" height="9" rx="2"/><rect x="3.5" y="14.5" width="7" height="6" rx="2"/></symbol>
@@ -100,38 +102,15 @@
   <span class="tuser"><span class="avatar" id="tAvatar" aria-hidden="true">?</span><span class="temail" id="tEmail"></span></span>
 </div>
 <div class="vh" id="home">
-  <div class="hgrid">
-    <section class="hhero">
-      <div>
-        <p class="hhi">สวัสดีครับ</p>
-        <h1>ยินดีต้อนรับสู่ Workstation ABBTG-A</h1>
-        <p class="hsub">ติดตามภาพรวมการทำงานของ Hub · KPI จากข้อมูลที่ซิงก์</p>
-      </div>
-      <svg class="hillus" viewBox="0 0 220 140" aria-hidden="true">
-        <rect width="220" height="140" rx="16" fill="#E7F4FF"/>
-        <circle cx="46" cy="36" r="16" fill="#FFE58A"/>
-        <ellipse cx="150" cy="28" rx="18" ry="10" fill="#fff"/>
-        <path d="M28 108h150v8H28z" fill="#F0D7B0"/>
-        <path d="M78 62h78v40H78z" fill="#8EC5FF"/>
-        <path d="M78 62l39-22 39 22z" fill="#F05A1A"/>
-        <rect x="108" y="78" width="18" height="24" fill="#fff"/>
-        <rect x="36" y="78" width="36" height="22" rx="4" fill="#FFD15C"/>
-        <circle cx="44" cy="104" r="6" fill="#333"/>
-        <circle cx="64" cy="104" r="6" fill="#333"/>
-      </svg>
-    </section>
-    <section class="hqa">
-      <h2>Quick Action</h2>
-      <div class="hqg">
-        <button type="button" data-go="leave">เพิ่มการลา</button>
-        <button type="button" data-go="fleet">ตารางกะ Fleet</button>
-        <button type="button" id="hSync" class="lite">ดึงข้อมูลล่าสุด</button>
-        <button type="button" data-go="driver" class="lite">ออกรายงาน</button>
-      </div>
-    </section>
-  </div>
+  <p class="hhi ha-greet">สวัสดีครับ</p>
   <div class="hkpis" id="hkpis"></div>
-  <section class="htop-card hcard"><div class="hrow"><b>TOP 5 DELIVERED · COMPLETION ต่ำกว่า 80%</b><span>เรียงตาม Delivered สูงสุด</span></div><div id="hTopDelivered" class="htop-content"><p class="htop-empty">กำลังโหลดข้อมูลรายบุคคล…</p></div></section>
+  <section class="ha-actions" aria-label="ทางลัด">
+    <button type="button" data-go="leave" class="ha-primary">เพิ่มการลา</button>
+    <button type="button" id="hSync">ดึงข้อมูลล่าสุด</button>
+    <button type="button" data-go="fleet">ตารางกะ Fleet</button>
+    <button type="button" data-go="driver">ออกรายงาน</button>
+  </section>
+  <section class="ha-top"><h2>คนขับที่ส่งไม่ถึง 80%</h2><p class="ha-top-sub">5 คนที่ส่งได้มากที่สุดในกลุ่มนี้</p><div id="hTopDelivered" class="htop-content"><p class="htop-empty">กำลังโหลดข้อมูลรายบุคคล…</p></div></section>
 </div>
 
 <header>
@@ -258,7 +237,7 @@
 <script src="assets/fleet-ot.js?v=20261012fleetot1"></script>
 <script src="assets/leave.js?v=20261004home"></script>
 <script src="assets/auth.js?v=20261012emailrestore1"></script>
-<script src="assets/home.js?v=20261012kpisla1"></script>
+<script src="assets/home.js?v=20261015themea1"></script>
 <script src="assets/shell.js?v=20261011deliverside1"></script>
 <script src="assets/pwa.js?v=20261014pwa1"></script>
 </body>

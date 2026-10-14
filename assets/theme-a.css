@@ -1,0 +1,265 @@
+/* Theme A "ป้ายหน้างาน" — presentation only.
+   Loaded after style.css / fleet-ot.css and scoped to body.theme-a, so removing the
+   class (or this file) restores the previous look. No data, KPI or auth logic here. */
+
+body.theme-a{
+  --a-ink:#23272B;--a-muted:#5B6168;--a-line:#C9CDD2;--a-soft:#E4E6E9;
+  --a-signal:#FFC20E;--a-good:#1B7F4C;--a-bad:#C8372D;--a-warn-bg:#FFF1C2;
+  --font:"Bai Jamjuree","Noto Sans Thai",system-ui,sans-serif;
+  font-family:var(--font);background:#FFFFFF;color:var(--a-ink);
+}
+body.theme-a button,body.theme-a input,body.theme-a select{font-family:var(--font)}
+
+/* ---------- top bar (all pages) ---------- */
+body.theme-a .topbar{background:#FFFFFF;border-bottom:2px solid var(--a-ink);box-shadow:none}
+body.theme-a .tkick{font-size:12px;color:var(--a-muted);font-weight:500}
+body.theme-a .ttl{font-size:22px;font-weight:700;color:var(--a-ink)}
+body.theme-a .tdate{border:2px solid var(--a-ink);border-radius:6px;background:#FFFFFF;font-weight:600}
+body.theme-a .avatar{background:var(--a-signal);border:2px solid var(--a-ink);color:var(--a-ink)}
+
+/* ---------- navigation (sidebar on desktop, bottom bar on phones) ---------- */
+body.theme-a .side{background:#FFFFFF;border-right:2px solid var(--a-ink)}
+body.theme-a .views{background:transparent;box-shadow:none}
+body.theme-a .views button{font-family:var(--font);color:var(--a-ink);border-radius:8px;box-shadow:none}
+body.theme-a .views button .ic{background:transparent;border-color:transparent}
+body.theme-a .views button:hover:not(.on){background:#F2F3F5}
+body.theme-a .views button.on{background:var(--a-signal);border-color:var(--a-ink);color:var(--a-ink);box-shadow:none;font-weight:700}
+body.theme-a .views button.on .ic{background:transparent;border-color:transparent}
+body.theme-a .views button:focus-visible{outline:3px solid var(--a-ink);outline-offset:2px}
+@media (max-width:767px){
+  body.theme-a:not(.auth-out) .side{background:#FFFFFF;border-top:2px solid var(--a-ink);box-shadow:none}
+  body.theme-a:not(.auth-out) .views{background:#FFFFFF}
+  body.theme-a:not(.auth-out) .views button{border:0;border-radius:8px;font-size:11px;font-weight:500}
+  body.theme-a:not(.auth-out) .views button.on{border:0;box-shadow:none;font-weight:700}
+}
+
+/* ---------- home ---------- */
+body.theme-a.v-home .vh{max-width:1120px}
+body.theme-a #home,body.theme-a #home *{font-family:var(--font)}
+body.theme-a #home .ha-greet{margin:0 0 10px;font-size:14px;font-weight:500;color:var(--a-muted)}
+
+body.theme-a #home .hkpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 14px}
+
+/* status band: the one loud element on the page */
+body.theme-a #home .ha-status{grid-column:1/-1;display:flex;flex-direction:column;gap:10px;padding:16px 16px 14px;
+  background:var(--a-signal);border:2px solid var(--a-ink);border-radius:10px;color:var(--a-ink)}
+body.theme-a #home .ha-status-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:15px;font-weight:600}
+body.theme-a #home .ha-status-top small{font-size:13px;font-weight:500}
+body.theme-a #home .ha-status-main{display:flex;align-items:flex-end;gap:12px}
+body.theme-a #home .ha-status-main>b{font-size:56px;font-weight:700;line-height:1;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+body.theme-a #home .ha-status-main>span{font-size:15px;font-weight:500;line-height:1.3;padding-bottom:4px}
+body.theme-a #home .ha-bar{display:flex;height:14px;background:#FFFFFF;border:2px solid var(--a-ink);border-radius:7px;overflow:hidden}
+body.theme-a #home .ha-bar i{display:block;height:100%;width:0}
+body.theme-a #home .ha-bar-done{background:var(--a-ink)}
+body.theme-a #home .ha-bar-hold{background:var(--a-bad)}
+body.theme-a #home .ha-legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;font-weight:500}
+body.theme-a #home .ha-legend span{display:inline-flex;align-items:center;gap:6px}
+body.theme-a #home .ha-legend b{font-weight:700;font-variant-numeric:tabular-nums}
+body.theme-a #home .ha-dot{display:inline-block;width:10px;height:10px;border-radius:2px}
+body.theme-a #home .ha-dot.done{background:var(--a-ink)}
+body.theme-a #home .ha-dot.hold{background:var(--a-bad)}
+body.theme-a #home .ha-dot.left{background:#FFFFFF;border:1.5px solid var(--a-ink)}
+
+/* KPI plates */
+body.theme-a #home .hkpi.ha-kpi,
+body.theme-a #home .hkpi.ha-kpi[data-status]{display:flex;flex-direction:column;gap:4px;min-width:0;min-height:0;padding:12px;
+  background:#FFFFFF!important;border:2px solid var(--a-ink);border-radius:10px;box-shadow:none;color:var(--a-ink)}
+body.theme-a #home .ha-kpi.ha-wide{grid-column:1/-1}
+body.theme-a #home .ha-kpi .hkpi-top{display:flex;align-items:center;justify-content:space-between;gap:6px}
+body.theme-a #home .ha-kpi .hkpi-label{font-size:14px;font-weight:600;letter-spacing:0;text-transform:none}
+body.theme-a #home .ha-kpi .hkpi-badge{flex:0 0 auto;font-size:12px;font-weight:600;padding:2px 8px;border-radius:4px;
+  border:1.5px solid var(--a-ink);background:#FFFFFF;color:var(--a-ink)}
+body.theme-a #home .ha-kpi[data-status="green"] .hkpi-badge{background:var(--a-good);border-color:var(--a-good);color:#FFFFFF}
+body.theme-a #home .ha-kpi[data-status="yellow"] .hkpi-badge{background:var(--a-warn-bg);border-color:var(--a-ink);color:var(--a-ink)}
+body.theme-a #home .ha-kpi[data-status="red"] .hkpi-badge{background:var(--a-bad);border-color:var(--a-bad);color:#FFFFFF}
+body.theme-a #home .ha-kpi>b{font-size:30px;font-weight:700;line-height:1.1;color:var(--a-ink);letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+body.theme-a #home .ha-kpi .hkpi-meter,
+body.theme-a #home .ha-kpi .hkpi-progress{display:flex;height:8px;border-radius:4px;background:var(--a-soft);overflow:hidden;margin:2px 0}
+body.theme-a #home .ha-kpi .hkpi-meter i{display:block;height:100%;border-radius:0;background:var(--a-ink)}
+body.theme-a #home .ha-kpi .hkpi-meter.four i{background:var(--a-muted)}
+body.theme-a #home .ha-kpi[data-status="red"] .hkpi-meter i{background:var(--a-bad)}
+body.theme-a #home .ha-kpi[data-status="green"] .hkpi-meter i{background:var(--a-good)}
+/* the status describes the 2W share; the 4W bar is context and stays neutral */
+body.theme-a #home .ha-kpi[data-status] .hkpi-meter.four i{background:var(--a-muted)}
+body.theme-a #home .ha-kpi .hkpi-progress i{display:block;height:100%}
+body.theme-a #home .ha-kpi .hkpi-progress i:first-child{background:var(--a-ink)}
+body.theme-a #home .ha-kpi .hkpi-progress i:last-child{background:var(--a-muted)}
+body.theme-a #home .ha-kpi .hkpi-split{display:flex;gap:12px;border:0;padding:0;font-size:12px;color:var(--a-muted)}
+body.theme-a #home .ha-kpi .hkpi-split span{font-size:12px;color:var(--a-muted)}
+body.theme-a #home .ha-kpi .hkpi-split b{font-size:13px;font-weight:700;color:var(--a-ink)}
+body.theme-a #home .ha-kpi .hkpi-target,
+body.theme-a #home .ha-kpi .hkpi-note{font-size:11px;color:var(--a-muted);line-height:1.3}
+body.theme-a #home .ha-kpi .hkpi-note:empty{display:none}
+body.theme-a #home .ha-kpi .allocation-row{display:flex;flex-direction:column;gap:3px}
+body.theme-a #home .ha-kpi .allocation-row-label{display:flex;justify-content:space-between;align-items:baseline}
+body.theme-a #home .ha-kpi .allocation-row-label span{font-size:13px;font-weight:600}
+body.theme-a #home .ha-kpi .allocation-row-label b{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
+
+/* supporting numbers */
+body.theme-a #home .ha-minor{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+body.theme-a #home .ha-minor>div{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:8px 0;border-bottom:1px solid var(--a-line)}
+body.theme-a #home .ha-minor span{font-size:13px;color:var(--a-muted)}
+body.theme-a #home .ha-minor b{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
+
+/* quick actions */
+body.theme-a #home .ha-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 18px}
+body.theme-a #home .ha-actions button{min-height:48px;padding:6px 10px;border:2px solid var(--a-ink);border-radius:10px;background:#FFFFFF;
+  color:var(--a-ink);font-size:15px;font-weight:600;cursor:pointer;box-shadow:none}
+body.theme-a #home .ha-actions button.ha-primary{background:var(--a-ink);color:#FFFFFF}
+body.theme-a #home .ha-actions button:hover{background:#F2F3F5}
+body.theme-a #home .ha-actions button.ha-primary:hover{background:#000}
+body.theme-a #home .ha-actions button:focus-visible{outline:3px solid var(--a-signal);outline-offset:2px}
+
+/* drivers below 80% */
+body.theme-a #home .ha-top{border-top:2px solid var(--a-ink);padding-top:12px;margin-bottom:16px}
+body.theme-a #home .ha-top h2{margin:0;font-size:16px;font-weight:700}
+body.theme-a #home .ha-top-sub{margin:2px 0 8px;font-size:13px;color:var(--a-muted)}
+body.theme-a #home .ha-top .htop-content{width:100%;overflow-x:auto}
+body.theme-a #home .ha-top .htop-empty{margin:0;padding:6px 0;font-size:14px;color:var(--a-muted)}
+body.theme-a #home .ha-top .htop-table{display:flex;flex-direction:column}
+body.theme-a #home .ha-top .htop-row{display:grid;grid-template-columns:22px minmax(0,1fr) auto auto auto;gap:8px;align-items:center;
+  padding:9px 0;border-bottom:1px solid var(--a-line);font-size:13px}
+body.theme-a #home .ha-top .htop-head{font-size:11px;font-weight:600;color:var(--a-muted);border-bottom:2px solid var(--a-ink)}
+body.theme-a #home .ha-top .htop-index{font-weight:700;color:var(--a-ink)}
+body.theme-a #home .ha-top .htop-person b{font-weight:600;color:var(--a-ink)}
+body.theme-a #home .ha-top .htop-rate{padding:2px 6px;border-radius:4px;background:var(--a-bad);color:#FFFFFF;font-size:12px;font-weight:700}
+
+@media (min-width:900px){
+  body.theme-a #home .hkpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+  body.theme-a #home .ha-kpi.ha-wide,body.theme-a #home .ha-minor{grid-column:span 2}
+  body.theme-a #home .ha-actions{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media (max-width:767px){
+  body.theme-a.v-home .vh{padding:14px 16px 12px}
+}
+@media (max-width:360px){
+  body.theme-a #home .ha-status-main>b{font-size:46px}
+  body.theme-a #home .ha-kpi>b{font-size:26px}
+}
+@media (prefers-reduced-motion:reduce){body.theme-a *{transition:none!important}}
+
+/* =====================================================================
+   Other app pages (Fleet Overview, กะ Fleet, กะ Ops, การลา)
+   1) re-point the older themes' tokens at the A palette,
+   2) flatten shared components (plates, chips, buttons, date strip),
+   3) drop decoration that the A design does not have.
+   ===================================================================== */
+body.theme-a{
+  --ui-bg:#FFFFFF;--ui-surface:#FFFFFF;--ui-text:var(--a-ink);--ui-muted:var(--a-muted);--ui-border:var(--a-ink);
+  --ui-yellow:var(--a-signal);--ui-cyan:#FFFFFF;--acc:var(--a-signal);
+  --ui-cyan-2:#FFFFFF;--ui-orange-2:#F2F3F5;--ui-yellow-2:var(--a-warn-bg);--ui-green-2:#E3F2EA;--ui-red-2:#F8E1DF;
+  --ui-line:var(--a-line);--ui-soft:#F2F3F5;--oth:#F2F3F5;
+  --ui-shadow:none;--ui-sh3:none;--ui-sh2:none;
+  --ui-radius-lg:10px;--ui-radius-md:10px;--ui-radius-sm:8px;
+  --theme-ink:var(--a-ink);--theme-muted:var(--a-muted);--theme-canvas:#FFFFFF;--theme-surface:#FFFFFF;--theme-line:var(--a-line);
+  --theme-blue:#FFFFFF;--theme-green:#FFFFFF;--theme-gold:#FFFFFF;--theme-coral:#FFFFFF;
+  --oc-ink:var(--a-ink);--oc-canvas:#FFFFFF;--oc-soft:#F2F3F5;--oc-card:#F2F3F5;--oc-muted:var(--a-muted);--oc-line:var(--a-line);
+  background:#FFFFFF;
+}
+body.theme-a:not(.v-home),body.theme-a:not(.v-home) *{font-family:var(--font)}
+body.theme-a:not(.v-home) .toolbar{background:#FFFFFF;box-shadow:none}
+
+/* page headers: keep the update time and date box, drop the second greeting and ornaments */
+body.theme-a .welcome,body.theme-a .phead{background:#FFFFFF;border:2px solid var(--a-ink);border-radius:10px;box-shadow:none}
+body.theme-a .welcome:before,body.theme-a .welcome:after,body.theme-a .phead:before,body.theme-a .wart{display:none}
+body.theme-a .welcome h1,body.theme-a .welcome .wsub,body.theme-a .welcome .whi{display:none}
+body.theme-a .phead h1{font-size:22px;font-weight:700}
+body.theme-a .upd{color:var(--a-muted);font-weight:500}
+body.theme-a .datebox{border:2px solid var(--a-ink);border-radius:8px;box-shadow:none;background:var(--a-signal)}
+
+/* summary plates */
+body.theme-a .card,body.theme-a #cards .card,body.theme-a #cards .card:nth-child(n),
+body.theme-a .scards .card,body.theme-a .scards:not(.opsx) .card:nth-child(n),
+body.theme-a .scard,body.theme-a .stile,body.theme-a .lcard,body.theme-a .tmr{
+  background:#FFFFFF;border:2px solid var(--a-ink);border-radius:10px;box-shadow:none;color:var(--a-ink);transform:none}
+body.theme-a .card:before,body.theme-a #cards .card:before{display:none}
+body.theme-a .card .k,body.theme-a #cards .card .k,body.theme-a .scard .k,body.theme-a .lcard .k{font-size:13px;font-weight:600;color:var(--a-ink)}
+body.theme-a .card .v,body.theme-a #cards .card .v,body.theme-a .scard .v{font-size:28px;font-weight:700;color:var(--a-ink);letter-spacing:-.5px}
+body.theme-a .card .s,body.theme-a #cards .card .s,body.theme-a .scard .s{color:var(--a-muted)}
+body.theme-a .scard.off .v,body.theme-a .scard.off .v small{color:var(--a-bad)}
+body.theme-a .scard.on,body.theme-a .stile.on,body.theme-a .lcard.on{background:var(--a-signal)!important;transform:none!important;box-shadow:none!important}
+body.theme-a .scard:hover,body.theme-a .stile:hover,body.theme-a .lcard:hover,body.theme-a .tmr:not(.dis):hover{transform:none;box-shadow:none;background:#F2F3F5}
+
+/* chips, segmented controls, sort controls */
+body.theme-a .chip,body.theme-a.v-driver .chip{border:2px solid var(--a-ink);border-radius:20px;background:#FFFFFF;box-shadow:none;color:var(--a-ink);font-size:13px;font-weight:600}
+body.theme-a .chip.on,body.theme-a.v-driver .chip.on{background:var(--a-ink);color:#FFFFFF;box-shadow:none}
+body.theme-a .chip .n,body.theme-a.v-driver .chip .n{background:var(--a-ink);color:#FFFFFF;border-radius:10px}
+body.theme-a .chip.on .n,body.theme-a.v-driver .chip.on .n{background:#FFFFFF;color:var(--a-ink)}
+body.theme-a .sortbar select,body.theme-a .dirbtn,body.theme-a.v-driver .sortbar select,body.theme-a.v-driver .dirbtn{border:2px solid var(--a-ink);border-radius:8px;box-shadow:none;background:#FFFFFF}
+body.theme-a .search input,body.theme-a.v-driver .search input{border:2px solid var(--a-ink);border-radius:8px;box-shadow:none}
+body.theme-a .search input:focus{box-shadow:0 0 0 3px var(--a-signal)}
+body.theme-a .selwrap select{border:2px solid var(--a-ink);border-radius:8px;box-shadow:none}
+
+/* buttons: plain outline; the add action is the one filled button */
+body.theme-a .refbtn,body.theme-a .tbtn,body.theme-a .arw,body.theme-a .ledit,body.theme-a .psave,body.theme-a .lvgo,body.theme-a .abtn{
+  background:#FFFFFF;border:2px solid var(--a-ink);border-radius:8px;box-shadow:none;color:var(--a-ink);transform:none}
+body.theme-a .refbtn svg{fill:var(--a-ink)}
+body.theme-a .ladd,body.theme-a .psave{background:var(--a-ink);border:2px solid var(--a-ink);border-radius:8px;color:#FFFFFF;box-shadow:none}
+body.theme-a .ldel{background:#FFFFFF;border:2px solid var(--a-bad);border-radius:8px;color:var(--a-bad);box-shadow:none}
+body.theme-a :is(.refbtn,.tbtn,.arw,.ledit,.lvgo,.abtn,.ladd,.ldel,.psave):hover{transform:none;box-shadow:none}
+body.theme-a :is(.refbtn,.tbtn,.arw,.ledit,.lvgo,.abtn):hover{background:#F2F3F5}
+
+/* date strip (กะ Fleet / กะ Ops) */
+body.theme-a .dchip{border:2px solid var(--a-ink);border-radius:8px;background:#FFFFFF;box-shadow:none;transform:none}
+body.theme-a .dchip:hover{transform:none;box-shadow:none;background:#F2F3F5}
+body.theme-a .dchip.wkend{background:#F2F3F5}
+body.theme-a .dchip .doff{background:transparent;color:var(--a-ink);font-weight:600}
+body.theme-a .dchip.sel{background:var(--a-signal);transform:none}
+body.theme-a .dchip.today:after{background:var(--a-ink);border-color:var(--a-ink)}
+
+/* list rows and badges */
+body.theme-a .list,body.theme-a .slist{border-color:var(--a-ink);box-shadow:none;border-radius:10px}
+body.theme-a .row,body.theme-a .prow,body.theme-a .lrow{border-bottom-color:var(--a-line)}
+body.theme-a .row.st-done{--stc:var(--a-good)}
+body.theme-a .row.st-active{--stc:var(--a-signal)}
+body.theme-a .badge,body.theme-a .sbdg,body.theme-a.v-driver .rmain .badge{border-radius:4px;border-width:1.5px;border-color:var(--a-ink)}
+body.theme-a .pbar .track{background:var(--a-soft);border-radius:4px}
+body.theme-a .pbar .fill{background:var(--a-ink);border-radius:4px}
+body.theme-a .ghdr{border-bottom:2px solid var(--a-ink)}
+body.theme-a .thead,body.theme-a.v-driver .thead{background:#F2F3F5;border-color:var(--a-ink);color:var(--a-ink)}
+body.theme-a .fleet-ot-panel{border:2px solid var(--a-ink);border-radius:10px;box-shadow:none;background:#FFFFFF}
+body.theme-a .err,body.theme-a .warn{border-radius:8px;box-shadow:none}
+body.theme-a .welcome{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;min-height:0}
+body.theme-a .ghdr .dot,body.theme-a .ghdr.g-off .dot,body.theme-a .ghdr.g-other .dot,body.theme-a .ghdr.g-blank .dot{border-radius:3px;border:1.5px solid var(--a-ink)}
+body.theme-a .ghdr .dot{background:var(--a-ink)}
+body.theme-a .ghdr.g-off .dot{background:var(--a-bad)}
+body.theme-a .ghdr.g-other .dot{background:var(--a-signal)}
+body.theme-a .ghdr.g-blank .dot{background:#FFFFFF}
+body.theme-a .tmr .tg{background:var(--a-ink);border-color:var(--a-ink);color:#FFFFFF;border-radius:4px}
+
+/* =====================================================================
+   Weekly Off (weekly-off/index.html, own stylesheet with :root tokens)
+   ===================================================================== */
+body.theme-a.wo{
+  --bg:#FFFFFF;--surface:#FFFFFF;--ink:var(--a-ink);--muted:var(--a-muted);--line:var(--a-line);
+  --cyan:var(--a-ink);--cyan-soft:#FFFFFF;--orange:var(--a-muted);--orange-soft:#FFFFFF;
+  --yellow:var(--a-signal);--yellow-soft:var(--a-warn-bg);--green-soft:#E3F2EA;--red:var(--a-bad);
+  --border:2px solid var(--a-ink);--radius-lg:10px;--radius-md:10px;--radius-sm:8px;--shadow:none;
+  font-family:var(--font);
+}
+body.theme-a.wo *{font-family:var(--font)}
+body.theme-a.wo .brand-mark{background:var(--a-signal);box-shadow:none;border-radius:10px}
+body.theme-a.wo .eyebrow{letter-spacing:0;text-transform:none;font-weight:600}
+body.theme-a.wo .summary-card{box-shadow:none;background:#FFFFFF}
+body.theme-a.wo .summary-card.total-summary{background:var(--a-signal)}
+body.theme-a.wo .panel{box-shadow:none}
+body.theme-a.wo .day-card{box-shadow:none;border-radius:8px}
+body.theme-a.wo .day-card:hover{transform:none;box-shadow:none;background:#F2F3F5}
+body.theme-a.wo .day-card[aria-pressed=true]{background:var(--a-signal);box-shadow:none;transform:none}
+body.theme-a.wo .month-tab{border:2px solid var(--a-ink);border-radius:8px;background:#FFFFFF;color:var(--a-ink);box-shadow:none}
+body.theme-a.wo .month-tab.active,body.theme-a.wo .month-tab[aria-selected=true]{background:var(--a-ink);color:#FFFFFF}
+body.theme-a.wo .source-state{border:2px solid var(--a-ink)}
+body.theme-a.wo .source-state.ready{background:#E3F2EA}
+body.theme-a.wo .person-card{background:#FFFFFF;border-color:var(--a-line)}
+body.theme-a.wo .fleet-group h3{border-bottom-color:var(--a-ink)}
+body.theme-a.wo .ops-group h3{border-bottom-color:var(--a-muted)}
+body.theme-a.wo .search-panel.fleet-search{border-top-color:var(--a-ink)}
+body.theme-a.wo .search-panel.ops-search{border-top-color:var(--a-muted)}
+body.theme-a.wo .search-input{box-shadow:none}
+body.theme-a.wo .search-input:focus{outline:3px solid var(--a-signal);outline-offset:1px}
+body.theme-a.wo .detail-total{background:var(--a-signal);border-color:var(--a-ink)}
+body.theme-a.wo .load-error button{box-shadow:none}
+body.theme-a.wo .auth-card{box-shadow:none;border-radius:12px}
+body.theme-a.wo .auth-mark{background:var(--a-signal);box-shadow:none}
+body.theme-a.wo .auth-card button{background:var(--a-ink);color:#FFFFFF;box-shadow:none}
+body.theme-a.wo .back-link{box-shadow:none;border-radius:8px}
