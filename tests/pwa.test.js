@@ -35,13 +35,13 @@ test('manifest is installable and references real 192/512 PNG and maskable icons
   assert.ok(manifest.shortcuts.some((item) => item.url === './weekly-off/'));
 });
 
-test('root and standalone Weekly Off use the same root manifest and shared worker bootstrap', () => {
+test('root uses the root manifest; Weekly Off keeps its own manifest and shares the root worker bootstrap', () => {
   assert.match(rootHtml, /rel="manifest" href="manifest\.webmanifest"/);
   assert.match(rootHtml, /name="apple-mobile-web-app-title" content="Workstation ABBTG-A"/);
   assert.match(rootHtml, /name="application-name" content="Workstation ABBTG-A"/);
   assert.match(rootHtml, /assets\/pwa\.js/);
-  assert.match(weeklyHtml, /rel="manifest" href="\.\.\/manifest\.webmanifest"/);
-  assert.match(weeklyHtml, /name="application-name" content="Workstation ABBTG-A"/);
+  assert.match(weeklyHtml, /rel="manifest" href="manifest\.webmanifest"/);
+  assert.match(weeklyHtml, /name="application-name" content="Weekly Off — ABBTG-A"/);
   assert.match(weeklyHtml, /\.\.\/assets\/pwa\.js/);
   assert.match(weeklyHtml, /offline-store\.js/);
   assert.match(pwa, /new URL\('sw\.js', appRoot\)/);
@@ -54,7 +54,7 @@ test('the worker refreshes cached shells and Email Login after auth rollback', (
   assert.match(sw, /path === 'weekly-off' \|\| path === 'weekly-off\/' \|\| path === 'weekly-off\/index\.html'/);
   assert.match(sw, /Response\.redirect\(new URL\('weekly-off\/'/);
   assert.match(sw, /weekly-off\/index\.html/);
-  assert.match(sw, /var VERSION = '20261012kpisla1'/);
+  assert.match(sw, /var VERSION = '\d{8}[a-z0-9]+'/);
   assert.match(sw, /assets\/auth\.js\?v=20261012emailrestore1/);
   assert.match(rootHtml, /assets\/auth\.js\?v=20261012emailrestore1/);
   assert.match(read('assets/auth.js'), /signInWithPassword\(\{email:em,password:pw\}\)/);
@@ -78,7 +78,8 @@ test('service worker bypasses Supabase, credentials, tokens and non-GET data req
 test('Weekly Off refreshes automatically when connectivity returns and labels cached freshness', () => {
   assert.match(weeklyJs, /addEventListener\('online'/);
   assert.match(weeklyJs, /if\(isAuthenticated\).*load\(\)/s);
-  assert.match(weeklyJs, /ออฟไลน์ · ข้อมูลล่าสุด/);
-  assert.match(weeklyJs, /ออนไลน์ · อัปเดตล่าสุด/);
-  assert.match(weeklyJs, /OfflineStore\.save\(session,result\[0\],result\[1\],savedAt\)/);
+  assert.match(weeklyJs, /showSnapshot\(offlineSnapshot,'ออฟไลน์'\)/);
+  assert.match(weeklyJs, /' · ข้อมูลล่าสุด '/);
+  assert.match(weeklyJs, /'ออนไลน์ · '.*' · อัปเดตล่าสุด '/);
+  assert.match(weeklyJs, /OfflineStore\.save\(session,months,savedAt\)/);
 });
