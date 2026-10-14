@@ -7,7 +7,7 @@
    - Weekly Off data is kept separately by the authenticated page, not in Cache Storage.
 */
 'use strict';
-var VERSION = '20261015oneapp1';
+var VERSION = '20261015themea1';
 var NETWORK_TIMEOUT_MS = 4000;
 var CACHE = 'abbtga-ws-' + VERSION;
 var SCOPE_URL = new URL(self.registration.scope);
@@ -16,7 +16,7 @@ var STATIC_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com', 'cdn.jsdelivr.n
 var CORE = [
   'index.html', 'manifest.webmanifest',
   'icons/apple-touch-icon.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/workforce-icon.svg',
-  'assets/style.css', 'assets/fleet-ot.css', 'assets/fleet-ot.js', 'assets/config.js', 'assets/api.js', 'assets/driver.js', 'assets/roster.js',
+  'assets/style.css', 'assets/fleet-ot.css', 'assets/theme-a.css', 'assets/fleet-ot.js', 'assets/config.js', 'assets/api.js', 'assets/driver.js', 'assets/roster.js',
   'assets/leave.js', 'assets/auth.js?v=20261012emailrestore1', 'assets/home.js', 'assets/shell.js', 'assets/pwa.js',
   'weekly-off/index.html', 'weekly-off/weekly-off.css', 'weekly-off/core.js',
   'weekly-off/weekly-off.js', 'weekly-off/offline-store.js'

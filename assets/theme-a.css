@@ -1,0 +1,137 @@
+/* Theme A "ป้ายหน้างาน" — presentation only.
+   Loaded after style.css / fleet-ot.css and scoped to body.theme-a, so removing the
+   class (or this file) restores the previous look. No data, KPI or auth logic here. */
+
+body.theme-a{
+  --a-ink:#23272B;--a-muted:#5B6168;--a-line:#C9CDD2;--a-soft:#E4E6E9;
+  --a-signal:#FFC20E;--a-good:#1B7F4C;--a-bad:#C8372D;--a-warn-bg:#FFF1C2;
+  --font:"Bai Jamjuree","Noto Sans Thai",system-ui,sans-serif;
+  font-family:var(--font);background:#FFFFFF;color:var(--a-ink);
+}
+body.theme-a button,body.theme-a input,body.theme-a select{font-family:var(--font)}
+
+/* ---------- top bar (all pages) ---------- */
+body.theme-a .topbar{background:#FFFFFF;border-bottom:2px solid var(--a-ink);box-shadow:none}
+body.theme-a .tkick{font-size:12px;color:var(--a-muted);font-weight:500}
+body.theme-a .ttl{font-size:22px;font-weight:700;color:var(--a-ink)}
+body.theme-a .tdate{border:2px solid var(--a-ink);border-radius:6px;background:#FFFFFF;font-weight:600}
+body.theme-a .avatar{background:var(--a-signal);border:2px solid var(--a-ink);color:var(--a-ink)}
+
+/* ---------- navigation (sidebar on desktop, bottom bar on phones) ---------- */
+body.theme-a .side{background:#FFFFFF;border-right:2px solid var(--a-ink)}
+body.theme-a .views{background:transparent;box-shadow:none}
+body.theme-a .views button{font-family:var(--font);color:var(--a-ink);border-radius:8px;box-shadow:none}
+body.theme-a .views button .ic{background:transparent;border-color:transparent}
+body.theme-a .views button:hover:not(.on){background:#F2F3F5}
+body.theme-a .views button.on{background:var(--a-signal);border-color:var(--a-ink);color:var(--a-ink);box-shadow:none;font-weight:700}
+body.theme-a .views button.on .ic{background:transparent;border-color:transparent}
+body.theme-a .views button:focus-visible{outline:3px solid var(--a-ink);outline-offset:2px}
+@media (max-width:767px){
+  body.theme-a:not(.auth-out) .side{background:#FFFFFF;border-top:2px solid var(--a-ink);box-shadow:none}
+  body.theme-a:not(.auth-out) .views{background:#FFFFFF}
+  body.theme-a:not(.auth-out) .views button{border:0;border-radius:8px;font-size:11px;font-weight:500}
+  body.theme-a:not(.auth-out) .views button.on{border:0;box-shadow:none;font-weight:700}
+}
+
+/* ---------- home ---------- */
+body.theme-a.v-home .vh{max-width:1120px}
+body.theme-a #home,body.theme-a #home *{font-family:var(--font)}
+body.theme-a #home .ha-greet{margin:0 0 10px;font-size:14px;font-weight:500;color:var(--a-muted)}
+
+body.theme-a #home .hkpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 14px}
+
+/* status band: the one loud element on the page */
+body.theme-a #home .ha-status{grid-column:1/-1;display:flex;flex-direction:column;gap:10px;padding:16px 16px 14px;
+  background:var(--a-signal);border:2px solid var(--a-ink);border-radius:10px;color:var(--a-ink)}
+body.theme-a #home .ha-status-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:15px;font-weight:600}
+body.theme-a #home .ha-status-top small{font-size:13px;font-weight:500}
+body.theme-a #home .ha-status-main{display:flex;align-items:flex-end;gap:12px}
+body.theme-a #home .ha-status-main>b{font-size:56px;font-weight:700;line-height:1;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+body.theme-a #home .ha-status-main>span{font-size:15px;font-weight:500;line-height:1.3;padding-bottom:4px}
+body.theme-a #home .ha-bar{display:flex;height:14px;background:#FFFFFF;border:2px solid var(--a-ink);border-radius:7px;overflow:hidden}
+body.theme-a #home .ha-bar i{display:block;height:100%;width:0}
+body.theme-a #home .ha-bar-done{background:var(--a-ink)}
+body.theme-a #home .ha-bar-hold{background:var(--a-bad)}
+body.theme-a #home .ha-legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;font-weight:500}
+body.theme-a #home .ha-legend span{display:inline-flex;align-items:center;gap:6px}
+body.theme-a #home .ha-legend b{font-weight:700;font-variant-numeric:tabular-nums}
+body.theme-a #home .ha-dot{display:inline-block;width:10px;height:10px;border-radius:2px}
+body.theme-a #home .ha-dot.done{background:var(--a-ink)}
+body.theme-a #home .ha-dot.hold{background:var(--a-bad)}
+body.theme-a #home .ha-dot.left{background:#FFFFFF;border:1.5px solid var(--a-ink)}
+
+/* KPI plates */
+body.theme-a #home .hkpi.ha-kpi,
+body.theme-a #home .hkpi.ha-kpi[data-status]{display:flex;flex-direction:column;gap:4px;min-width:0;min-height:0;padding:12px;
+  background:#FFFFFF!important;border:2px solid var(--a-ink);border-radius:10px;box-shadow:none;color:var(--a-ink)}
+body.theme-a #home .ha-kpi.ha-wide{grid-column:1/-1}
+body.theme-a #home .ha-kpi .hkpi-top{display:flex;align-items:center;justify-content:space-between;gap:6px}
+body.theme-a #home .ha-kpi .hkpi-label{font-size:14px;font-weight:600;letter-spacing:0;text-transform:none}
+body.theme-a #home .ha-kpi .hkpi-badge{flex:0 0 auto;font-size:12px;font-weight:600;padding:2px 8px;border-radius:4px;
+  border:1.5px solid var(--a-ink);background:#FFFFFF;color:var(--a-ink)}
+body.theme-a #home .ha-kpi[data-status="green"] .hkpi-badge{background:var(--a-good);border-color:var(--a-good);color:#FFFFFF}
+body.theme-a #home .ha-kpi[data-status="yellow"] .hkpi-badge{background:var(--a-warn-bg);border-color:var(--a-ink);color:var(--a-ink)}
+body.theme-a #home .ha-kpi[data-status="red"] .hkpi-badge{background:var(--a-bad);border-color:var(--a-bad);color:#FFFFFF}
+body.theme-a #home .ha-kpi>b{font-size:30px;font-weight:700;line-height:1.1;color:var(--a-ink);letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+body.theme-a #home .ha-kpi .hkpi-meter,
+body.theme-a #home .ha-kpi .hkpi-progress{display:flex;height:8px;border-radius:4px;background:var(--a-soft);overflow:hidden;margin:2px 0}
+body.theme-a #home .ha-kpi .hkpi-meter i{display:block;height:100%;border-radius:0;background:var(--a-ink)}
+body.theme-a #home .ha-kpi .hkpi-meter.four i{background:var(--a-muted)}
+body.theme-a #home .ha-kpi[data-status="red"] .hkpi-meter i{background:var(--a-bad)}
+body.theme-a #home .ha-kpi[data-status="green"] .hkpi-meter i{background:var(--a-good)}
+body.theme-a #home .ha-kpi .hkpi-progress i{display:block;height:100%}
+body.theme-a #home .ha-kpi .hkpi-progress i:first-child{background:var(--a-ink)}
+body.theme-a #home .ha-kpi .hkpi-progress i:last-child{background:var(--a-muted)}
+body.theme-a #home .ha-kpi .hkpi-split{display:flex;gap:12px;border:0;padding:0;font-size:12px;color:var(--a-muted)}
+body.theme-a #home .ha-kpi .hkpi-split span{font-size:12px;color:var(--a-muted)}
+body.theme-a #home .ha-kpi .hkpi-split b{font-size:13px;font-weight:700;color:var(--a-ink)}
+body.theme-a #home .ha-kpi .hkpi-target,
+body.theme-a #home .ha-kpi .hkpi-note{font-size:11px;color:var(--a-muted);line-height:1.3}
+body.theme-a #home .ha-kpi .hkpi-note:empty{display:none}
+body.theme-a #home .ha-kpi .allocation-row{display:flex;flex-direction:column;gap:3px}
+body.theme-a #home .ha-kpi .allocation-row-label{display:flex;justify-content:space-between;align-items:baseline}
+body.theme-a #home .ha-kpi .allocation-row-label span{font-size:13px;font-weight:600}
+body.theme-a #home .ha-kpi .allocation-row-label b{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
+
+/* supporting numbers */
+body.theme-a #home .ha-minor{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+body.theme-a #home .ha-minor>div{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:8px 0;border-bottom:1px solid var(--a-line)}
+body.theme-a #home .ha-minor span{font-size:13px;color:var(--a-muted)}
+body.theme-a #home .ha-minor b{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
+
+/* quick actions */
+body.theme-a #home .ha-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 18px}
+body.theme-a #home .ha-actions button{min-height:48px;padding:6px 10px;border:2px solid var(--a-ink);border-radius:10px;background:#FFFFFF;
+  color:var(--a-ink);font-size:15px;font-weight:600;cursor:pointer;box-shadow:none}
+body.theme-a #home .ha-actions button.ha-primary{background:var(--a-ink);color:#FFFFFF}
+body.theme-a #home .ha-actions button:hover{background:#F2F3F5}
+body.theme-a #home .ha-actions button.ha-primary:hover{background:#000}
+body.theme-a #home .ha-actions button:focus-visible{outline:3px solid var(--a-signal);outline-offset:2px}
+
+/* drivers below 80% */
+body.theme-a #home .ha-top{border-top:2px solid var(--a-ink);padding-top:12px;margin-bottom:16px}
+body.theme-a #home .ha-top h2{margin:0;font-size:16px;font-weight:700}
+body.theme-a #home .ha-top-sub{margin:2px 0 8px;font-size:13px;color:var(--a-muted)}
+body.theme-a #home .ha-top .htop-content{width:100%;overflow-x:auto}
+body.theme-a #home .ha-top .htop-empty{margin:0;padding:6px 0;font-size:14px;color:var(--a-muted)}
+body.theme-a #home .ha-top .htop-table{display:flex;flex-direction:column}
+body.theme-a #home .ha-top .htop-row{display:grid;grid-template-columns:22px minmax(0,1fr) auto auto auto;gap:8px;align-items:center;
+  padding:9px 0;border-bottom:1px solid var(--a-line);font-size:13px}
+body.theme-a #home .ha-top .htop-head{font-size:11px;font-weight:600;color:var(--a-muted);border-bottom:2px solid var(--a-ink)}
+body.theme-a #home .ha-top .htop-index{font-weight:700;color:var(--a-ink)}
+body.theme-a #home .ha-top .htop-person b{font-weight:600;color:var(--a-ink)}
+body.theme-a #home .ha-top .htop-rate{padding:2px 6px;border-radius:4px;background:var(--a-bad);color:#FFFFFF;font-size:12px;font-weight:700}
+
+@media (min-width:900px){
+  body.theme-a #home .hkpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+  body.theme-a #home .ha-kpi.ha-wide,body.theme-a #home .ha-minor{grid-column:span 2}
+  body.theme-a #home .ha-actions{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media (max-width:767px){
+  body.theme-a.v-home .vh{padding:14px 16px 12px}
+}
+@media (max-width:360px){
+  body.theme-a #home .ha-status-main>b{font-size:46px}
+  body.theme-a #home .ha-kpi>b{font-size:26px}
+}
+@media (prefers-reduced-motion:reduce){body.theme-a *{transition:none!important}}

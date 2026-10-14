@@ -84,3 +84,12 @@ test('Home card labels and cache keys match the revised formulas', () => {
   assert.match(index, /assets\/home\.js\?v=\d{8}[a-z0-9]+/);
   assert.match(sw, /var VERSION = '\d{8}[a-z0-9]+'/);
 });
+
+test('every element the Home painter writes to exists in the rendered markup', () => {
+  const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  const painted = new Set();
+  for (const m of source.matchAll(/(?:setText\(|\$\()'([A-Za-z0-9]+)'/g)) painted.add(m[1]);
+  assert.ok(painted.size > 20, 'expected the painter to write many KPI fields');
+  const markup = source + index;
+  for (const id of painted) assert.match(markup, new RegExp('id="' + id + '"'), 'missing #' + id);
+});

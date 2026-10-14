@@ -65,21 +65,13 @@ function renderKpiCards(){
   if(cardsReady)return;
   var box=$('hkpis');if(!box)return;
   box.innerHTML=[
-    '<div class="hmetric-heading"><span>♧ FLEET HEAD COUNT</span><small>HC Status</small></div>',
-    '<article class="hkpi hkpi-plan" data-kpi="plan-hc" style="background:#FFF0B8"><div class="hkpi-top"><span class="hkpi-label">Plan HC</span><span class="hkpi-badge" id="kpiPlanBadge">—</span></div><b id="kpiPlanValue">–</b><div class="hkpi-progress"><i id="kpiPlan2wBar"></i><i id="kpiPlan4wBar"></i></div><div class="hkpi-split"><span>● 2W <b id="kpiPlan2w">–</b></span><span>● 4W <b id="kpiPlan4w">–</b></span></div><small class="hkpi-target">แผนกำลังคนจาก Fleet shift roster</small></article>',
-    '<article class="hkpi hkpi-active" data-kpi="active" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">Active</span><span class="hkpi-badge green">—</span></div><b id="kpiActiveValue">–</b><div class="hkpi-split"><span>● 2W <b id="kpiActive2w">–</b></span><span>● 4W <b id="kpiActive4w">–</b></span></div><small class="hkpi-note" id="kpiActiveNote"></small><small class="hkpi-target">คนขับที่มี Assign มากกว่า 0</small></article>',
-    '<div class="hmetric-heading"><span>▤ ASSIGN & DELIVERED</span><small id="homeOrderTotal">Daily Report</small></div>',
-    '<article class="hkpi" data-kpi="assign" style="background:#DDF3FB"><span class="hkpi-label">Assign</span><b id="kpiAssignValue">—</b><small class="hkpi-target">ยอดงานที่มอบหมาย · Daily Report</small></article>',
-    '<article class="hkpi" data-kpi="delivered" style="background:#FFE3D9"><span class="hkpi-label">Delivered</span><b id="kpiDeliveredValue">—</b><small class="hkpi-target">ยอดจัดส่งสำเร็จ · Daily Report</small></article>',
-    '<div class="hmetric-heading"><span>↔ ALLOCATION & PRODUCTIVITY</span><small>Overview</small></div>',
-    '<article class="hkpi hkpi-allocation" data-kpi="allocation" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">2W / 4W ALLOCATION</span><span class="hkpi-badge" id="kpiAllocationStatus">Target 69.80%</span></div><div class="allocation-row"><div class="allocation-row-label"><span><i class="allocation-dot two"></i>2W</span><b id="kpiAllocation2w">–</b></div><div class="hkpi-meter"><i id="kpiAllocation2wBar"></i></div></div><div class="allocation-row"><div class="allocation-row-label"><span><i class="allocation-dot four"></i>4W</span><b id="kpiAllocation4w">–</b></div><div class="hkpi-meter blue"><i id="kpiAllocation4wBar"></i></div></div><small class="hkpi-target" id="kpiAllocationTarget">Target 2W 69.80% · 4W 30.20%</small><small class="hkpi-target">สัดส่วน Assign ของ 2W/4W เทียบกับ Assign รวม</small></article>',
-    '<article class="hkpi" data-kpi="pdty" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">PDTY</span><span class="hkpi-badge">Productivity</span></div><b id="kpiPdtyValue">–</b><small class="hkpi-target">Target 196</small><div class="hkpi-meter"><i id="kpiPdtyBar"></i></div><small class="hkpi-target">Assign ÷ (Active 2W + Active 4W)</small></article>',
-    '<div class="hmetric-heading"><span>⚡ SLA & ON-HOLD</span><small>Hub KPI</small></div>',
-    '<article class="hkpi" data-kpi="sla" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">SLA</span><span class="hkpi-badge coral">Target ≥ 96%</span></div><b id="kpiSlaValue">–</b><small class="hkpi-target">Delivered ÷ Today\'s Volume × 100</small><div class="hkpi-meter"><i id="kpiSlaBar"></i></div></article>',
-    '<article class="hkpi" data-kpi="onhold" style="background:#FFF1B8"><span class="hkpi-label">On-hold</span><b id="kpiOnholdValue">—</b><small class="hkpi-target">พัสดุที่พักการจัดส่ง</small></article>',
-    '<div class="hmetric-heading"><span>▤ DELIVERY TRACKING</span><small>ข้อมูลประกอบ</small></div>',
-    '<article class="hkpi" data-kpi="today-volume" style="background:#FFE6D8"><span class="hkpi-label">Today\'s Volume</span><b id="kpiTodayVolume">—</b><small class="hkpi-target">ปริมาณงานวันนี้</small></article>',
-    '<article class="hkpi" data-kpi="inbound" style="background:#E7F4FF"><span class="hkpi-label">Inbound</span><b id="kpiInboundValue">—</b><small class="hkpi-target">ข้อมูลจากระบบซิงก์</small></article>'
+    '<section class="ha-status" aria-label="สถานะการส่งวันนี้"><div class="ha-status-top"><span>ส่งแล้ววันนี้</span><small id="homeOrderTotal">Daily Report</small></div><div class="ha-status-main"><b id="kpiDeliveredRate">—</b><span><span id="kpiDeliveredValue">—</span> จาก<br><span id="kpiAssignValue">—</span> ชิ้น</span></div><div class="ha-bar" id="kpiRateBarWrap" role="img" aria-label="ยังไม่มีข้อมูล"><i class="ha-bar-done" id="kpiRateBar"></i><i class="ha-bar-hold" id="kpiHoldBar"></i></div><div class="ha-legend"><span><i class="ha-dot done"></i>ส่งแล้ว</span><span><i class="ha-dot hold"></i>พักไว้ <b id="kpiOnholdValue">—</b></span><span><i class="ha-dot left"></i>กำลังส่ง <b id="kpiRemainValue">—</b></span></div></section>',
+    '<article class="hkpi ha-kpi" data-kpi="sla" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">SLA</span><span class="hkpi-badge">เป้า ≥ 96%</span></div><b id="kpiSlaValue">–</b><div class="hkpi-meter"><i id="kpiSlaBar"></i></div><small class="hkpi-target">Delivered ÷ Today\'s Volume × 100</small></article>',
+    '<article class="hkpi ha-kpi" data-kpi="pdty" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">PDTY</span><span class="hkpi-badge">เป้า 196</span></div><b id="kpiPdtyValue">–</b><div class="hkpi-meter"><i id="kpiPdtyBar"></i></div><small class="hkpi-target">Assign ÷ (Active 2W + Active 4W)</small></article>',
+    '<article class="hkpi ha-kpi" data-kpi="active" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">คนขับทำงาน</span><span class="hkpi-badge">—</span></div><b id="kpiActiveValue">–</b><div class="hkpi-split"><span>2W <b id="kpiActive2w">–</b></span><span>4W <b id="kpiActive4w">–</b></span></div><small class="hkpi-note" id="kpiActiveNote"></small><small class="hkpi-target">คนขับที่มี Assign มากกว่า 0</small></article>',
+    '<article class="hkpi ha-kpi" data-kpi="plan-hc"><div class="hkpi-top"><span class="hkpi-label">แผนกำลังคน</span><span class="hkpi-badge" id="kpiPlanBadge">—</span></div><b id="kpiPlanValue">–</b><div class="hkpi-progress"><i id="kpiPlan2wBar"></i><i id="kpiPlan4wBar"></i></div><div class="hkpi-split"><span>2W <b id="kpiPlan2w">–</b></span><span>4W <b id="kpiPlan4w">–</b></span></div><small class="hkpi-target">จาก Fleet shift roster</small></article>',
+    '<article class="hkpi ha-kpi ha-wide" data-kpi="allocation" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">สัดส่วน Assign 2W / 4W</span><span class="hkpi-badge" id="kpiAllocationStatus">รอข้อมูล</span></div><div class="allocation-row"><div class="allocation-row-label"><span>2W</span><b id="kpiAllocation2w">–</b></div><div class="hkpi-meter"><i id="kpiAllocation2wBar"></i></div></div><div class="allocation-row"><div class="allocation-row-label"><span>4W</span><b id="kpiAllocation4w">–</b></div><div class="hkpi-meter four"><i id="kpiAllocation4wBar"></i></div></div><small class="hkpi-target" id="kpiAllocationTarget">เป้าหมาย 2W 69.80% · 4W 30.20%</small></article>',
+    '<div class="ha-minor"><div data-kpi="today-volume"><span>Today\'s Volume</span><b id="kpiTodayVolume">—</b></div><div data-kpi="inbound"><span>Inbound</span><b id="kpiInboundValue">—</b></div></div>'
   ].join('');
   cardsReady=true;
 }
@@ -109,6 +101,13 @@ function paint(){
   setText('kpiOnholdValue',t&&t.onhold!=null?fmt(t.onhold):'—');
   setText('kpiAssignValue',t&&t.assign!=null?fmt(t.assign):'—');
   setText('kpiDeliveredValue',t&&t.delivered!=null?fmt(t.delivered):'—');
+  setText('kpiRemainValue',t&&t.remain!=null?fmt(t.remain):'—');
+  var hasRate=!!(t&&t.assign>0&&t.pct!=null&&isFinite(t.pct));
+  setText('kpiDeliveredRate',hasRate?decimal(t.pct,1)+'%':'—');
+  var rateBar=$('kpiRateBar'),holdBar=$('kpiHoldBar'),barWrap=$('kpiRateBarWrap');
+  if(rateBar)rateBar.style.width=hasRate?Math.min(100,Math.max(0,t.pct))+'%':'0%';
+  if(holdBar)holdBar.style.width=hasRate&&t.onhold!=null?Math.min(100,Math.max(0,value(t.onhold)/value(t.assign)*100))+'%':'0%';
+  if(barWrap)barWrap.setAttribute('aria-label',hasRate?'ส่งแล้ว '+fmt(t.delivered)+' จาก '+fmt(t.assign)+' ชิ้น พักไว้ '+fmt(t.onhold)+' ชิ้น':'ยังไม่มีข้อมูล');
   if(t){
     setText('kpiActiveValue',k.active==null?'—':fmt(k.active));
     setText('kpiActive2w',k.active2==null?'–':fmt(k.active2));
