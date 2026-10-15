@@ -261,7 +261,7 @@ var SpxSync_ = (function () {
     // without a position header does not shift Assign / Delivered / On-hold.
     // "ตำแหน่ง" and "position" are optional; a missing header sends "".
     var col = { id: 0, name: 1, first: 2, assign: 3, delivered: 4, onhold: 5, position: -1, idle: -1 };
-    var keyMap = { driverid: 'id', 'ชื่อคนขับ': 'name', firstdel: 'first', assign: 'assign', delivered: 'delivered', onhold: 'onhold', 'ตำแหน่ง': 'position', position: 'position', timesincelastdelivery: 'idle' };
+    var keyMap = { driverid: 'id', 'ชื่อคนขับ': 'name', firstdel: 'first', assign: 'assign', delivered: 'delivered', onhold: 'onhold', 'ตำแหน่ง': 'position', position: 'position', timesincelastdelivery: 'idle', lastdelivery: 'idle', lastdelivering: 'idle', timesincelastseen: 'idle' };
     var found = {};
     values[hdrRow].forEach(function (h, i) {
       var k = keyMap[normKey_(h)];
