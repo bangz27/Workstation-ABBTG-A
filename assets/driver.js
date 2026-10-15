@@ -27,10 +27,20 @@ function thStamp(s){
   return m?(+m[3])+' '+TH_MON[+m[2]-1]+' '+m[4]+' น.':String(s||'');
 }
 
+/* "Time Since Last Delivery" from the sheet, as h:m (e.g. "0:59", "3:9"); "-" or blank = no data */
+function gapMinutes(s){var m=/^(\d+):(\d{1,2})$/.exec(String(s==null?'':s).trim());return m?(+m[1])*60+(+m[2]):null;}
+function gapText(min){
+  if(min==null)return '—';
+  if(min<1)return 'เพิ่งส่ง';
+  var h=Math.floor(min/60),r=min%60;
+  return h?(h+' ชม.'+(r?' '+r+' นาที':'')):(r+' นาที');
+}
+function gapLabel(min){return min==null?'':min<1?'เพิ่งส่ง':'ส่งล่าสุด '+gapText(min)+'ที่แล้ว';}
 /* derived fields: progress = Delivered/Assign %, ค้าง = Assign − Delivered − On-hold */
 function enrich(d){
   var a=+d.assign||0,del=+d.delivered||0,oh=+d.onhold||0,raw=a-del-oh;
   return {id:String(d.id),name:String(d.name),position:String(d.position==null?'':d.position).trim(),first:d.first||'-',assign:a,delivered:del,onhold:oh,
+    idleRaw:String(d.idle==null?'':d.idle).trim(),idle:gapMinutes(d.idle),
     remainRaw:raw,remain:Math.max(0,raw),done:raw<=0,progress:a?del/a*100:0};
 }
 function status(d){
@@ -123,7 +133,7 @@ function renderCards(){
     ['Delivering รวม',fmt(rem),'ยังส่งไม่ครบ '+(n-done)+' คน','y'],
     ['จบงาน',fmt(done),'จาก '+n+' คน','g']
   ].map(function(c){return '<div class="card"><div class="k">'+c[0]+'</div><div class="v '+c[3]+'">'+c[1]+'</div><div class="s">'+c[2]+'</div></div>';}).join('');
-  window.__SPX_TOTALS={sheet:state.sheet,drivers:n,done:done,assign:a,delivered:del,onhold:oh,remain:rem,trips:trips,pct:+pct.toFixed(1),people:DATA.map(function(d){return {id:d.id,name:d.name,position:d.position,first:d.first,assign:d.assign,delivered:d.delivered};})};
+  window.__SPX_TOTALS={sheet:state.sheet,drivers:n,done:done,assign:a,delivered:del,onhold:oh,remain:rem,trips:trips,pct:+pct.toFixed(1),people:DATA.map(function(d){return {id:d.id,name:d.name,position:d.position,first:d.first,idle:d.idle,idleText:d.idle==null?'':gapText(d.idle),assign:d.assign,delivered:d.delivered};})};
   if(window.SPX_HOME)window.SPX_HOME.paint();
 }
 
@@ -186,9 +196,9 @@ function rowHTML(d,i){
    '<div class="rmain">'+
     '<div class="l1">'+
       '<span class="rank">'+(i+1)+'</span>'+
-      '<span class="wrapname nm"><span class="nm">'+esc(d.name)+'</span><span class="id d-only">ID '+esc(d.id)+' · '+esc(posText(d))+'</span></span>'+
+      '<span class="wrapname nm"><span class="nm">'+esc(d.name)+'</span><span class="id d-only">ID '+esc(d.id)+' · '+esc(posText(d))+(d.idle!=null?' · '+esc(gapLabel(d.idle)):'')+'</span></span>'+
     '</div>'+
-    '<div class="l2 m-only"><span class="id">ID '+esc(d.id)+'</span><span>·</span><span class="pos">'+esc(posText(d))+'</span><span>·</span><span>เริ่มส่ง '+esc(d.first)+'</span><span style="margin-left:auto"><span class="badge sb '+st.c+'">'+st.t+'</span></span></div>'+
+    '<div class="l2 m-only"><span class="id">ID '+esc(d.id)+'</span><span>·</span><span class="pos">'+esc(posText(d))+'</span><span>·</span><span>เริ่มส่ง '+esc(d.first)+'</span>'+(d.idle!=null?'<span>·</span><span>'+esc(gapLabel(d.idle))+'</span>':'')+'<span style="margin-left:auto"><span class="badge sb '+st.c+'">'+st.t+'</span></span></div>'+
     '<div class="nums">'+
       '<div class="m-only"><div class="k">First Del</div><div class="v">'+esc(d.first)+'</div></div>'+
       '<div class="d-only"><div class="v">'+esc(d.first)+'</div></div>'+
@@ -205,6 +215,7 @@ function rowHTML(d,i){
      '<dt>ชื่อคนขับ</dt><dd>'+esc(d.name)+'</dd>'+
      '<dt>ตำแหน่ง</dt><dd>'+esc(posText(d))+'</dd>'+
      '<dt>เริ่มส่งชิ้นแรก</dt><dd>'+esc(d.first)+(d.first!=='-'?' น.':'')+'</dd>'+
+     '<dt>เวลาตั้งแต่ส่งชิ้นล่าสุด</dt><dd>'+(d.idle!=null?esc(gapText(d.idle))+' ('+esc(d.idleRaw)+')':'—')+'</dd>'+
      '<dt>Assign</dt><dd>'+fmt(d.assign)+' ชิ้น</dd>'+
      '<dt>Delivered</dt><dd>'+fmt(d.delivered)+' ชิ้น</dd>'+
      '<dt>On-hold</dt><dd>'+fmt(d.onhold)+' ชิ้น</dd>'+

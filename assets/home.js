@@ -15,18 +15,19 @@ function wheelOf(func){
 }
 function calculate(t,metrics){
   var hasPeople=!!(t&&Array.isArray(t.people)),active=hasPeople?0:null,active2=0,active4=0,activeUnknown=0;
-  var assign2=0,assign4=0;
+  var assign2=0,assign4=0,assignUnknown=0;
   if(hasPeople)t.people.forEach(function(p){
     var a=value(p&&p.assign),type=wheelOf(p&&p.position);
-    if(a>0){active++;if(type===2)active2++;else if(type===4)active4++;else activeUnknown++;}
-    if(type===2)assign2+=a;else if(type===4)assign4+=a;
+    if(a>0){if(type===2)active2++;else if(type===4)active4++;else activeUnknown++;}
+    if(type===2)assign2+=a;else if(type===4)assign4+=a;else assignUnknown+=a;
   });
-  var assignTotal=assign2+assign4,delivered=t&&t.delivered!=null?value(t.delivered):null,assign=t&&t.assign!=null?value(t.assign):null,activeKnown=active2+active4;
+  var assignTotal=assign2+assign4,delivered=t&&t.delivered!=null?value(t.delivered):null,assign=t&&t.assign!=null?value(t.assign):null,activeKnown=active2+active4,assignKnown=assign==null?null:assign-(hasPeople?assignUnknown:0);
+  if(hasPeople)active=activeKnown;
   return {
     active:active,active2:hasPeople?active2:null,active4:hasPeople?active4:null,activeUnknown:activeUnknown,
     assign2:hasPeople?assign2:null,assign4:hasPeople?assign4:null,assignTotal:hasPeople?assignTotal:null,
     allocation2:hasPeople?ratio(assign2,assignTotal):null,allocation4:hasPeople?ratio(assign4,assignTotal):null,
-    pdty:!hasPeople||activeKnown<=0||assign==null?null:ratio(assign,activeKnown),sla:!t||delivered==null||!metrics||metrics.todayVolume==null||metrics.todayVolume<=0?null:ratio(delivered,metrics.todayVolume)
+    pdty:!hasPeople||activeKnown<=0||assignKnown==null?null:ratio(assignKnown,activeKnown),sla:!t||delivered==null||!metrics||metrics.todayVolume==null||metrics.todayVolume<=0?null:ratio(delivered,metrics.todayVolume)
   };
 }
 function sheetISO(name){
@@ -65,11 +66,11 @@ function renderKpiCards(){
   if(cardsReady)return;
   var box=$('hkpis');if(!box)return;
   box.innerHTML=[
-    '<section class="ha-status" aria-label="สถานะการส่งวันนี้"><div class="ha-status-top"><span>ส่งแล้ววันนี้</span><small id="homeOrderTotal">Daily Report</small></div><div class="ha-status-main"><b id="kpiDeliveredRate">—</b><span><span id="kpiDeliveredValue">—</span> จาก<br><span id="kpiAssignValue">—</span> ชิ้น</span></div><div class="ha-bar" id="kpiRateBarWrap" role="img" aria-label="ยังไม่มีข้อมูล"><i class="ha-bar-done" id="kpiRateBar"></i><i class="ha-bar-hold" id="kpiHoldBar"></i></div><div class="ha-legend"><span><i class="ha-dot done"></i>ส่งแล้ว</span><span><i class="ha-dot hold"></i>พักไว้ <b id="kpiOnholdValue">—</b></span><span><i class="ha-dot left"></i>กำลังส่ง <b id="kpiRemainValue">—</b></span></div></section>',
+    '<section class="ha-status" aria-label="ส่งสำเร็จ"><div class="ha-status-top"><span>ส่งสำเร็จ</span><small id="homeOrderTotal">Daily Report</small></div><div class="ha-status-main"><b id="kpiDeliveredRate">—</b><span><span id="kpiDeliveredValue">—</span> จาก<br><span id="kpiAssignValue">—</span> ชิ้น</span></div><div class="ha-bar" id="kpiRateBarWrap" role="img" aria-label="ยังไม่มีข้อมูล"><i class="ha-bar-done" id="kpiRateBar"></i><i class="ha-bar-hold" id="kpiHoldBar"></i></div><div class="ha-legend"><span><i class="ha-dot done"></i>ส่งแล้ว</span><span><i class="ha-dot hold"></i>Onhold <b id="kpiOnholdValue">—</b></span><span><i class="ha-dot left"></i>กำลังส่ง <b id="kpiRemainValue">—</b></span></div></section>',
     '<article class="hkpi ha-kpi" data-kpi="sla" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">SLA</span><span class="hkpi-badge">เป้า ≥ 96%</span></div><b id="kpiSlaValue">–</b><div class="hkpi-meter"><i id="kpiSlaBar"></i></div><small class="hkpi-target">Delivered ÷ Today\'s Volume × 100</small></article>',
     '<article class="hkpi ha-kpi" data-kpi="pdty" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">PDTY</span><span class="hkpi-badge">เป้า 196</span></div><b id="kpiPdtyValue">–</b><div class="hkpi-meter"><i id="kpiPdtyBar"></i></div><small class="hkpi-target">Assign ÷ (Active 2W + Active 4W)</small></article>',
-    '<article class="hkpi ha-kpi" data-kpi="active" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">คนขับทำงาน</span><span class="hkpi-badge">—</span></div><b id="kpiActiveValue">–</b><div class="hkpi-split"><span>2W <b id="kpiActive2w">–</b></span><span>4W <b id="kpiActive4w">–</b></span></div><small class="hkpi-note" id="kpiActiveNote"></small><small class="hkpi-target">คนขับที่มี Assign มากกว่า 0</small></article>',
-    '<article class="hkpi ha-kpi" data-kpi="plan-hc"><div class="hkpi-top"><span class="hkpi-label">แผนกำลังคน</span><span class="hkpi-badge" id="kpiPlanBadge">—</span></div><b id="kpiPlanValue">–</b><div class="hkpi-progress"><i id="kpiPlan2wBar"></i><i id="kpiPlan4wBar"></i></div><div class="hkpi-split"><span>2W <b id="kpiPlan2w">–</b></span><span>4W <b id="kpiPlan4w">–</b></span></div><small class="hkpi-target">จาก Fleet shift roster</small></article>',
+    '<article class="hkpi ha-kpi" data-kpi="active" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">Active Fleet</span><span class="hkpi-badge">—</span></div><b id="kpiActiveValue">–</b><div class="hkpi-split"><span>2W <b id="kpiActive2w">–</b></span><span>4W <b id="kpiActive4w">–</b></span></div><small class="hkpi-note" id="kpiActiveNote"></small><small class="hkpi-target">คนขับที่มี Assign มากกว่า 0</small></article>',
+    '<article class="hkpi ha-kpi" data-kpi="plan-hc"><div class="hkpi-top"><span class="hkpi-label">Plan Fleet</span><span class="hkpi-badge" id="kpiPlanBadge">—</span></div><b id="kpiPlanValue">–</b><div class="hkpi-progress"><i id="kpiPlan2wBar"></i><i id="kpiPlan4wBar"></i></div><div class="hkpi-split"><span>2W <b id="kpiPlan2w">–</b></span><span>4W <b id="kpiPlan4w">–</b></span></div><small class="hkpi-target">จาก Fleet shift roster</small></article>',
     '<article class="hkpi ha-kpi ha-wide" data-kpi="allocation" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">สัดส่วน Assign 2W / 4W</span><span class="hkpi-badge" id="kpiAllocationStatus">รอข้อมูล</span></div><div class="allocation-row"><div class="allocation-row-label"><span>2W</span><b id="kpiAllocation2w">–</b></div><div class="hkpi-meter"><i id="kpiAllocation2wBar"></i></div></div><div class="allocation-row"><div class="allocation-row-label"><span>4W</span><b id="kpiAllocation4w">–</b></div><div class="hkpi-meter four"><i id="kpiAllocation4wBar"></i></div></div><small class="hkpi-target" id="kpiAllocationTarget">เป้าหมาย 2W 69.80% · 4W 30.20%</small></article>',
     '<div class="ha-minor"><div data-kpi="today-volume"><span>Today\'s Volume</span><b id="kpiTodayVolume">—</b></div><div data-kpi="inbound"><span>Inbound</span><b id="kpiInboundValue">—</b></div></div>'
   ].join('');
@@ -81,15 +82,23 @@ function renderTopDelivered(t){
   if(!t||!Array.isArray(t.people)){box.innerHTML='<p class="htop-empty">กำลังโหลดข้อมูลรายบุคคล…</p>';return;}
   var people=t.people.map(function(p){
     var assign=value(p&&p.assign),delivered=value(p&&p.delivered);
-    return {id:String(p&&p.id||''),name:String(p&&p.name||'ไม่ระบุชื่อ'),position:String(p&&p.position||''),assign:assign,delivered:delivered,rate:assign>0?delivered/assign*100:null};
+    return {id:String(p&&p.id||''),name:String(p&&p.name||'ไม่ระบุชื่อ'),position:String(p&&p.position||''),first:String(p&&p.first||'').trim(),idle:p&&p.idle!=null?Number(p.idle):null,idleText:String(p&&p.idleText||''),assign:assign,delivered:delivered,rate:assign>0?delivered/assign*100:null};
   }).filter(function(p){return p.assign>0&&p.rate!=null&&p.rate<80;})
-    .sort(function(a,b){return b.delivered-a.delivered;}).slice(0,5);
-  if(!people.length){box.innerHTML='<p class="htop-empty">ไม่มีพนักงานที่มี Completion ต่ำกว่า 80% ในข้อมูลชุดนี้</p>';return;}
+    .sort(function(a,b){return a.rate-b.rate||a.delivered-b.delivered;});
   function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-  box.innerHTML='<div class="htop-table"><div class="htop-row htop-head"><span>#</span><span>พนักงาน</span><span>ตำแหน่ง</span><span>Delivered / Assign</span><span>Completion</span></div>'+
-    people.map(function(p,i){
-      return '<div class="htop-row"><span class="htop-index">'+(i+1)+'</span><span class="htop-person"><b>'+esc(p.name)+'</b></span><span>'+esc(p.position||'—')+'</span><span>'+fmt(p.delivered)+' / '+fmt(p.assign)+'</span><strong class="htop-rate">'+p.rate.toFixed(1)+'%</strong></div>';
-    }).join('')+'</div>';
+  var groups=[{type:2,label:'2WH'},{type:4,label:'4WH'}].map(function(g){
+    var all=people.filter(function(p){return wheelOf(p.position)===g.type;});
+    return {label:g.label,total:all.length,rows:all.slice(0,5)};
+  });
+  if(!groups[0].total&&!groups[1].total){box.innerHTML='<p class="htop-empty">ไม่มีคนขับ 2WH / 4WH ที่ส่งต่ำกว่า 80% ในข้อมูลชุดนี้</p>';return;}
+  box.innerHTML=groups.map(function(g){
+    var head='<h3 class="htop-group">'+g.label+' <small>'+(g.total?(g.total>g.rows.length?'5 จาก '+g.total+' คน':g.total+' คน'):'ไม่มี')+'</small></h3>';
+    if(!g.total)return head;
+    return head+'<div class="htop-table"><div class="htop-row htop-head"><span>#</span><span>พนักงาน</span><span>Delivered / Assign</span><span>Completion</span></div>'+
+      g.rows.map(function(p,i){
+        return '<div class="htop-row"><span class="htop-index">'+(i+1)+'</span><span class="htop-person"><b>'+esc(p.name)+'</b><small class="htop-meta">First Delivering '+esc(p.first&&p.first!=='-'?p.first:'—')+' · Time Since Last Seen '+esc(p.idle==null?'—':p.idle<1?'เพิ่งส่ง':p.idleText)+'</small></span><span>'+fmt(p.delivered)+' / '+fmt(p.assign)+'</span><strong class="htop-rate">'+p.rate.toFixed(1)+'%</strong></div>';
+      }).join('')+'</div>';
+  }).join('');
 }
 function paint(){
   var t=window.__SPX_TOTALS,root=$('home');
@@ -107,12 +116,12 @@ function paint(){
   var rateBar=$('kpiRateBar'),holdBar=$('kpiHoldBar'),barWrap=$('kpiRateBarWrap');
   if(rateBar)rateBar.style.width=hasRate?Math.min(100,Math.max(0,t.pct))+'%':'0%';
   if(holdBar)holdBar.style.width=hasRate&&t.onhold!=null?Math.min(100,Math.max(0,value(t.onhold)/value(t.assign)*100))+'%':'0%';
-  if(barWrap)barWrap.setAttribute('aria-label',hasRate?'ส่งแล้ว '+fmt(t.delivered)+' จาก '+fmt(t.assign)+' ชิ้น พักไว้ '+fmt(t.onhold)+' ชิ้น':'ยังไม่มีข้อมูล');
+  if(barWrap)barWrap.setAttribute('aria-label',hasRate?'ส่งแล้ว '+fmt(t.delivered)+' จาก '+fmt(t.assign)+' ชิ้น Onhold '+fmt(t.onhold)+' ชิ้น':'ยังไม่มีข้อมูล');
   if(t){
     setText('kpiActiveValue',k.active==null?'—':fmt(k.active));
     setText('kpiActive2w',k.active2==null?'–':fmt(k.active2));
     setText('kpiActive4w',k.active4==null?'–':fmt(k.active4));
-    setText('kpiActiveNote',k.activeUnknown?'ไม่ระบุประเภท '+fmt(k.activeUnknown):'');
+    setText('kpiActiveNote','');
     setText('kpiAllocation2w',pct(k.allocation2));
     setText('kpiAllocation4w',pct(k.allocation4));
     setText('kpiPdtyValue',decimal(k.pdty,1));
