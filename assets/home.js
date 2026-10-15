@@ -96,7 +96,7 @@ function renderTopDelivered(t){
     if(!g.total)return head;
     return head+'<div class="htop-table"><div class="htop-row htop-head"><span>#</span><span>พนักงาน</span><span>Delivered / Assign</span><span>Completion</span></div>'+
       g.rows.map(function(p,i){
-        return '<div class="htop-row"><span class="htop-index">'+(i+1)+'</span><span class="htop-person"><b>'+esc(p.name)+'</b><small class="htop-meta">First Delivering '+esc(p.first&&p.first!=='-'?p.first:'—')+' · Last delivering '+esc(p.idleRaw||'—')+'</small></span><span>'+fmt(p.delivered)+' / '+fmt(p.assign)+'</span><strong class="htop-rate">'+p.rate.toFixed(1)+'%</strong></div>';
+        return '<div class="htop-row"><span class="htop-index">'+(i+1)+'</span><span class="htop-person"><b>'+esc(p.name)+'</b><small class="htop-meta">First '+esc(p.first&&p.first!=='-'?p.first:'—')+' · Last '+esc(p.idleRaw||'—')+'</small></span><span>'+fmt(p.delivered)+' / '+fmt(p.assign)+'</span><strong class="htop-rate">'+p.rate.toFixed(1)+'%</strong></div>';
       }).join('')+'</div>';
   }).join('');
 }

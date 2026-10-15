@@ -197,9 +197,9 @@ function rowHTML(d,i){
    '<div class="rmain">'+
     '<div class="l1">'+
       '<span class="rank">'+(i+1)+'</span>'+
-      '<span class="wrapname nm"><span class="nm">'+esc(d.name)+'</span><span class="id d-only">ID '+esc(d.id)+' · '+esc(posText(d))+' · Last delivering '+esc(lastDel(d))+'</span></span>'+
+      '<span class="wrapname nm"><span class="nm">'+esc(d.name)+'</span><span class="id d-only">ID '+esc(d.id)+' · '+esc(posText(d))+' · Last '+esc(lastDel(d))+'</span></span>'+
     '</div>'+
-    '<div class="l2 m-only"><span class="id">ID '+esc(d.id)+'</span><span>·</span><span class="pos">'+esc(posText(d))+'</span><span>·</span><span>Last delivering '+esc(lastDel(d))+'</span>'+'<span style="margin-left:auto"><span class="badge sb '+st.c+'">'+st.t+'</span></span></div>'+
+    '<div class="l2 m-only"><span class="id">ID '+esc(d.id)+'</span><span>·</span><span class="pos">'+esc(posText(d))+'</span><span>·</span><span>Last '+esc(lastDel(d))+'</span>'+'<span style="margin-left:auto"><span class="badge sb '+st.c+'">'+st.t+'</span></span></div>'+
     '<div class="nums">'+
       '<div class="m-only"><div class="k">First Del</div><div class="v">'+esc(d.first)+'</div></div>'+
       '<div class="d-only"><div class="v">'+esc(d.first)+'</div></div>'+
