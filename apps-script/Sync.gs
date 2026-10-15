@@ -260,8 +260,8 @@ var SpxSync_ = (function () {
     // Header text wins. Fallback indexes stay the old A–F layout so a sheet
     // without a position header does not shift Assign / Delivered / On-hold.
     // "ตำแหน่ง" and "position" are optional; a missing header sends "".
-    var col = { id: 0, name: 1, first: 2, assign: 3, delivered: 4, onhold: 5, position: -1 };
-    var keyMap = { driverid: 'id', 'ชื่อคนขับ': 'name', firstdel: 'first', assign: 'assign', delivered: 'delivered', onhold: 'onhold', 'ตำแหน่ง': 'position', position: 'position' };
+    var col = { id: 0, name: 1, first: 2, assign: 3, delivered: 4, onhold: 5, position: -1, idle: -1 };
+    var keyMap = { driverid: 'id', 'ชื่อคนขับ': 'name', firstdel: 'first', assign: 'assign', delivered: 'delivered', onhold: 'onhold', 'ตำแหน่ง': 'position', position: 'position', timesincelastdelivery: 'idle' };
     var found = {};
     values[hdrRow].forEach(function (h, i) {
       var k = keyMap[normKey_(h)];
@@ -281,6 +281,8 @@ var SpxSync_ = (function () {
       var onhold = toNum_(row[col.onhold]);
 
       var position = col.position >= 0 ? cellStr_(row[col.position]) : '';
+      // "Time Since Last Delivery" (optional column): send the text exactly as shown, e.g. "0:59", "-".
+      var idle = col.idle >= 0 ? cellStr_(display[i][col.idle]) : '';
       drivers.push({
         id: id,
         name: name || '(ไม่ระบุชื่อ)',
@@ -288,7 +290,8 @@ var SpxSync_ = (function () {
         first: fmtTime_(row[col.first], display[i][col.first], tz),
         assign: assign,
         delivered: delivered,
-        onhold: onhold
+        onhold: onhold,
+        idle: idle
       });
     }
     return { drivers: drivers, warnings: warnings };
