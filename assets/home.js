@@ -82,7 +82,7 @@ function renderTopDelivered(t){
   if(!t||!Array.isArray(t.people)){box.innerHTML='<p class="htop-empty">กำลังโหลดข้อมูลรายบุคคล…</p>';return;}
   var people=t.people.map(function(p){
     var assign=value(p&&p.assign),delivered=value(p&&p.delivered);
-    return {id:String(p&&p.id||''),name:String(p&&p.name||'ไม่ระบุชื่อ'),position:String(p&&p.position||''),first:String(p&&p.first||'').trim(),idle:p&&p.idle!=null?Number(p.idle):null,idleText:String(p&&p.idleText||''),assign:assign,delivered:delivered,rate:assign>0?delivered/assign*100:null};
+    return {id:String(p&&p.id||''),name:String(p&&p.name||'ไม่ระบุชื่อ'),position:String(p&&p.position||''),first:String(p&&p.first||'').trim(),idle:p&&p.idle!=null?Number(p.idle):null,idleText:String(p&&p.idleText||''),idleRaw:(function(v){v=String(v==null?'':v).trim();return v&&v!=='-'?v:'';})(p&&p.idleRaw),assign:assign,delivered:delivered,rate:assign>0?delivered/assign*100:null};
   }).filter(function(p){return p.assign>0&&p.rate!=null&&p.rate<80;})
     .sort(function(a,b){return a.rate-b.rate||a.delivered-b.delivered;});
   function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -96,7 +96,7 @@ function renderTopDelivered(t){
     if(!g.total)return head;
     return head+'<div class="htop-table"><div class="htop-row htop-head"><span>#</span><span>พนักงาน</span><span>Delivered / Assign</span><span>Completion</span></div>'+
       g.rows.map(function(p,i){
-        return '<div class="htop-row"><span class="htop-index">'+(i+1)+'</span><span class="htop-person"><b>'+esc(p.name)+'</b><small class="htop-meta">First Delivering '+esc(p.first&&p.first!=='-'?p.first:'—')+' · '+esc(p.idle==null?'ส่งล่าสุดเมื่อ —':p.idle<1?'เพิ่งส่ง':'ส่งล่าสุดเมื่อ '+p.idleText+'ที่แล้ว')+'</small></span><span>'+fmt(p.delivered)+' / '+fmt(p.assign)+'</span><strong class="htop-rate">'+p.rate.toFixed(1)+'%</strong></div>';
+        return '<div class="htop-row"><span class="htop-index">'+(i+1)+'</span><span class="htop-person"><b>'+esc(p.name)+'</b><small class="htop-meta">First Delivering '+esc(p.first&&p.first!=='-'?p.first:'—')+' · Last delivering '+esc(p.idleRaw||'—')+'</small></span><span>'+fmt(p.delivered)+' / '+fmt(p.assign)+'</span><strong class="htop-rate">'+p.rate.toFixed(1)+'%</strong></div>';
       }).join('')+'</div>';
   }).join('');
 }
