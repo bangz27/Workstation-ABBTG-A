@@ -23,7 +23,7 @@ function loadHome() {
   return { home: window.SPX_HOME, elements };
 }
 
-test('PDTY = Assign / (Active 2W + Active 4W)', () => {
+test('PDTY = (Assign - unknown-type Assign) / (Active 2W + Active 4W); unknown type excluded from Active', () => {
   const { home } = loadHome();
   const result = home.calculate({
     assign: 600,
@@ -37,7 +37,8 @@ test('PDTY = Assign / (Active 2W + Active 4W)', () => {
   }, { todayVolume: 100 });
   assert.equal(result.active2, 1);
   assert.equal(result.active4, 1);
-  assert.equal(result.pdty, 300);
+  assert.equal(result.active, 2);
+  assert.equal(result.pdty, 299.5);
 });
 
 test('SLA = Delivered / Today\'s Volume; Assign does not act as the denominator', () => {

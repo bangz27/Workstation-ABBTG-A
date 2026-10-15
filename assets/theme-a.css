@@ -117,7 +117,10 @@ body.theme-a #home .ha-top-sub{margin:2px 0 8px;font-size:13px;color:var(--a-mut
 body.theme-a #home .ha-top .htop-content{width:100%;overflow-x:auto}
 body.theme-a #home .ha-top .htop-empty{margin:0;padding:6px 0;font-size:14px;color:var(--a-muted)}
 body.theme-a #home .ha-top .htop-table{display:flex;flex-direction:column}
-body.theme-a #home .ha-top .htop-row{display:grid;grid-template-columns:22px minmax(0,1fr) auto auto auto;gap:8px;align-items:center;
+body.theme-a #home .ha-top .htop-group{margin:12px 0 2px;font-size:15px;font-weight:700;color:var(--a-ink)}
+body.theme-a #home .ha-top .htop-group:first-child{margin-top:4px}
+body.theme-a #home .ha-top .htop-group small{font-size:12px;font-weight:500;color:var(--a-muted);margin-left:4px}
+body.theme-a #home .ha-top .htop-row{display:grid;grid-template-columns:22px minmax(0,1fr) auto auto;gap:8px;align-items:center;
   padding:9px 0;border-bottom:1px solid var(--a-line);font-size:13px}
 body.theme-a #home .ha-top .htop-head{font-size:11px;font-weight:600;color:var(--a-muted);border-bottom:2px solid var(--a-ink)}
 body.theme-a #home .ha-top .htop-index{font-weight:700;color:var(--a-ink)}
