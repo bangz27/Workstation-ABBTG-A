@@ -22,6 +22,9 @@ var SPX_SYNC_CONFIG = {
   RPC: 'sync_sheet',
   SECRET_PROP: 'SYNC_SECRET',                                       // Script Properties key (the secret lives there)
   SHEETS: { daily: 'Daily Report', fleet: 'Dayoff Fleet', ops: 'Dayoff Ops', weeklyOffFleet: 'Weekly Off Fleet', weeklyOffOps: 'Weekly Off Ops', weeklyOffFleetM0: 'Weekly Off Fleet M0', weeklyOffOpsM0: 'Weekly Off Ops M0', weeklyOffFleetM1: 'Weekly Off Fleet M+1', weeklyOffOpsM1: 'Weekly Off Ops M+1' },
+  // Tabs that feed the synced tabs through formulas (Daily Report = ARRAYFORMULA over "import").
+  // Editing them changes synced data without an edit event on the synced tab, so they trigger a sync too.
+  SOURCE_SHEETS: ['import'],
   TIMER_MINUTES: 15                                                 // allowed: 1, 5, 10, 15, 30
 };
 
@@ -111,6 +114,7 @@ var SpxSync_ = (function () {
   function isWatchedSheet(name) {
     var k = normKey_(name);
     for (var key in C.SHEETS) if (normKey_(C.SHEETS[key]) === k) return true;
+    for (var i = 0; i < (C.SOURCE_SHEETS || []).length; i++) if (normKey_(C.SOURCE_SHEETS[i]) === k) return true;
     return false;
   }
 
