@@ -124,6 +124,8 @@ body.theme-a #home .ha-top .htop-row{display:grid;grid-template-columns:22px min
   padding:9px 0;border-bottom:1px solid var(--a-line);font-size:13px}
 body.theme-a #home .ha-top .htop-head{font-size:11px;font-weight:600;color:var(--a-muted);border-bottom:2px solid var(--a-ink)}
 body.theme-a #home .ha-top .htop-index{font-weight:700;color:var(--a-ink)}
+body.theme-a #home .ha-top .htop-person{display:flex;flex-direction:column;min-width:0}
+body.theme-a #home .ha-top .htop-meta{font-size:11px;color:var(--a-muted);line-height:1.35}
 body.theme-a #home .ha-top .htop-person b{font-weight:600;color:var(--a-ink)}
 body.theme-a #home .ha-top .htop-rate{padding:2px 6px;border-radius:4px;background:var(--a-bad);color:#FFFFFF;font-size:12px;font-weight:700}
 
