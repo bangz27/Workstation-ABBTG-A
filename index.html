@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#F8F8F5">
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://bkmvwgoldyrzmgvmeskp.supabase.co wss://bkmvwgoldyrzmgvmeskp.supabase.co; base-uri 'none'; form-action 'self'; object-src 'none'; worker-src 'self'; manifest-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://bkmvwgoldyrzmgvmeskp.supabase.co wss://bkmvwgoldyrzmgvmeskp.supabase.co https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'self'; object-src 'none'; worker-src 'self'; manifest-src 'self'">
 <title>ABBTG-A Dashboard</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -23,6 +23,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="assets/theme-a.css?v=20261015under80b">
+<link rel="stylesheet" href="assets/seatalk.css?v=20261016seatalk1">
 </head>
 <body class="v-home auth-out theme-a">
 <svg class="svgdefs" aria-hidden="true" focusable="false" width="0" height="0">
@@ -109,6 +110,7 @@
     <button type="button" id="hSync">ดึงข้อมูลล่าสุด</button>
     <button type="button" data-go="fleet">ตารางกะ Fleet</button>
     <button type="button" data-go="driver">ออกรายงาน</button>
+    <button type="button" id="hSeaTalk" class="ha-seatalk">ส่งรายงานเข้า SeaTalk</button>
   </section>
   <section class="ha-top"><h2>คนขับที่ส่งไม่ถึง 80%</h2><p class="ha-top-sub">เรียงจาก Completion ต่ำสุด แยก 2WH / 4WH</p><div id="hTopDelivered" class="htop-content"><p class="htop-empty">กำลังโหลดข้อมูลรายบุคคล…</p></div></section>
 </div>
@@ -238,6 +240,7 @@
 <script src="assets/leave.js?v=20261004home"></script>
 <script src="assets/auth.js?v=20261012emailrestore1"></script>
 <script src="assets/home.js?v=20261015short1"></script>
+<script src="assets/seatalk.js?v=20261016seatalk1"></script>
 <script src="assets/shell.js?v=20261011deliverside1"></script>
 <script src="assets/pwa.js?v=20261014pwa1"></script>
 </body>
