@@ -1,0 +1,28 @@
+/* ส่งรายงานเข้า SeaTalk (Home → ทางลัด) — dialog only; text comes from Apps Script. */
+#home .ha-actions .ha-seatalk{grid-column:1/-1}
+.st-dlg{width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 24px);padding:0;border:2px solid var(--a-ink,#23272B);border-radius:12px;
+  background:#FFFFFF;color:var(--a-ink,#23272B);font-family:var(--font,"Noto Sans Thai",system-ui,sans-serif)}
+.st-dlg::backdrop{background:rgba(0,0,0,.45)}
+.st-wrap{display:flex;flex-direction:column;max-height:calc(100dvh - 28px)}
+.st-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 16px;border-bottom:2px solid var(--a-ink,#23272B)}
+.st-head h2{margin:0;font-size:17px;font-weight:700}
+.st-x{min-width:44px;min-height:44px;border:0;background:transparent;font-size:22px;line-height:1;cursor:pointer;color:inherit}
+.st-body{padding:12px 16px 16px;overflow:auto}
+.st-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.st-tab{min-height:44px;border:2px solid var(--a-ink,#23272B);border-radius:10px;background:#FFFFFF;font:inherit;font-weight:600;color:inherit;cursor:pointer}
+.st-tab[aria-selected="true"]{background:var(--a-ink,#23272B);color:#FFFFFF}
+.st-panel[hidden]{display:none}
+.st-dlg label{display:block;margin:8px 0 4px;font-size:13px;color:var(--a-muted,#5B6168)}
+.st-dlg input{width:100%;box-sizing:border-box;min-height:44px;padding:10px 12px;font:inherit;font-size:16px;border:2px solid var(--a-line,#C9CDD2);border-radius:10px}
+.st-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:8px;margin-top:12px}
+.st-row button{min-height:52px;border:2px solid var(--a-ink,#23272B);border-radius:10px;font:inherit;font-weight:700;font-size:16px;cursor:pointer}
+.st-prev{background:#FFFFFF;color:inherit}
+.st-send{background:var(--a-ink,#23272B);color:#FFFFFF}
+.st-send.armed{background:var(--a-bad,#C8372D);border-color:var(--a-bad,#C8372D)}
+.st-row button:disabled{opacity:.5;cursor:default}
+.st-status{min-height:20px;margin-top:10px;font-size:14px}
+.st-status.ok{color:var(--a-good,#1B7F4C)}
+.st-status.err{color:var(--a-bad,#C8372D)}
+.st-last{font-size:12px;color:var(--a-muted,#5B6168)}
+.st-pre{margin:8px 0 0;padding:12px;border:1px solid var(--a-line,#C9CDD2);border-radius:10px;background:#F7F8F9;
+  white-space:pre-wrap;word-break:break-word;font:inherit;font-size:14px;line-height:1.5}
