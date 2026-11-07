@@ -1,0 +1,141 @@
+/* จัดกะ FMS — page styles (theme-a tokens from ../assets/theme-a.css) */
+body.theme-a .views button{position:relative}
+.wp{max-width:1180px;margin:0 auto;padding:18px 28px 40px}
+.wp *{box-sizing:border-box}
+.wp-month{display:flex;align-items:center;gap:8px;border:2px solid var(--a-ink);border-radius:8px;padding:4px 6px;background:#fff}
+.wp-month b{font-size:15px;min-width:120px;text-align:center}
+.wp-month button{border:0;background:transparent;width:30px;height:30px;border-radius:6px;cursor:pointer;display:grid;place-items:center}
+.wp-month button:hover{background:#F2F3F5}
+.wp-month .ic{width:18px;height:18px;fill:none;stroke:var(--a-ink);stroke-width:2}
+.wp-search input{border:2px solid var(--a-ink);border-radius:8px;padding:8px 12px;font:14px var(--font);width:280px}
+.wp-chips{display:flex;gap:6px;flex-wrap:wrap}
+.wp-chips button,.wp-acts button,.wp-bulk button,.wp-card button{font:600 13px var(--font);border:2px solid var(--a-ink);border-radius:999px;background:#fff;padding:5px 12px;cursor:pointer;color:var(--a-ink)}
+.wp-chips button.on{background:var(--a-ink);color:#fff}
+.wp-chips button.bad{border-color:var(--a-bad);color:var(--a-bad)}
+button.pri{background:var(--a-signal)!important}
+button.ghost{background:#fff}
+button.danger{color:var(--a-bad)!important;border-color:var(--a-bad)!important}
+button:disabled{opacity:.45;cursor:not-allowed}
+.sh{font-family:"IBM Plex Mono",monospace;font-weight:600}
+.sh.miss{color:var(--a-bad);font-family:var(--font)}
+.dd,.cd{font-style:normal;display:inline-block;font-size:12px;font-weight:700;border-radius:5px;padding:1px 7px;margin:0 3px 2px 0}
+.dd{background:var(--a-ink);color:#fff}
+.cd{background:#EDE4FF;border:1.5px solid #6B4FBB;color:#4A3392}
+.wp-note{font-size:12.5px;color:var(--a-muted);margin:10px 2px 0}
+.wp-cal{border:2px solid var(--a-ink);border-radius:10px;overflow:auto;background:#fff}
+.wp-cal table{border-collapse:collapse;font-size:12px;min-width:100%}
+.wp-cal th,.wp-cal td{border:1px solid var(--a-soft);padding:0;text-align:center;height:30px;min-width:34px}
+.wp-cal th{background:#F2F3F5;font-weight:600;padding:3px}
+.wp-cal th.we{color:var(--a-bad)}
+.wp-cal td.nm,.wp-cal th.nm{position:sticky;left:0;background:#fff;text-align:left;padding:0 10px;min-width:150px;font-weight:600;border-right:2px solid var(--a-ink)}
+.wp-cal th.nm{background:#F2F3F5}
+.wp-cal td.w{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--a-muted)}
+.wp-cal td.rd{background:var(--a-ink);color:#fff;font-weight:700}
+.wp-cal td.cp{background:#EDE4FF;color:#4A3392;font-weight:700}
+.wp-cal td.lv{background:#FFD8D2;color:var(--a-bad);font-weight:700}
+.wp-cal td.ov{box-shadow:inset 0 0 0 2px var(--a-signal);font-weight:700;color:var(--a-ink)}
+.wp-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;margin-top:10px;color:var(--a-muted)}
+.lc{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:5px;border:1px solid var(--a-line)}
+.lc.rd{background:var(--a-ink)}.lc.cp{background:#EDE4FF}.lc.lv{background:#FFD8D2}.lc.ov{box-shadow:inset 0 0 0 2px var(--a-signal)}
+
+.wp-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.wp-main-acts{display:flex;gap:8px}
+.wp-main-acts button,.wp-sel button,.dw-f button,.md-row button,.dw-comp button{font:600 14px var(--font);border:2px solid var(--a-ink);border-radius:8px;background:#fff;padding:8px 16px;cursor:pointer;color:var(--a-ink)}
+.wp-main-acts .more{padding:8px 12px;font-size:18px;line-height:1}
+button.sm{padding:4px 10px!important;font-size:12.5px!important}
+.wp-status{width:100%;display:flex;align-items:center;gap:14px;text-align:left;background:var(--a-warn-bg);border:2px solid var(--a-ink);border-radius:10px;padding:12px 16px;margin-bottom:14px;cursor:pointer;font-family:var(--font);color:var(--a-ink)}
+.wp-status:hover{filter:brightness(.98)}
+.wp-ring{flex:none;width:62px;height:62px;border-radius:50%;display:grid;place-content:center;text-align:center;line-height:1;background:radial-gradient(#FFF1C2 58%,transparent 59%),conic-gradient(var(--a-good) calc(var(--p)*1%),#E4E6E9 0)}
+.wp-ring b{font-size:18px}.wp-ring small{font-size:11px;color:var(--a-muted)}
+.wp-st-t{display:flex;flex-direction:column;gap:2px;flex:1}
+.wp-st-t b{font-size:16px}.wp-st-t small{font-size:13px;color:var(--a-muted)}
+.wp-st-go{font-weight:700;font-size:14px;white-space:nowrap}
+.wp-status.done{background:#E6F6E9}.wp-status.done .wp-ring{background:radial-gradient(#E6F6E9 58%,transparent 59%),conic-gradient(var(--a-good) calc(var(--p)*1%),#E4E6E9 0)}
+.wp-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.wp-search{flex:1;min-width:200px}.wp-search input{width:100%}
+.wp-toggle{display:inline-flex;border:2px solid var(--a-ink);border-radius:8px;overflow:hidden}
+.wp-toggle button{border:0;background:#fff;padding:6px 14px;font:600 13px var(--font);cursor:pointer;color:var(--a-ink)}
+.wp-toggle button.on{background:var(--a-ink);color:#fff}
+.wp-sel{display:flex;gap:8px;align-items:center;background:var(--a-ink);color:#fff;border-radius:10px;padding:8px 12px;margin-bottom:10px;position:sticky;top:70px;z-index:5}
+.wp-sel b{margin-right:4px}.wp-sel button{border-color:#fff;padding:5px 12px;font-size:13px}
+.wp-sel .x{margin-left:auto;background:transparent;color:#fff}
+.wp-list{border:2px solid var(--a-ink);border-radius:10px;background:#fff;overflow:hidden}
+.wp-row{display:grid;grid-template-columns:30px 1fr 120px 130px 150px;gap:12px;align-items:center;padding:11px 16px;border-top:1px solid var(--a-soft);cursor:pointer}
+.wp-row:first-child{border-top:0}
+.wp-row:hover{background:#F7F8F9}
+.wp-row.selr{background:#FFFAE6}
+.wp-row b{display:block;font-weight:600;font-size:14.5px}
+.wp-row small{font-size:12px;color:var(--a-muted)}
+.wp-row .flag{justify-self:end;font-size:12.5px;font-weight:700;color:var(--a-bad);background:#FDECEA;border-radius:6px;padding:3px 9px}
+.wp-row .fine{justify-self:end;color:var(--a-good);font-size:18px;font-weight:700}
+.wp-row .cbx{width:20px;height:20px;border:2px solid var(--a-line);border-radius:5px;cursor:pointer}
+.wp-row.selr .cbx{background:var(--a-ink);border-color:var(--a-ink);box-shadow:inset 0 0 0 3px #FFFAE6}
+.wp-scrim{position:fixed;inset:0;background:rgba(35,39,43,.35);z-index:50}
+.wp-drawer{position:fixed;top:0;right:0;bottom:0;width:min(400px,100vw);background:#fff;border-left:2px solid var(--a-ink);z-index:51;padding:18px;display:flex;flex-direction:column;gap:6px;transform:translateX(105%);transition:transform .2s ease;font-family:var(--font);overflow:auto}
+.wp-drawer.open{transform:none}
+.dw-h{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.dw-h b{display:block;font-size:19px}.dw-h small{color:var(--a-muted);font-size:13px}
+.dw-x{border:0;background:#F2F3F5;border-radius:8px;width:34px;height:34px;cursor:pointer;font-size:15px}
+.wp-drawer label,.dw-more label{font-size:13px;font-weight:600;color:var(--a-muted);margin-top:10px}
+.dw-pills,.dw-days{display:flex;gap:6px;flex-wrap:wrap}
+.dw-pills button,.dw-days button{font:600 14px var(--font);border:2px solid var(--a-ink);border-radius:8px;background:#fff;padding:9px 12px;cursor:pointer;color:var(--a-ink)}
+.dw-days button{width:44px;padding:9px 0}
+.dw-pills button.on{background:var(--a-signal)}
+.dw-days button.on{background:var(--a-ink);color:#fff}
+.dw-comp{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.wp-drawer details{margin-top:14px;border-top:1px solid var(--a-soft);padding-top:10px}
+.wp-drawer summary{cursor:pointer;font-weight:600;font-size:14px}
+.dw-more{display:flex;flex-direction:column;gap:4px}
+.dw-more input,.dw-more select{border:2px solid var(--a-line);border-radius:8px;padding:8px 10px;font:14px var(--font)}
+.dw-f{margin-top:auto;display:flex;gap:8px;padding-top:16px}.dw-f button{flex:1;padding:11px}
+.wp-modal{position:fixed;inset:0;background:rgba(35,39,43,.35);z-index:60;display:grid;place-items:center;padding:16px}
+.wp-modal[hidden]{display:none}
+.md-box{background:#fff;border:2px solid var(--a-ink);border-radius:12px;padding:18px;width:min(440px,100%);font-family:var(--font)}
+.md-row{display:flex;justify-content:space-between;align-items:center;border:2px solid var(--a-ink);border-radius:10px;padding:12px 14px;margin-top:10px}
+.md-row b{display:block;font-size:16px}.md-row small{font-size:13px}
+.md-row.ok small{color:var(--a-good)}.md-row.bad{background:#FDECEA}.md-row.bad small{color:var(--a-bad);font-weight:600}
+.md-hint{font-size:12.5px;color:var(--a-muted);margin:12px 0 0}
+@media (max-width:900px){
+  .wp{padding:14px 14px 24px}
+  .wp-top{flex-direction:column;align-items:stretch}
+  .wp-month{justify-content:space-between}
+  .wp-main-acts button{flex:1}.wp-main-acts .more{flex:none}
+  .wp-row{grid-template-columns:26px 1fr auto;grid-template-areas:"c n f" "c s s";row-gap:4px;padding:12px}
+  .wp-row>.cbx{grid-area:c;align-self:start;margin-top:2px}
+  .wp-row>.nm{grid-area:n}.wp-row>.flag,.wp-row>.fine{grid-area:f}
+  .wp-row>.shf,.wp-row>.offd{grid-area:s;display:inline}
+  .wp-row>.offd{grid-area:auto;grid-column:2/4;margin-top:-2px}
+  .wp-st-go{display:none}
+  .wp-sel{top:60px;flex-wrap:wrap}
+}
+
+.wp-loading[hidden],.wp-err[hidden],.wp-sel[hidden],.wp-scrim[hidden],#ui[hidden],.wp-menu[hidden],.wp-pop[hidden],.wp-toast[hidden]{display:none!important}
+.dw-sel{border:2px solid var(--a-ink);border-radius:8px;padding:10px 12px;font:600 15px var(--font);background:#fff;color:var(--a-ink)}
+#dwS{transition:background .2s,color .2s}#dwS.saved{background:var(--a-good)!important;color:#fff;border-color:var(--a-good)}
+.wp-loading{display:flex;gap:10px;align-items:center;padding:40px 0;color:var(--a-muted)}
+.wp-err{border:2px solid var(--a-bad);background:#FDECEA;border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:14px;white-space:pre-line}
+.wp-more{position:relative}
+.wp-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:20;background:#fff;border:2px solid var(--a-ink);border-radius:10px;padding:6px;min-width:280px;display:flex;flex-direction:column}
+.wp-menu button{border:0!important;background:none;text-align:left;padding:10px 12px!important;border-radius:6px!important;font:600 14px var(--font);cursor:pointer;color:var(--a-ink)}
+.wp-menu button:hover{background:#F2F3F5}
+.wp-sel select{font:600 13px var(--font);border-radius:8px;border:2px solid #fff;padding:5px 8px;background:#fff;color:var(--a-ink)}
+.wp-row .nm b .tagt{font-style:normal;font-size:11px;font-weight:700;border:1.5px solid var(--a-ink);border-radius:4px;padding:0 5px;margin-left:6px;vertical-align:1px}
+.wp-row.rsg{opacity:.55}
+.wp-note a,.wp-note button{color:var(--a-ink);font-weight:700;background:none;border:0;padding:0;font:inherit;text-decoration:underline;cursor:pointer}
+.wp-foot{font-size:12px;color:var(--a-muted);margin-top:18px}
+.wp-cal td.ce{cursor:pointer}.wp-cal td.ce:hover{outline:2px solid var(--a-ink);outline-offset:-2px}
+.wp-cal td.bl{color:#B0B4B9}
+.wp-pop{position:fixed;z-index:70;background:#fff;border:2px solid var(--a-ink);border-radius:10px;padding:6px;box-shadow:0 6px 0 rgba(0,0,0,.08)}
+.wp-pop select{border:0;font:600 14px var(--font);min-width:170px;outline:none}
+.wp-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:80;background:var(--a-ink);color:#fff;border-radius:10px;padding:10px 16px;font:600 14px var(--font);max-width:90vw}
+.dw-comp .cd{cursor:pointer}
+.dw-comp input[type=date]{border:2px solid var(--a-line);border-radius:8px;padding:5px 8px;font:13px var(--font)}
+.dw-msg{color:var(--a-bad);font-size:13px;font-weight:600;margin:8px 0 0;min-height:1em}
+#dwDel{margin-top:16px;align-self:flex-start;font:600 13px var(--font);border:2px solid var(--a-bad);border-radius:8px;background:#fff;padding:7px 12px;cursor:pointer}
+.wp-drawer input:disabled,.wp-drawer select:disabled,.dw-days button:disabled{opacity:.7;cursor:default}
+.md-row .tpl{display:block;font-size:12px;color:var(--a-muted);margin-top:3px;font-weight:400}
+.md-row .tpl button{font:600 12px var(--font)!important;padding:1px 8px!important;border-radius:6px!important;margin-left:6px;border:1.5px solid var(--a-ink)!important;background:#fff}
+.md-row .acts{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.md-row.warn{background:var(--a-warn-bg)}.md-row.warn small{color:var(--a-ink)}
+body.ro [data-admin]{display:none!important}
+@media (max-width:767px){.wp-toast{bottom:96px}}

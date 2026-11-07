@@ -27,6 +27,7 @@ Google Sheet ──(Apps Script: Sync.gs ทุกครั้งที่แก
 | `assets/driver.js` | หน้า Fleet Over View |
 | `assets/roster.js` | หน้า กะ Fleet / กะ Ops + เมนู |
 | `weekly-off/` | หน้าตารางวันหยุด (เปิดจากเมนู "วันหยุด" ในแอปเดียวกัน) |
+| `planner/` | หน้า **จัดกะ FMS** — รายชื่อ กะ วันหยุด วันชดเชย แล้วส่งออกไฟล์ Upload Planned HC (ตาราง `shift_planner`, แก้ได้เฉพาะ admin) |
 | `sw.js`, `assets/pwa.js`, `manifest.webmanifest` | PWA — ติดตั้งเป็นแอปบนมือถือ/PC (แอปเดียว) |
 
 ไม่มีขั้นตอน build — แก้ไฟล์แล้ว push ได้เลย (supabase-js โหลดจาก CDN แบบล็อกเวอร์ชัน + SRI)
@@ -51,3 +52,11 @@ python3 -m http.server 8080
 แล้วเปิด http://localhost:8080 (ต้องเพิ่ม `http://localhost:8080` ใน Supabase → Authentication → URL Configuration ถ้าจะใช้ลิงก์รีเซ็ตรหัสผ่าน)
 
 > ห้าม commit ไฟล์ข้อมูลจริง ภาพหน้าจอที่มีรายชื่อ หรือรหัสลับ (`SYNC_SECRET`) ลง repo นี้
+
+## จัดกะ FMS (`planner/`)
+
+- ติดตั้งครั้งแรก: รัน `supabase/migrations/20261108090000_shift_planner.sql` ใน Supabase → SQL Editor (ต้องมีฟังก์ชัน `public.is_admin()` อยู่แล้ว)
+- ข้อมูลเก็บเป็นเอกสารเดียวต่อฮับใน `public.shift_planner` · Template ของ FMS เก็บใน `public.shift_planner_template` (ไม่ commit ไฟล์ .xlsx ลง repo)
+- ผู้ใช้ที่ล็อกอินดูและส่งออกได้ · เพิ่ม/แก้/ลบได้เฉพาะ admin ผ่าน RPC `save_shift_planner` (มี rev กันบันทึกทับกัน)
+- ย้ายข้อมูลจากแอปเดิม (wfm-shift-planner): แอปเดิม → ตั้งค่า → สำรองข้อมูล (.json) แล้วหน้านี้ → ⋯ → นำเข้าไฟล์สำรอง
+- ไฟล์ Driver อัปโหลดในแท็บ **Drivers**, ไฟล์ Ops ในแท็บ **Ops** ของ FMS (สลับแท็บจะได้ error 181403009)
