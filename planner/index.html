@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Bai+Jamjuree:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="../assets/style.css?v=20261012homeweeklyui1">
 <link rel="stylesheet" href="../assets/theme-a.css?v=20261015under80b">
-<link rel="stylesheet" href="planner.css?v=20261108plan1">
+<link rel="stylesheet" href="planner.css?v=20261109plan2">
 </head>
 <body class="theme-a v-plan">
 <svg class="svgdefs" aria-hidden="true" focusable="false" width="0" height="0">
@@ -166,6 +166,10 @@
   </div>
 </div>
 
+<div class="wp-modal" id="askModal" hidden role="dialog" aria-modal="true" aria-labelledby="askTxt">
+  <div class="md-box"><p class="ask-t" id="askTxt"></p><input type="date" id="askDate" class="ask-d" hidden>
+  <div class="dw-f"><button type="button" class="ghost" id="askNo">ยกเลิก</button><button type="button" class="pri" id="askGo">ยืนยัน</button></div></div>
+</div>
 <div class="wp-pop" id="cellPop" hidden><select id="cellSel" size="8" aria-label="ค่าเฉพาะวัน"></select></div>
 <div class="wp-toast" id="toast" role="status" hidden></div>
 <input type="file" id="fileFms" accept=".xlsx" hidden>
@@ -176,9 +180,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" integrity="sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok" crossorigin="anonymous"></script>
 <script src="../assets/config.js?v=20261004home"></script>
 <script src="../assets/api.js?v=20261004home"></script>
-<script src="core.js?v=20261108plan1"></script>
-<script src="xlsx.js?v=20261108plan1"></script>
-<script src="planner.js?v=20261108plan1"></script>
+<script src="core.js?v=20261109plan2"></script>
+<script src="xlsx.js?v=20261109plan2"></script>
+<script src="planner.js?v=20261109plan2"></script>
 <script src="../assets/shell.js?v=20261011deliverside1"></script>
 <script src="../assets/pwa.js?v=20261014pwa1"></script>
 </body>

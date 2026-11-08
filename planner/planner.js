@@ -16,6 +16,21 @@ function typeLbl(t){return t==='ops'?'Ops':'Driver';}
 function idLbl(t){return t==='ops'?'Ops ID':'Driver ID';}
 function byId(id){return S.D.employees.find(function(e){return e.id===id;});}
 
+/* in-page confirm (native confirm/prompt are blocked in some embedded browsers) */
+function ask(text,opt){
+  opt=opt||{};
+  return new Promise(function(res){
+    var m=$('askModal');$('askTxt').textContent=text;
+    var d=$('askDate');d.hidden=!opt.date;if(opt.date)d.value=opt.date;
+    $('askGo').textContent=opt.ok||'ยืนยัน';$('askGo').classList.toggle('danger',!!opt.danger);
+    m.hidden=false;setTimeout(function(){(opt.date?d:$('askGo')).focus();},30);
+    function done(v){m.hidden=true;$('askGo').onclick=$('askNo').onclick=null;m.onkeydown=null;res(v);}
+    $('askGo').onclick=function(){if(opt.date&&!/^\d{4}-\d{2}-\d{2}$/.test(d.value)){d.focus();return;}done(opt.date?d.value:true);};
+    $('askNo').onclick=function(){done(false);};
+    m.onkeydown=function(e){if(e.key==='Escape'){e.stopPropagation();done(false);}};
+  });
+}
+
 /* ---------------- load / save ---------------- */
 function missingTable(err){var m=String(err&&(err.message||err.code)||'');return /42P01|PGRST20[25]|does not exist|schema cache/i.test(m);}
 function load(){
@@ -279,12 +294,14 @@ function importFms(file){
   X.parseTemplate(file.buf).then(function(base){
     var people=C.peopleFromFms(base,S.D.settings.rdCode);
     if(!people.length)throw new Error('ไม่พบรายชื่อในแท็บ Dedicated');
-    if(!confirm('พบ '+people.length+' คน ('+typeLbl(base.type)+') ในไฟล์\nจะเพิ่มคนที่ยังไม่มี และอัปเดตกะ/วันหยุดของคนที่มีอยู่แล้ว\nและเก็บไฟล์นี้เป็น Template '+typeLbl(base.type)+' — ทำต่อไหม?'))return;
-    if(base.type==='driver'&&base.data[0]&&base.data[0][0])S.D.settings.station=String(base.data[0][0]).trim();
-    var prev=JSON.stringify(S.D),r=C.mergePeople(S.D,people);
-    return save().then(function(){return storeTemplate(base.type,u8,file.name,base);}).then(function(){
-      render();toast('นำเข้าแล้ว: เพิ่ม '+r.added+' · อัปเดต '+r.updated+' คน',5000);
-    },function(err){S.D=JSON.parse(prev);render();throw err;});
+    return ask('พบ '+people.length+' คน ('+typeLbl(base.type)+') ในไฟล์\nจะเพิ่มคนที่ยังไม่มี และอัปเดตกะ/วันหยุดของคนที่มีอยู่แล้ว\nและเก็บไฟล์นี้เป็น Template '+typeLbl(base.type)+' — ทำต่อไหม?',{ok:'นำเข้า'}).then(function(go){
+      if(!go)return;
+      if(base.type==='driver'&&base.data[0]&&base.data[0][0])S.D.settings.station=String(base.data[0][0]).trim();
+      var prev=JSON.stringify(S.D),r=C.mergePeople(S.D,people);
+      return save().then(function(){return storeTemplate(base.type,u8,file.name,base);}).then(function(){
+        render();toast('นำเข้าแล้ว: เพิ่ม '+r.added+' · อัปเดต '+r.updated+' คน',5000);
+      },function(err){S.D=JSON.parse(prev);render();throw err;});
+    });
   }).catch(function(e){if(e)toast('นำเข้าไม่สำเร็จ: '+(e.message||e),6000);});
 }
 function importJson(file){
@@ -292,9 +309,11 @@ function importJson(file){
   try{x=JSON.parse(new TextDecoder().decode(new Uint8Array(file.buf)));}catch(e){toast('ไฟล์ .json ไม่ถูกต้อง',5000);return;}
   var d=C.migrate(x);
   if(!d.employees.length){toast('ไม่พบรายชื่อพนักงานในไฟล์',5000);return;}
-  if(!confirm('ไฟล์นี้มี '+d.employees.length+' คน\nจะ “แทนที่” ข้อมูลทั้งหมดในหน้านี้ ('+S.D.employees.length+' คน) — ทำต่อไหม?'))return;
-  var prev=S.D;S.D=d;
-  save().then(function(){S.sel.clear();render();toast('นำเข้าแล้ว '+d.employees.length+' คน',4000);},function(err){S.D=prev;render();toast('นำเข้าไม่สำเร็จ: '+err.message,6000);});
+  ask('ไฟล์นี้มี '+d.employees.length+' คน\nจะแทนที่ข้อมูลทั้งหมดในหน้านี้ ('+S.D.employees.length+' คน) — ทำต่อไหม?',{ok:'นำเข้า'}).then(function(go){
+    if(!go)return;
+    var prev=S.D;S.D=d;
+    save().then(function(){S.sel.clear();render();toast('นำเข้าแล้ว '+d.employees.length+' คน',4000);},function(err){S.D=prev;render();toast('นำเข้าไม่สำเร็จ: '+err.message,6000);});
+  });
 }
 function backup(){
   var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S.D,null,1)],{type:'application/json'}));
@@ -334,27 +353,31 @@ function bind(){
   $('dwS').onclick=saveDw;$('dwC').onclick=closeDw;$('dwX').onclick=closeDw;$('dwScrim').onclick=closeDw;
   $('dwDel').onclick=function(){
     if(dw.isNew){closeDw();return;}
-    if(!confirm('ลบ '+(dw.e.name||dw.e.wid)+' ออกจากรายชื่อถาวร?\n(ถ้าแค่ลาออก ให้เปลี่ยนสถานะเป็น “ลาออก” แทน)'))return;
-    var id=dw.e.id,prev=JSON.stringify(S.D);
-    S.D.employees=S.D.employees.filter(function(x){return x.id!==id;});
-    Object.keys(S.D.overrides).forEach(function(k){if(k.indexOf(id+'|')===0)delete S.D.overrides[k];});
-    save().then(function(){closeDw();render();toast('ลบแล้ว');},function(err){S.D=JSON.parse(prev);toast('ลบไม่สำเร็จ: '+err.message,5000);});
+    ask('ลบ '+(dw.e.name||dw.e.wid)+' ออกจากรายชื่อถาวร?\n(ถ้าแค่ลาออก ให้เปลี่ยนสถานะเป็น “ลาออก” แทน)',{ok:'ลบ',danger:true}).then(function(go){
+      if(!go)return;
+      var id=dw.e.id,prev=JSON.stringify(S.D);
+      S.D.employees=S.D.employees.filter(function(x){return x.id!==id;});
+      Object.keys(S.D.overrides).forEach(function(k){if(k.indexOf(id+'|')===0)delete S.D.overrides[k];});
+      save().then(function(){closeDw();render();toast('ลบแล้ว');},function(err){S.D=JSON.parse(prev);toast('ลบไม่สำเร็จ: '+err.message,5000);});
+    });
   };
   document.addEventListener('keydown',function(e){if(e.key==='Escape'){if($('drawer').classList.contains('open'))closeDw();if(!$('expModal').hidden)$('expModal').hidden=true;$('moreMenu').hidden=true;}});
 
   $('bShift').onchange=function(){var v=this.value;this.value='';if(v)bulk(function(e){e.shift=v;},'ตั้งกะ '+v+' แล้ว');};
   $('bOff').onchange=function(){var v=this.value;this.value='';if(v!=='')bulk(function(e){e.offDays=[+v];},'ตั้งวันหยุดแล้ว');};
   $('bResign').onclick=function(){
-    var d=prompt('วันที่ลาออก (วันแรกที่ไม่ทำงาน) รูปแบบ YYYY-MM-DD',new Date().toISOString().slice(0,10));
-    if(!d)return;if(!/^\d{4}-\d{2}-\d{2}$/.test(d)){toast('รูปแบบวันที่ไม่ถูกต้อง');return;}
-    bulk(function(e){e.status='resigned';e.resignDate=d;},'บันทึกการลาออกแล้ว');
+    ask('วันที่ลาออกของ '+S.sel.size+' คน (วันแรกที่ไม่ทำงาน)',{date:new Date().toISOString().slice(0,10),ok:'บันทึก'}).then(function(d){
+      if(d)bulk(function(e){e.status='resigned';e.resignDate=d;},'บันทึกการลาออกแล้ว');
+    });
   };
   $('bDel').onclick=function(){
-    if(!confirm('ลบ '+S.sel.size+' คนออกจากรายชื่อถาวร?'))return;
-    var ids=new Set(S.sel),prev=JSON.stringify(S.D);
-    S.D.employees=S.D.employees.filter(function(e){return !ids.has(e.id);});
-    Object.keys(S.D.overrides).forEach(function(k){if(ids.has(k.split('|')[0]))delete S.D.overrides[k];});
-    save().then(function(){S.sel.clear();render();toast('ลบ '+ids.size+' คนแล้ว');},function(err){S.D=JSON.parse(prev);render();toast('ลบไม่สำเร็จ: '+err.message,5000);});
+    ask('ลบ '+S.sel.size+' คนออกจากรายชื่อถาวร?',{ok:'ลบ',danger:true}).then(function(go){
+      if(!go)return;
+      var ids=new Set(S.sel),prev=JSON.stringify(S.D);
+      S.D.employees=S.D.employees.filter(function(e){return !ids.has(e.id);});
+      Object.keys(S.D.overrides).forEach(function(k){if(ids.has(k.split('|')[0]))delete S.D.overrides[k];});
+      save().then(function(){S.sel.clear();render();toast('ลบ '+ids.size+' คนแล้ว');},function(err){S.D=JSON.parse(prev);render();toast('ลบไม่สำเร็จ: '+err.message,5000);});
+    });
   };
   $('selClr').onclick=function(){S.sel.clear();render();};
 
