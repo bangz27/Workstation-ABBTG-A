@@ -99,8 +99,8 @@ function grpOf(e){
   return p||'Subcon Monthly';   // no position recorded = Subcon Monthly (hub rule)
 }
 function grpRank(e){
-  var g=grpOf(e),i=C.POS[e.type].indexOf(g);
-  return (e.type==='driver'?'0':'1')+(i>=0?String(i).padStart(2,'0'):(String(e.pos||e.dept||'').trim()?'50':'99'));
+  var i=C.POS[e.type].indexOf(grpOf(e));
+  return (e.type==='driver'?'0':'1')+(i>=0?String(i).padStart(2,'0'):'50');
 }
 function sortKey(e){return grpRank(e)+'|'+grpOf(e)+'|'+(C.issue(e)?'0':'1')+(e.status==='resigned'?'1':'0')+String(e.name||'');}
 function visible(){
@@ -137,7 +137,7 @@ function renderList(list){
   list.forEach(function(e){
     var k=e.type+'|'+grpOf(e);
     if(k!==last){
-      h+=(last===null?'<div class="wp-row wp-head" aria-hidden="true"><span></span><span>ชื่อ</span><span>กะ</span><span>หยุดประจำ (กดเพื่อเปลี่ยน)</span><span></span></div>':'')+'<div class="wp-grp"><b>'+esc(grpOf(e))+'</b><em class="gt '+e.type+'">'+typeLbl(e.type)+'</em><span>'+groups[k]+' คน</span></div>';
+      h+=(last===null?'<div class="wp-row wp-head" aria-hidden="true"><span></span><span>ชื่อ</span><span>กะ</span><span>หยุดประจำ (กดเพื่อเปลี่ยน)</span><span></span></div>':'')+'<div class="wp-grp"><b>'+esc(grpOf(e))+'</b><em class="gt '+e.type+'">'+typeLbl(e.type)+'</em><span>'+groups[k]+' คน</span>'+(S.admin?'<button type="button" class="gsel" data-g="'+esc(k)+'">เลือกทั้งกลุ่ม</button>':'')+'</div>';
       last=k;
     }
     var b=C.inMonth(e,S.ym)?C.issue(e):'',rs=e.status==='resigned';
@@ -394,6 +394,8 @@ function backup(){
 function bind(){
   fillSelect($('bShift'),C.SHIFTS,'ตั้งกะ…');
   $('bOff').innerHTML='<option value="">ตั้งวันหยุด…</option>'+C.WEEK_ORDER.map(function(w){return '<option value="'+w+'">หยุดทุกวัน'+['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'][w]+'</option>';}).join('');
+  var allPos=C.POS.driver.concat(C.POS.ops);
+  $('bPos').innerHTML='<option value="">ตั้งตำแหน่ง…</option>'+allPos.map(function(x){return '<option>'+esc(x)+'</option>';}).join('');
   $('dlFunc').innerHTML=C.FUNCS.map(function(f){return '<option value="'+esc(f)+'">';}).join('');
 
   $('mPrev').onclick=function(){S.ym=C.addMonths(S.ym,-1);S.sel.clear();render();};
@@ -403,6 +405,9 @@ function bind(){
   $('chips').onclick=function(e){var b=e.target.closest('button');if(!b)return;S.f=b.dataset.f;Array.prototype.forEach.call(this.children,function(x){x.classList.toggle('on',x===b);});render();};
   $('viewTg').onclick=function(e){var b=e.target.closest('button');if(!b)return;S.view=b.dataset.v;Array.prototype.forEach.call(this.children,function(x){x.classList.toggle('on',x===b);});render();};
   $('list').onclick=function(e){
+    var gb=e.target.closest('.gsel');
+    if(gb){var ids=visible().filter(function(p){return p.type+'|'+grpOf(p)===gb.dataset.g;}).map(function(p){return p.id;});
+      var all=ids.every(function(id){return S.sel.has(id);});ids.forEach(function(id){all?S.sel.delete(id):S.sel.add(id);});render();return;}
     var r=e.target.closest('.wp-row');if(!r||r.classList.contains('wp-head'))return;
     var p=byId(r.dataset.id);if(!p)return;
     if(e.target.dataset.c&&S.admin){S.sel.has(p.id)?S.sel.delete(p.id):S.sel.add(p.id);render();return;}
@@ -445,6 +450,7 @@ function bind(){
 
   $('bShift').onchange=function(){var v=this.value;this.value='';if(v)bulk(function(e){e.shift=v;},'ตั้งกะ '+v+' แล้ว');};
   $('bOff').onchange=function(){var v=this.value;this.value='';if(v!=='')bulk(function(e){e.offDays=[+v];},'ตั้งวันหยุดแล้ว');};
+  $('bPos').onchange=function(){var v=this.value;this.value='';if(v)bulk(function(e){e.pos=v;},'ตั้งตำแหน่ง '+v+' แล้ว');};
   $('bResign').onclick=function(){
     ask('วันที่ลาออกของ '+S.sel.size+' คน (วันแรกที่ไม่ทำงาน)',{date:new Date().toISOString().slice(0,10),ok:'บันทึก'}).then(function(d){
       if(d)bulk(function(e){e.status='resigned';e.resignDate=d;},'บันทึกการลาออกแล้ว');

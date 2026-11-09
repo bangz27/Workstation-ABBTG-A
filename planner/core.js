@@ -7,7 +7,7 @@
   var SHIFTS = [];                                       // 9-hour shifts every hour: 0000-0900 … 2300-0800
   for (var h = 0; h < 24; h++) SHIFTS.push(pad(h) + '00-' + pad((h + 9) % 24) + '00');
   var POS = {
-    driver: ['2W Shipper','4W Shipper','2W Shipper (Subcon Monthly)','4W Shipper (Subcon Monthly)','4W First Mile','4W First Mile (PROJ)'],
+    driver: ['2W Shipper','4W Shipper','2W Shipper (Subcon Monthly)','4W Shipper (Subcon Monthly)','4W First Mile','4W First Mile (PROJ)','Subcon Monthly'],
     ops: ['Hub Agent','Hub Agent Support','Senior Agent','Agent, Hub','Assistant Supervisor, Hub','Hub Supervisor']
   };
   var FUNCS = ['Pickup+Delivery','Delivery','Pickup','LH'];
