@@ -96,7 +96,7 @@ function commit(msg){return save().then(function(){render();if(msg)toast(msg);},
 function grpOf(e){
   var p=String(e.pos||(e.type==='ops'?e.dept:'')||'').trim();
   if(/^4W First Mile\b/i.test(p))return '4W First Mile';   // 4W First Mile (PROJ) shares the 4W First Mile group
-  return p||'ไม่ระบุตำแหน่ง';
+  return p||'Subcon Monthly';   // no position recorded = Subcon Monthly (hub rule)
 }
 function grpRank(e){
   var g=grpOf(e),i=C.POS[e.type].indexOf(g);
