@@ -95,6 +95,7 @@ function commit(msg){return save().then(function(){render();if(msg)toast(msg);},
 /* list groups = position (e.g. 4W First Mile); known positions first, in the preset order */
 function grpOf(e){
   var p=String(e.pos||(e.type==='ops'?e.dept:'')||'').trim();
+  if(/^4W First Mile\b/i.test(p))return '4W First Mile';   // 4W First Mile (PROJ) shares the 4W First Mile group
   return p||'ไม่ระบุตำแหน่ง';
 }
 function grpRank(e){
@@ -144,7 +145,7 @@ function renderList(list){
     var flag=rs?'<span class="flag mut">ลาออก'+(e.resignDate?' '+esc(C.shortDate(e.resignDate)):'')+'</span>':b?'<span class="flag">'+esc(b)+'</span>':'<span class="fine" aria-label="ครบ">✓</span>';
     h+='<div class="wp-row'+(S.sel.has(e.id)?' selr':'')+(rs?' rsg':'')+(b?' badr':'')+'" data-id="'+e.id+'">'+
       (S.admin?'<span class="cbx" data-c="1" role="checkbox" aria-checked="'+S.sel.has(e.id)+'" aria-label="เลือก"></span>':'<span></span>')+
-      '<button type="button" class="nm" data-open="1"><b>'+esc(e.name||'(ไม่มีชื่อ)')+(e.nick?' <i class="nk">('+esc(e.nick)+')</i>':'')+'</b><small>'+esc(e.wid||'—')+(nc?' · <i class="cdn">ชดเชย '+nc+' วัน</i>':'')+'</small></button>'+
+      '<button type="button" class="nm" data-open="1"><b>'+esc(e.name||'(ไม่มีชื่อ)')+(e.nick?' <i class="nk">('+esc(e.nick)+')</i>':'')+'</b><small>'+esc(e.wid||'—')+(e.pos&&e.pos!==grpOf(e)?' · '+esc(e.pos):'')+(nc?' · <i class="cdn">ชดเชย '+nc+' วัน</i>':'')+'</small></button>'+
       '<span class="shf">'+shiftSel(e)+'</span>'+
       '<span class="offd">'+dayBtns(e)+'</span>'+flag+'</div>';
   });
