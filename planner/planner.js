@@ -92,7 +92,16 @@ function setSaveState(k){
 function commit(msg){return save().then(function(){render();if(msg)toast(msg);},function(e){toast('บันทึกไม่สำเร็จ: '+e.message,5000);render();});}
 
 /* ---------------- list ---------------- */
-function sortKey(e){return e.type+(C.issue(e)?'0':'1')+(e.status==='resigned'?'1':'0')+String(e.name||'');}
+/* list groups = position (e.g. 4W First Mile); known positions first, in the preset order */
+function grpOf(e){
+  var p=String(e.pos||(e.type==='ops'?e.dept:'')||'').trim();
+  return p||'ไม่ระบุตำแหน่ง';
+}
+function grpRank(e){
+  var g=grpOf(e),i=C.POS[e.type].indexOf(g);
+  return (e.type==='driver'?'0':'1')+(i>=0?String(i).padStart(2,'0'):(String(e.pos||e.dept||'').trim()?'50':'99'));
+}
+function sortKey(e){return grpRank(e)+'|'+grpOf(e)+'|'+(C.issue(e)?'0':'1')+(e.status==='resigned'?'1':'0')+String(e.name||'');}
 function visible(){
   var q=S.q.trim().toLowerCase();
   return S.D.employees.filter(function(e){
@@ -122,20 +131,20 @@ function dayBtns(e){
   }).join('')+'</span>';
 }
 function renderList(list){
-  var h='',lastType='';
-  var groups={driver:0,ops:0};list.forEach(function(e){groups[e.type]++;});
+  var h='',last=null;
+  var groups={};list.forEach(function(e){var k=e.type+'|'+grpOf(e);groups[k]=(groups[k]||0)+1;});
   list.forEach(function(e){
-    if(e.type!==lastType){
-      lastType=e.type;
-      h+='<div class="wp-grp"><b>'+typeLbl(e.type)+'</b><span>'+groups[e.type]+' คน</span></div>'+
-        '<div class="wp-row wp-head" aria-hidden="true"><span></span><span>ชื่อ</span><span>กะ</span><span>หยุดประจำ (กดเพื่อเปลี่ยน)</span><span></span></div>';
+    var k=e.type+'|'+grpOf(e);
+    if(k!==last){
+      h+=(last===null?'<div class="wp-row wp-head" aria-hidden="true"><span></span><span>ชื่อ</span><span>กะ</span><span>หยุดประจำ (กดเพื่อเปลี่ยน)</span><span></span></div>':'')+'<div class="wp-grp"><b>'+esc(grpOf(e))+'</b><em class="gt '+e.type+'">'+typeLbl(e.type)+'</em><span>'+groups[k]+' คน</span></div>';
+      last=k;
     }
     var b=C.inMonth(e,S.ym)?C.issue(e):'',rs=e.status==='resigned';
     var nc=e.comp.filter(function(iso){return iso.slice(0,7)===S.ym;}).length;
     var flag=rs?'<span class="flag mut">ลาออก'+(e.resignDate?' '+esc(C.shortDate(e.resignDate)):'')+'</span>':b?'<span class="flag">'+esc(b)+'</span>':'<span class="fine" aria-label="ครบ">✓</span>';
     h+='<div class="wp-row'+(S.sel.has(e.id)?' selr':'')+(rs?' rsg':'')+(b?' badr':'')+'" data-id="'+e.id+'">'+
       (S.admin?'<span class="cbx" data-c="1" role="checkbox" aria-checked="'+S.sel.has(e.id)+'" aria-label="เลือก"></span>':'<span></span>')+
-      '<button type="button" class="nm" data-open="1"><b>'+esc(e.name||'(ไม่มีชื่อ)')+'</b><small>'+esc(e.wid||'—')+(e.pos?' · '+esc(e.pos):'')+(nc?' · <i class="cdn">ชดเชย '+nc+' วัน</i>':'')+'</small></button>'+
+      '<button type="button" class="nm" data-open="1"><b>'+esc(e.name||'(ไม่มีชื่อ)')+'</b><small>'+esc(e.wid||'—')+(nc?' · <i class="cdn">ชดเชย '+nc+' วัน</i>':'')+'</small></button>'+
       '<span class="shf">'+shiftSel(e)+'</span>'+
       '<span class="offd">'+dayBtns(e)+'</span>'+flag+'</div>';
   });
