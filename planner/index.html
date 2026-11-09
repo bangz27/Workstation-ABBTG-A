@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Bai+Jamjuree:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="../assets/style.css?v=20261012homeweeklyui1">
 <link rel="stylesheet" href="../assets/theme-a.css?v=20261015under80b">
-<link rel="stylesheet" href="planner.css?v=20261109plan5">
+<link rel="stylesheet" href="planner.css?v=20261109plan6">
 </head>
 <body class="theme-a v-plan">
 <svg class="svgdefs" aria-hidden="true" focusable="false" width="0" height="0">
@@ -144,17 +144,18 @@
   <label>หยุดประจำทุกสัปดาห์</label>
   <div class="dw-days" id="fOff"></div>
   <label>วันหยุดชดเชย</label>
-  <div class="dw-comp"><span id="fComp"></span><input type="date" id="fCompAdd" aria-label="เพิ่มวันหยุดชดเชย"></div>
+  <div class="dw-comp"><span id="fComp"></span></div>
+  <label class="dw-add" for="fCompAdd"><span>+ เพิ่มวันหยุดชดเชย</span><input type="date" id="fCompAdd" aria-label="เพิ่มวันหยุดชดเชย"></label>
   <details id="dwMore"><summary>ข้อมูลเพิ่มเติม</summary>
     <div class="dw-more">
+      <div id="fEditIds" class="dw-col"><label for="fWid2" id="fWid2Lbl">ID</label><input id="fWid2" autocomplete="off"><label for="fName2">ชื่อ-นามสกุล</label><input id="fName2" autocomplete="off"></div>
       <label for="fPos">ตำแหน่ง</label><input id="fPos" list="dlPos" autocomplete="off">
-      <div id="fDrvOnly"><label for="fEmp">Employee ID</label><input id="fEmp" autocomplete="off">
+      <div id="fDrvOnly" class="dw-col"><label for="fEmp">Employee ID</label><input id="fEmp" autocomplete="off">
       <label for="fFunc">Function</label><input id="fFunc" list="dlFunc" autocomplete="off"></div>
-      <div id="fOpsOnly"><label for="fDept">Department</label><input id="fDept" autocomplete="off"></div>
-      <div id="fEditIds"><label for="fWid2" id="fWid2Lbl">ID</label><input id="fWid2" autocomplete="off"><label for="fName2">ชื่อ-นามสกุล</label><input id="fName2" autocomplete="off"></div>
+      <div id="fOpsOnly" class="dw-col"><label for="fDept">Department</label><input id="fDept" autocomplete="off"></div>
       <label for="fStart">วันเริ่มงาน</label><input type="date" id="fStart">
       <label for="fStatus">สถานะ</label><select id="fStatus"><option value="active">ทำงาน</option><option value="resigned">ลาออก</option></select>
-      <div id="fResignWrap"><label for="fResign">วันที่ลาออก (วันแรกที่ไม่ทำงาน)</label><input type="date" id="fResign"></div>
+      <div id="fResignWrap" class="dw-col"><label for="fResign">วันที่ลาออก (วันแรกที่ไม่ทำงาน)</label><input type="date" id="fResign"></div>
       <label for="fNote">หมายเหตุ</label><input id="fNote" autocomplete="off">
       <button type="button" class="ghost danger" id="dwDel" data-admin>ลบพนักงานคนนี้</button>
     </div>
@@ -184,9 +185,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" integrity="sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok" crossorigin="anonymous"></script>
 <script src="../assets/config.js?v=20261004home"></script>
 <script src="../assets/api.js?v=20261004home"></script>
-<script src="core.js?v=20261109plan5"></script>
-<script src="xlsx.js?v=20261109plan5"></script>
-<script src="planner.js?v=20261109plan5"></script>
+<script src="core.js?v=20261109plan6"></script>
+<script src="xlsx.js?v=20261109plan6"></script>
+<script src="planner.js?v=20261109plan6"></script>
 <script src="../assets/shell.js?v=20261011deliverside1"></script>
 <script src="../assets/pwa.js?v=20261014pwa1"></script>
 </body>

@@ -220,3 +220,19 @@ body.ro [data-admin]{display:none!important}
 .wp-head+.wp-grp{border-top:0}
 .wp-row .nk{font-style:normal;font-weight:500;color:var(--a-muted)}
 .dw-in{border:2px solid var(--a-line);border-radius:8px;padding:9px 10px;font:15px var(--font)}
+
+/* ---- v3.1: person panel layout ---- */
+.wp-drawer{gap:4px}
+.dw-col{display:flex;flex-direction:column;gap:4px}
+.dw-col[hidden]{display:none}
+.wp-drawer input,.wp-drawer select{width:100%;box-sizing:border-box;min-height:44px;font-size:16px}
+.dw-more input,.dw-more select{border:2px solid var(--a-line);border-radius:8px;padding:9px 10px;font:16px var(--font);background:#fff;color:var(--a-ink)}
+.wp-drawer input[type=date]{-webkit-appearance:none;appearance:none;text-align:left;min-width:0}
+.wp-drawer input[type=date]::-webkit-date-and-time-value{text-align:left}
+.dw-comp{min-height:24px}
+.dw-comp small{font-size:13px}
+.dw-add{position:relative;display:flex;align-items:center;justify-content:center;min-height:44px;margin-top:6px;border:2px dashed var(--a-ink);border-radius:8px;font:600 14px var(--font)!important;color:var(--a-ink)!important;cursor:pointer;overflow:hidden}
+.dw-add input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+#dwDel{width:auto;min-height:40px}
+.wp-drawer{padding-bottom:0}
+.dw-f{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--a-soft);margin-left:-18px;margin-right:-18px;padding:12px 18px calc(12px + env(safe-area-inset-bottom));z-index:2}

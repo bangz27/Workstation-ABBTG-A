@@ -427,6 +427,7 @@ function bind(){
   $('fOff').onclick=function(e){var b=e.target.closest('button');if(!b||!S.admin)return;var w=+b.dataset.w,i=dw.e.offDays.indexOf(w);if(i>=0)dw.e.offDays.splice(i,1);else dw.e.offDays.push(w);b.classList.toggle('on',i<0);b.setAttribute('aria-pressed',String(i<0));};
   $('fComp').onclick=function(e){var c=e.target.closest('.cd');if(!c||!S.admin)return;dw.e.comp=dw.e.comp.filter(function(x){return x!==c.dataset.iso;});compChips();};
   $('fCompAdd').onchange=function(){var v=this.value;if(v&&dw.e.comp.indexOf(v)<0){dw.e.comp.push(v);dw.e.comp.sort();}compChips();};
+  $('fCompAdd').onclick=function(){try{if(this.showPicker)this.showPicker();}catch(e){}};
   $('fStatus').onchange=function(){$('fResignWrap').hidden=this.value!=='resigned';if(this.value==='resigned'&&!$('fResign').value)$('fResign').value=new Date().toISOString().slice(0,10);};
   $('dwS').onclick=saveDw;$('dwC').onclick=closeDw;$('dwX').onclick=closeDw;$('dwScrim').onclick=closeDw;
   $('dwDel').onclick=function(){
