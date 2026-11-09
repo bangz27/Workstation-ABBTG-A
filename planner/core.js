@@ -7,7 +7,7 @@
   var SHIFTS = [];                                       // 9-hour shifts every hour: 0000-0900 … 2300-0800
   for (var h = 0; h < 24; h++) SHIFTS.push(pad(h) + '00-' + pad((h + 9) % 24) + '00');
   var POS = {
-    driver: ['2W Shipper','4W Shipper','2W Shipper (Subcon Monthly)','4W Shipper (Subcon Monthly)','4W First Mile','4W First Mile (PROJ)'],
+    driver: ['2W Shipper','4W Shipper','2W Shipper (Subcon Monthly)','4W Shipper (Subcon Monthly)','4W First Mile','4W First Mile (PROJ)','Subcon Monthly'],
     ops: ['Hub Agent','Hub Agent Support','Senior Agent','Agent, Hub','Assistant Supervisor, Hub','Hub Supervisor']
   };
   var FUNCS = ['Pickup+Delivery','Delivery','Pickup','LH'];
@@ -44,7 +44,7 @@
     return { version: 2, settings: { station: 'ABBTG-A - บางบัวทอง', rdCode: 'RD' }, employees: [], overrides: {} };
   }
   function newEmp(type, o){
-    var e = { id: uid(), type: type === 'ops' ? 'ops' : 'driver', wid: '', empId: '', name: '', dept: '', func: type === 'ops' ? '' : 'Pickup+Delivery',
+    var e = { id: uid(), type: type === 'ops' ? 'ops' : 'driver', wid: '', empId: '', name: '', nick: '', dept: '', func: type === 'ops' ? '' : 'Pickup+Delivery',
       pos: '', shift: '', offDays: [], comp: [], status: 'active', startDate: '', resignDate: '', note: '' };
     return Object.assign(e, o || {});
   }
