@@ -110,7 +110,7 @@ function visible(){
     if(S.f!=='all'&&e.type!==S.f)return false;
     if(S.onlyBad&&!(inM&&C.issue(e)))return false;
     if(S.dayF!=null&&e.offDays.indexOf(S.dayF)<0)return false;
-    if(q&&[e.name,e.wid,e.empId,e.pos,e.dept].join(' ').toLowerCase().indexOf(q)<0)return false;
+    if(q&&[e.name,e.nick,e.wid,e.empId,e.pos,e.dept].join(' ').toLowerCase().indexOf(q)<0)return false;
     return true;
   }).sort(function(a,b){return sortKey(a).localeCompare(sortKey(b),'th');});
 }
@@ -144,7 +144,7 @@ function renderList(list){
     var flag=rs?'<span class="flag mut">ลาออก'+(e.resignDate?' '+esc(C.shortDate(e.resignDate)):'')+'</span>':b?'<span class="flag">'+esc(b)+'</span>':'<span class="fine" aria-label="ครบ">✓</span>';
     h+='<div class="wp-row'+(S.sel.has(e.id)?' selr':'')+(rs?' rsg':'')+(b?' badr':'')+'" data-id="'+e.id+'">'+
       (S.admin?'<span class="cbx" data-c="1" role="checkbox" aria-checked="'+S.sel.has(e.id)+'" aria-label="เลือก"></span>':'<span></span>')+
-      '<button type="button" class="nm" data-open="1"><b>'+esc(e.name||'(ไม่มีชื่อ)')+'</b><small>'+esc(e.wid||'—')+(nc?' · <i class="cdn">ชดเชย '+nc+' วัน</i>':'')+'</small></button>'+
+      '<button type="button" class="nm" data-open="1"><b>'+esc(e.name||'(ไม่มีชื่อ)')+(e.nick?' <i class="nk">('+esc(e.nick)+')</i>':'')+'</b><small>'+esc(e.wid||'—')+(nc?' · <i class="cdn">ชดเชย '+nc+' วัน</i>':'')+'</small></button>'+
       '<span class="shf">'+shiftSel(e)+'</span>'+
       '<span class="offd">'+dayBtns(e)+'</span>'+flag+'</div>';
   });
@@ -217,7 +217,7 @@ function compChips(){
 }
 function openDw(e,isNew){
   dw={e:JSON.parse(JSON.stringify(e)),isNew:!!isNew};
-  $('dwName').textContent=isNew?'เพิ่มพนักงาน':(e.name||'(ไม่มีชื่อ)');
+  $('dwName').textContent=isNew?'เพิ่มพนักงาน':(e.name||'(ไม่มีชื่อ)')+(e.nick?' ('+e.nick+')':'');
   $('dwId').textContent=isNew?C.monthLabel(S.ym):idLbl(e.type)+' '+(e.wid||'—');
   $('dwNew').hidden=!isNew;$('fEditIds').hidden=!!isNew;
   setType(e.type);
@@ -226,7 +226,7 @@ function openDw(e,isNew){
   fillSelect($('fShift'),shifts,'— เลือกกะ —');$('fShift').value=e.shift||'';
   $('fOff').innerHTML=C.WEEK_ORDER.map(function(w){return '<button type="button" data-w="'+w+'" class="'+(e.offDays.indexOf(w)>=0?'on':'')+'" aria-pressed="'+(e.offDays.indexOf(w)>=0)+'">'+C.TH_WD[w]+'</button>';}).join('');
   compChips();
-  $('fPos').value=e.pos||'';$('fEmp').value=e.empId||'';$('fFunc').value=e.func||'';$('fDept').value=e.dept||'';
+  $('fNick').value=e.nick||'';$('fPos').value=e.pos||'';$('fEmp').value=e.empId||'';$('fFunc').value=e.func||'';$('fDept').value=e.dept||'';
   $('fStart').value=e.startDate||'';$('fStatus').value=e.status;$('fResign').value=e.resignDate||'';$('fResignWrap').hidden=e.status!=='resigned';$('fNote').value=e.note||'';
   $('dwMore').open=!!isNew;
   $('dwMsg').textContent='';
@@ -241,6 +241,7 @@ function readDw(){
   var e=dw.e;
   e.wid=C.normId(e.type,(dw.isNew?$('fWid'):$('fWid2')).value);
   e.name=(dw.isNew?$('fName'):$('fName2')).value.trim();
+  e.nick=$('fNick').value.trim();
   e.shift=$('fShift').value;
   e.pos=$('fPos').value.trim();e.empId=$('fEmp').value.trim();e.func=$('fFunc').value.trim();e.dept=$('fDept').value.trim();
   e.startDate=$('fStart').value;e.status=$('fStatus').value;e.resignDate=e.status==='resigned'?$('fResign').value:'';e.note=$('fNote').value.trim();

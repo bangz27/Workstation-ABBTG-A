@@ -44,7 +44,7 @@
     return { version: 2, settings: { station: 'ABBTG-A - บางบัวทอง', rdCode: 'RD' }, employees: [], overrides: {} };
   }
   function newEmp(type, o){
-    var e = { id: uid(), type: type === 'ops' ? 'ops' : 'driver', wid: '', empId: '', name: '', dept: '', func: type === 'ops' ? '' : 'Pickup+Delivery',
+    var e = { id: uid(), type: type === 'ops' ? 'ops' : 'driver', wid: '', empId: '', name: '', nick: '', dept: '', func: type === 'ops' ? '' : 'Pickup+Delivery',
       pos: '', shift: '', offDays: [], comp: [], status: 'active', startDate: '', resignDate: '', note: '' };
     return Object.assign(e, o || {});
   }

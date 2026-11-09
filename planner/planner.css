@@ -218,3 +218,5 @@ body.ro [data-admin]{display:none!important}
 .wp-grp .gt.driver{background:#DDF1FB}.wp-grp .gt.ops{background:#E6F6E9}
 .wp-grp+.wp-head{border-top:0}
 .wp-head+.wp-grp{border-top:0}
+.wp-row .nk{font-style:normal;font-weight:500;color:var(--a-muted)}
+.dw-in{border:2px solid var(--a-line);border-radius:8px;padding:9px 10px;font:15px var(--font)}
