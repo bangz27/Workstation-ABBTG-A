@@ -21,7 +21,7 @@ var SPX_SYNC_CONFIG = {
   SUPABASE_KEY: 'sb_publishable_glOfpLrNGGdz95Qt62eVJg_rlzIxqQ_',   // publishable (public) key — not a secret
   RPC: 'sync_sheet',
   SECRET_PROP: 'SYNC_SECRET',                                       // Script Properties key (the secret lives there)
-  SHEETS: { daily: 'Daily Report', fleet: 'Dayoff Fleet', ops: 'Dayoff Ops', weeklyOffFleet: 'Weekly Off Fleet', weeklyOffOps: 'Weekly Off Ops', weeklyOffFleetM0: 'Weekly Off Fleet M0', weeklyOffOpsM0: 'Weekly Off Ops M0', weeklyOffFleetM1: 'Weekly Off Fleet M+1', weeklyOffOpsM1: 'Weekly Off Ops M+1' },
+  SHEETS: { daily: 'Daily Report', summary: 'DailySummary', fleet: 'Dayoff Fleet', ops: 'Dayoff Ops', weeklyOffFleet: 'Weekly Off Fleet', weeklyOffOps: 'Weekly Off Ops', weeklyOffFleetM0: 'Weekly Off Fleet M0', weeklyOffOpsM0: 'Weekly Off Ops M0', weeklyOffFleetM1: 'Weekly Off Fleet M+1', weeklyOffOpsM1: 'Weekly Off Ops M+1' },
   // Tabs that feed the synced tabs through formulas (Daily Report = ARRAYFORMULA over "import").
   // Editing them changes synced data without an edit event on the synced tab, so they trigger a sync too.
   SOURCE_SHEETS: ['import'],
@@ -139,7 +139,8 @@ var SpxSync_ = (function () {
       var d = parseSheet_(dSheet, tz);
       payload.daily = { sheetName: dSheet.getName(), loadedAt: stamp, warnings: d.warnings, drivers: d.drivers };
       var kpiCells = dSheet.getRange('L2:L3').getValues();
-      dailyKpis = { todayVolume: toNum_(kpiCells[0][0]), inbound: toNum_(kpiCells[1][0]) };
+      dailyKpis = { todayVolume: toNum_(kpiCells[0][0]), inbound: toNum_(kpiCells[1][0]),
+        pdtyTarget: summaryNumber_(findSheet_(ss, C.SHEETS.summary), 'PDTY Target') };
     } else missing.push(C.SHEETS.daily);
 
     ['fleet', 'ops'].forEach(function (k) {
@@ -295,6 +296,18 @@ var SpxSync_ = (function () {
       });
     }
     return { drivers: drivers, warnings: warnings };
+  }
+
+  /** DailySummary: label in column A → positive number from column B, or null (missing / blank / not a number). */
+  function summaryNumber_(sheet, label) {
+    if (!sheet) return null;
+    var rows = sheet.getRange(1, 1, Math.max(1, sheet.getLastRow()), 2).getDisplayValues();
+    for (var i = 0; i < rows.length; i++) {
+      if (String(rows[i][0]).trim() !== label) continue;
+      var n = Number(String(rows[i][1]).replace(/[,\s]/g, ''));
+      return String(rows[i][1]).trim() !== '' && isFinite(n) && n > 0 ? n : null;
+    }
+    return null;
   }
 
   function normKey_(v) {

@@ -25,7 +25,10 @@ fleetValues[3][35]='2026-10-04';fleetValues[3][36]='2026-10-05';
 fleetValues[4][0]='staff-1';fleetValues[4][1]='Worker';fleetValues[4][2]='2WH';
 fleetValues[4][35]='WORK';fleetValues[4][36]='2WH';
 const fleet=sheet('Dayoff Fleet',fleetValues,fleetValues,[]);
-const sheets=[daily,fleet];
+const summaryValues=[['Hub','ABBTG-A'],['PDTY Target','194'],['SLA','96.00%']];
+const summary={name:'DailySummary',getName:function(){return 'DailySummary';},getLastRow:function(){return summaryValues.length;},
+  getRange:function(){return {getDisplayValues:function(){return summaryValues;}};}};
+const sheets=[daily,fleet,summary];
 const ss={
   getSpreadsheetTimeZone:function(){return 'Asia/Bangkok';},
   getName:function(){return 'Workstation ABBTG-A';},
@@ -34,6 +37,9 @@ const ss={
 };
 const result=context.SpxSync_.buildPayload(ss);
 assert.deepEqual(Array.from(daily.ranges),['L2:L3'],'Apps Script reads the exact contiguous Daily Report cells');
-assert.deepEqual(JSON.parse(JSON.stringify(result.payload.fleet.cols.homeKpis)),{todayVolume:9876,inbound:4321},'L2 maps to Today\'s Volume and L3 maps to Inbound through existing roster cols');
+assert.deepEqual(JSON.parse(JSON.stringify(result.payload.fleet.cols.homeKpis)),{todayVolume:9876,inbound:4321,pdtyTarget:194},'L2 maps to Today\'s Volume, L3 to Inbound, DailySummary "PDTY Target" to pdtyTarget through existing roster cols');
+summaryValues[1][1]='';
+assert.equal(context.SpxSync_.buildPayload(ss).payload.fleet.cols.homeKpis.pdtyTarget,null,'blank PDTY Target is sent as null, not 0');
+assert.equal(context.SpxSync_.isWatchedSheet('DailySummary'),true,'editing DailySummary triggers a sync');
 assert.equal(result.payload.fleet.cols.planHC.source,'dayoff fleet!AK4:AK','existing Plan HC source remains unchanged');
 console.log('PASS: Apps Script maps Daily Report!L2 to Today\'s Volume and L3 to Inbound via the existing fleet cols payload');
