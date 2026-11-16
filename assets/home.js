@@ -50,7 +50,8 @@ function countValue(n){
 }
 function homeMetrics(){
   var roster=fleetRoster(),values=roster&&roster.cols&&roster.cols.homeKpis;
-  return {todayVolume:countValue(values&&values.todayVolume),inbound:countValue(values&&values.inbound)};
+  var target=countValue(values&&values.pdtyTarget);
+  return {todayVolume:countValue(values&&values.todayVolume),inbound:countValue(values&&values.inbound),pdtyTarget:target>0?target:null};
 }
 function planHC(sheet){
   var roster=fleetRoster();
@@ -68,7 +69,7 @@ function renderKpiCards(){
   box.innerHTML=[
     '<section class="ha-status" aria-label="ส่งสำเร็จ"><div class="ha-status-top"><span>ส่งสำเร็จ</span><small id="homeOrderTotal">Daily Report</small></div><div class="ha-status-main"><b id="kpiDeliveredRate">—</b><span><span id="kpiDeliveredValue">—</span> จาก<br><span id="kpiAssignValue">—</span> ชิ้น</span></div><div class="ha-bar" id="kpiRateBarWrap" role="img" aria-label="ยังไม่มีข้อมูล"><i class="ha-bar-done" id="kpiRateBar"></i><i class="ha-bar-hold" id="kpiHoldBar"></i></div><div class="ha-legend"><span><i class="ha-dot done"></i>ส่งแล้ว</span><span><i class="ha-dot hold"></i>Onhold <b id="kpiOnholdValue">—</b></span><span><i class="ha-dot left"></i>กำลังส่ง <b id="kpiRemainValue">—</b></span></div></section>',
     '<article class="hkpi ha-kpi" data-kpi="sla" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">SLA</span><span class="hkpi-badge">เป้า ≥ 96%</span></div><b id="kpiSlaValue">–</b><div class="hkpi-meter"><i id="kpiSlaBar"></i></div><small class="hkpi-target">Delivered ÷ Today\'s Volume × 100</small></article>',
-    '<article class="hkpi ha-kpi" data-kpi="pdty" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">PDTY</span><span class="hkpi-badge">เป้า 196</span></div><b id="kpiPdtyValue">–</b><div class="hkpi-meter"><i id="kpiPdtyBar"></i></div><small class="hkpi-target">Assign ÷ (Active 2W + Active 4W)</small></article>',
+    '<article class="hkpi ha-kpi" data-kpi="pdty" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">PDTY</span><span class="hkpi-badge" id="kpiPdtyTarget">เป้า —</span></div><b id="kpiPdtyValue">–</b><div class="hkpi-meter"><i id="kpiPdtyBar"></i></div><small class="hkpi-target">Assign ÷ (Active 2W + Active 4W)</small></article>',
     '<article class="hkpi ha-kpi" data-kpi="active" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">Active Fleet</span><span class="hkpi-badge">—</span></div><b id="kpiActiveValue">–</b><div class="hkpi-split"><span>2W <b id="kpiActive2w">–</b></span><span>4W <b id="kpiActive4w">–</b></span></div><small class="hkpi-note" id="kpiActiveNote"></small><small class="hkpi-target">คนขับที่มี Assign มากกว่า 0</small></article>',
     '<article class="hkpi ha-kpi" data-kpi="plan-hc"><div class="hkpi-top"><span class="hkpi-label">Plan Fleet</span><span class="hkpi-badge" id="kpiPlanBadge">—</span></div><b id="kpiPlanValue">–</b><div class="hkpi-progress"><i id="kpiPlan2wBar"></i><i id="kpiPlan4wBar"></i></div><div class="hkpi-split"><span>2W <b id="kpiPlan2w">–</b></span><span>4W <b id="kpiPlan4w">–</b></span></div><small class="hkpi-target">จาก Fleet shift roster</small></article>',
     '<article class="hkpi ha-kpi ha-wide" data-kpi="allocation" data-status="neutral"><div class="hkpi-top"><span class="hkpi-label">สัดส่วน Assign 2W / 4W</span><span class="hkpi-badge" id="kpiAllocationStatus">รอข้อมูล</span></div><div class="allocation-row"><div class="allocation-row-label"><span>2W</span><b id="kpiAllocation2w">–</b></div><div class="hkpi-meter"><i id="kpiAllocation2wBar"></i></div></div><div class="allocation-row"><div class="allocation-row-label"><span>4W</span><b id="kpiAllocation4w">–</b></div><div class="hkpi-meter four"><i id="kpiAllocation4wBar"></i></div></div><small class="hkpi-target" id="kpiAllocationTarget">เป้าหมาย 2W 69.80% · 4W 30.20%</small></article>',
@@ -107,6 +108,7 @@ function paint(){
   var hc=planHC(t&&t.sheet),metrics=homeMetrics(),k=calculate(t,metrics);
   setText('kpiTodayVolume',metrics.todayVolume==null?'—':fmt(metrics.todayVolume));
   setText('kpiInboundValue',metrics.inbound==null?'—':fmt(metrics.inbound));
+  setText('kpiPdtyTarget','เป้า '+(metrics.pdtyTarget==null?'—':fmt(metrics.pdtyTarget)));
   setText('kpiOnholdValue',t&&t.onhold!=null?fmt(t.onhold):'—');
   setText('kpiAssignValue',t&&t.assign!=null?fmt(t.assign):'—');
   setText('kpiDeliveredValue',t&&t.delivered!=null?fmt(t.delivered):'—');
@@ -129,14 +131,14 @@ function paint(){
     var slaBar=$('kpiSlaBar');if(slaBar)slaBar.style.width=Math.min(100,Math.max(0,k.sla*100))+'%';
     var a2=$('kpiAllocation2wBar');if(a2)a2.style.width=Math.min(100,Math.max(0,k.allocation2*100))+'%';
     var a4=$('kpiAllocation4wBar');if(a4)a4.style.width=Math.min(100,Math.max(0,k.allocation4*100))+'%';
-    var pdtyBar=$('kpiPdtyBar');if(pdtyBar)pdtyBar.style.width=Math.min(100,Math.max(0,ratio(k.pdty,196)*100))+'%';
+    var pdtyBar=$('kpiPdtyBar');if(pdtyBar)pdtyBar.style.width=(metrics.pdtyTarget?Math.min(100,Math.max(0,ratio(k.pdty,metrics.pdtyTarget)*100)):0)+'%';
     function setStatus(key,status){var el=document.querySelector('[data-kpi="'+key+'"]');if(el)el.setAttribute('data-status',status);}
     function thresholdStatus(actual,target,near){if(actual==null||!isFinite(actual)||!target)return 'neutral';var rate=actual/target;return rate>=1?'green':rate>=near?'yellow':'red';}
     var allocationStatus=k.allocation2==null?'neutral':(k.allocation2>=0.698?'green':k.allocation2>=0.668?'yellow':'red');
     setStatus('allocation',allocationStatus);
     var allocationBadge=$('kpiAllocationStatus');if(allocationBadge)allocationBadge.textContent=allocationStatus==='green'?'ถึงเป้าหมาย':allocationStatus==='yellow'?'ใกล้เป้าหมาย':allocationStatus==='red'?'ต่ำกว่าเป้าหมาย':'รอข้อมูล';
     setText('kpiAllocationTarget','เป้าหมาย 2W 69.80% · 4W 30.20%');
-    setStatus('pdty',thresholdStatus(k.pdty,196,0.9));
+    setStatus('pdty',thresholdStatus(k.pdty,metrics.pdtyTarget,0.9));
     setStatus('sla',k.sla==null?'neutral':(k.sla>=0.96?'green':k.sla>=0.93?'yellow':'red'));
     setStatus('active',hc.available&&hc.total?thresholdStatus(k.active/hc.total*100,100,0.9):'neutral');
     var activeBadge2=document.querySelector('[data-kpi="active"] .hkpi-badge');if(activeBadge2)activeBadge2.textContent=hc.available&&hc.total?decimal(k.active/hc.total*100,1)+'%':'—';

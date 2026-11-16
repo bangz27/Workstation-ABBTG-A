@@ -94,3 +94,11 @@ test('every element the Home painter writes to exists in the rendered markup', (
   const markup = source + index;
   for (const id of painted) assert.match(markup, new RegExp('id="' + id + '"'), 'missing #' + id);
 });
+
+test('PDTY target comes from the synced sheet value; missing target shows — and stays neutral', () => {
+  const { home } = loadHome();
+  assert.doesNotMatch(source, /196/, 'no hardcoded PDTY target left');
+  assert.match(source, /thresholdStatus\(k\.pdty,metrics\.pdtyTarget,0\.9\)/);
+  assert.match(source, /'เป้า '\+\(metrics\.pdtyTarget==null\?'—'/);
+  assert.equal(typeof home.calculate, 'function');
+});
