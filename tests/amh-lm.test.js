@@ -103,6 +103,12 @@ test('blank template rows send no values (never 0) but still mark the section',(
   assert.equal(r.payload.cod.length,0);
 });
 
+test('two fleet rows for the same vehicle/contract/direction merge into one',()=>{
+  const p=G.parse([H,['date','','','2026-11-24'],['fleet','2WH','full_time',33,33],['fleet','2WH','full_time/total','','',203,209]]).payload;
+  assert.equal(p.fleet.length,1);
+  assert.deepEqual([p.fleet[0].actual,p.fleet[0].scheduled,p.fleet[0].delivered,p.fleet[0].handed_over],[33,33,203,209]);
+});
+
 test('bad rows are reported, not guessed',()=>{
   const r=G.parse([H,['kpi','made_up','total',1],['lh','X1','',1],['kpi','expedite','total','abc'],['weird','a']]);
   assert.equal(r.payload.business_date,null);

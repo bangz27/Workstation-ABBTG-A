@@ -163,8 +163,14 @@ var SpxAmhLm_ = (function () {
       } else if (sec === 'fleet') {
         parts = grp.split('/'); var vt = item.toUpperCase() === 'OTHERS' ? 'Others' : item.toUpperCase(), dir = parts[1] || 'total';
         if (!has(['full_time','part_time'], parts[0]) || !has(['2WH','4WH','Others'], vt) || !has(['total','forward','return'], dir)) { warnings.push(line + ': fleet ต้องเป็น 2WH|4WH|Others และ full_time|part_time[/total|forward|return]'); continue; }
-        lists.fleet.push({ contract: parts[0], vehicle_type: vt, direction: dir, actual: d, scheduled: e, delivered: f, handed_over: g,
-          section: (d === null && e === null) ? 'productivity' : 'headcount', updated: up });
+        var fr = { contract: parts[0], vehicle_type: vt, direction: dir, actual: d, scheduled: e, delivered: f, handed_over: g,
+          section: (d === null && e === null) ? 'productivity' : 'headcount', updated: up };
+        // one DB row per contract+vehicle+direction: merge a second row for the same key instead of failing the sync
+        var same = lists.fleet.filter(function (x) { return x.contract === fr.contract && x.vehicle_type === vt && x.direction === dir; })[0];
+        if (same) {
+          ['actual','scheduled','delivered','handed_over'].forEach(function (k) { if (same[k] === null) same[k] = fr[k]; });
+          if (fr.updated && (!same.updated || fr.updated > same.updated)) same.updated = fr.updated;
+        } else lists.fleet.push(fr);
       } else if (sec === 'cod') {
         key = low(item);
         if (!has(COD, key)) { warnings.push(line + ': cod ต้องเป็น today|1_3_days|4_5_days|over_5_days'); continue; }
