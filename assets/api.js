@@ -54,7 +54,8 @@ window.SPX_API={
       var D=row&&row.data?C.migrate(row.data):null;
       if(!D||!D.employees.length)return legacy();
       var v=C.rosterView(D,ops?'ops':'driver',C.bkkMonth(),2);
-      v.loadedAt=row.updated_at;v.sheetName='จัดกะ FMS';v.source='หน้า จัดกะ FMS';v.warnings=[];
+      var t=Date.parse(row.updated_at),bk=isFinite(t)?new Date(t+7*3600e3).toISOString():'';   // Bangkok "YYYY-MM-DD HH:MM:SS", the format thStamp reads
+      v.loadedAt=bk?bk.slice(0,10)+' '+bk.slice(11,19):'';v.sheetName='จัดกะ FMS';v.source='หน้า จัดกะ FMS';v.warnings=[];
       return v;
     });
   },
