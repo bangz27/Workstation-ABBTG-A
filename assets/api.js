@@ -44,7 +44,20 @@ window.SPX_API={
   /* Fleet Over View — tab "Daily Report" (only one tab is synced, the argument is ignored) */
   getDashboardData:function(){return call('get_daily_report');},
   /* "Dayoff Fleet" | "Dayoff Ops" */
-  getRosterData:function(sheet){return call('get_roster',{p_key:/ops/i.test(String(sheet))?'ops':'fleet'});},
+  /* กะ Fleet / กะ Ops: from จัดกะ FMS (public.shift_planner) — this month + next.
+     Falls back to the old Sheet tabs (get_roster) only while the planner has no saved data yet. */
+  getRosterData:function(sheet){
+    var ops=/ops/i.test(String(sheet)),C=window.PlannerCore;
+    var legacy=function(){return call('get_roster',{p_key:ops?'ops':'fleet'});};
+    if(!C||!C.rosterView)return legacy();
+    return q(sb.from('shift_planner').select('data,updated_at').eq('hub','ABBTG-A').maybeSingle()).then(function(row){
+      var D=row&&row.data?C.migrate(row.data):null;
+      if(!D||!D.employees.length)return legacy();
+      var v=C.rosterView(D,ops?'ops':'driver',C.bkkMonth(),2);
+      v.loadedAt=row.updated_at;v.sheetName='จัดกะ FMS';v.source='หน้า จัดกะ FMS';v.warnings=[];
+      return v;
+    });
+  },
   /* ---- leave records (table public.leave_records; view/add/edit/delete per account via RLS) ---- */
   isAdmin:function(){return sb.rpc('is_admin').then(function(r){return !r.error&&r.data===true;},function(){return false;});},
   /* ---- per-account leave permissions (private.leave_permissions via RPC; manage = admin only) ---- */
