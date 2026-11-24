@@ -95,10 +95,27 @@ test('sections not in the sheet are left out (so the sync does not wipe them)',(
   assert.equal('lh' in p,false);
 });
 
+test('blank template rows send no values (never 0) but still mark the section',()=>{
+  const r=G.parse([H,['date','','','2026-11-24'],['backlog','>6 Days','total/hub_aging','','',''],['lh','','',''],['cod','today','','','']]);
+  assert.deepEqual(Array.from(r.warnings),[]);
+  assert.equal(r.payload.backlog.length,0);
+  assert.equal(r.payload.lh.length,0);
+  assert.equal(r.payload.cod.length,0);
+});
+
 test('bad rows are reported, not guessed',()=>{
   const r=G.parse([H,['kpi','made_up','total',1],['lh','X1','',1],['kpi','expedite','total','abc'],['weird','a']]);
   assert.equal(r.payload.business_date,null);
   assert.equal(r.warnings.length,5);   // no date + 4 bad rows
+});
+
+test('percent cells use the shown text (0.97 stored, "97.0%" shown → 97)',()=>{
+  const raw=[H,['date','','',new Date('2026-11-24T00:00:00Z')],['kpi','cfr','',0.997,'','','',new Date('2026-11-24T11:40:00Z')]];
+  const shown=[H,['date','','','24/11/2569'],['kpi','cfr','','99.7%','','','','24/11/2569 18:40']];
+  const p=G.parse(G.mergeCells(raw,shown)).payload;
+  assert.equal(p.business_date,'2026-11-24');            // raw Date, not the Buddhist-year text
+  assert.equal(p.kpi[0].value,99.7);
+  assert.equal(p.kpi[0].updated,'2026-11-24T18:40:00+07:00');
 });
 
 test('Date cells convert to Bangkok time',()=>{

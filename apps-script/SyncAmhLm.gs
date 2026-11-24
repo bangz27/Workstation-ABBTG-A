@@ -139,6 +139,9 @@ var SpxAmhLm_ = (function () {
       var d = num(row[3]), e = text ? null : num(row[4]), f = text ? null : num(row[5]), g = num(row[6]), up = stamp(row[7], year);
       if ([d, e, f, g].some(function (x) { return x !== x; })) { warnings.push(line + ': มีค่าที่ไม่ใช่ตัวเลข'); continue; }
       if (str(row[7]) !== '' && !up) warnings.push(line + ': อ่านเวลาอัปเดตไม่ได้ (' + str(row[7]) + ')');
+      // A template row with no values = "no data" for that row (never 0); the section still counts as present.
+      if (has(['kpi','backlog','lh','progress','fleet','cod'], sec) && d === null && e === null && f === null && g === null &&
+          (sec !== 'lh' || (!item && !str(row[4]) && !str(row[5])))) { seen[sec] = true; continue; }
       var key, parts;
       if (sec === 'kpi') {
         key = low(item); var scope = grp || 'total';
@@ -173,6 +176,17 @@ var SpxAmhLm_ = (function () {
     return { payload: out, warnings: warnings };
   }
 
+  /** Value columns (D–G) as the cell shows them: a "97.0%" cell holds 0.97, but the page needs 97.
+      The date row and column H keep the raw value, so Date cells stay Dates (no locale/Buddhist-year guessing). */
+  function mergeCells(raw, shown) {
+    return raw.map(function (row, i) {
+      if (low(row[0]) === 'date') return row;
+      var r = row.slice();
+      for (var c = 3; c <= 6; c++) r[c] = shown[i][c];
+      return r;
+    });
+  }
+
   function run(source) {
     var props = PropertiesService.getScriptProperties();
     var lock = LockService.getScriptLock();
@@ -182,8 +196,8 @@ var SpxAmhLm_ = (function () {
       if (!secret) throw new Error('ยังไม่ได้ตั้ง SYNC_SECRET ใน Script properties');
       var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(AMH_LM_CONFIG.SHEET);
       if (!sh) throw new Error('ไม่พบแท็บ ' + AMH_LM_CONFIG.SHEET);
-      var rows = sh.getRange(1, 1, Math.max(1, sh.getLastRow()), 8).getValues();
-      var p = parse(rows, AMH_LM_CONFIG.HUB);
+      var range = sh.getRange(1, 1, Math.max(1, sh.getLastRow()), 8);
+      var p = parse(mergeCells(range.getValues(), range.getDisplayValues()), AMH_LM_CONFIG.HUB);
       props.setProperty('AMH_LM_LAST_WARN', p.warnings.join(' | ').slice(0, 2000) || '-');
       if (!p.payload.business_date) throw new Error(p.warnings[0]);
       var res = UrlFetchApp.fetch(AMH_LM_CONFIG.SUPABASE_URL + '/rest/v1/rpc/' + AMH_LM_CONFIG.RPC, {
@@ -203,5 +217,5 @@ var SpxAmhLm_ = (function () {
     }
   }
 
-  return { parse: parse, num: num, stamp: stamp, run: run };
+  return { parse: parse, num: num, stamp: stamp, mergeCells: mergeCells, run: run };
 })();
