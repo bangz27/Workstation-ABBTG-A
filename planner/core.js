@@ -159,11 +159,34 @@
     return { added: added, updated: updated };
   }
 
+  /* กะ Fleet / กะ Ops pages: the planner's schedule for `months` months from ym, in the shape roster.js reads.
+     People who resigned before the range are left out; after their resign date their cells are blank. */
+  function rosterView(D, type, ym, months){
+    type = type === 'ops' ? 'ops' : 'driver';
+    var yms = [], dates = [];
+    for (var k = 0; k < (months || 1); k++) { yms.push(addMonths(ym, k)); dates = dates.concat(daysInMonth(yms[k])); }
+    var people = D.employees
+      .filter(function(e){ return e.type === type && (String(e.wid || '').trim() || String(e.name || '').trim()) &&
+        yms.some(function(m){ return inMonth(e, m); }); })
+      .map(function(e){
+        return {
+          id: type === 'ops' ? normId('ops', e.wid) : String(e.wid || '').trim(),
+          empId: String(e.empId || '').trim(),
+          name: String(e.name || '').trim(),
+          func: String(type === 'ops' ? (e.dept || e.pos || '') : (e.func || '')).trim(),
+          station: (D.settings && D.settings.station) || '',
+          shifts: dates.map(function(iso){ return cellValue(D, e, iso).v; })
+        };
+      });
+    return { dates: dates, people: people,
+      cols: type === 'ops' ? { id: 'Ops ID', func: 'Department' } : { id: 'Driver ID', func: 'Function' } };
+  }
+
   root.PlannerCore = {
     TH_WD: TH_WD, EN_WD: EN_WD, WEEK_ORDER: WEEK_ORDER, SHIFTS: SHIFTS, POS: POS, FUNCS: FUNCS,
     pad: pad, wdOf: wdOf, daysInMonth: daysInMonth, addMonths: addMonths, bkkMonth: bkkMonth, monthLabel: monthLabel, shortDate: shortDate,
     normId: normId, uid: uid, emptyData: emptyData, newEmp: newEmp, migrate: migrate,
     cellValue: cellValue, inMonth: inMonth, issue: issue, monthList: monthList, stats: stats,
-    headerFor: headerFor, rowFor: rowFor, peopleFromFms: peopleFromFms, mergePeople: mergePeople
+    headerFor: headerFor, rowFor: rowFor, peopleFromFms: peopleFromFms, mergePeople: mergePeople, rosterView: rosterView
   };
 })(typeof window !== 'undefined' ? window : globalThis);

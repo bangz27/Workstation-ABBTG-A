@@ -198,7 +198,7 @@ function renderAll(scroll){
   var st=cur();if(!st||!st.res)return;
   var res=st.res;
   $('supd').textContent='อัปเดตล่าสุด '+thStamp(res.loadedAt);
-  $('sfoot').textContent='ข้อมูลจากแท็บ "'+res.sheetName+'" · ซิงก์เมื่อ '+thStamp(res.loadedAt)+' · แตะที่รายชื่อเพื่อดูตารางกะทั้งช่วง';
+  $('sfoot').textContent='ข้อมูลจาก'+(res.source||'แท็บ "'+res.sheetName+'"')+' · '+(res.source?'บันทึกเมื่อ ':'ซิงก์เมื่อ ')+thStamp(res.loadedAt)+' · แตะที่รายชื่อเพื่อดูตารางกะทั้งช่วง';
   var idLbl=res.cols&&res.cols.id||'ID';
   $('sq').placeholder='ค้นหาชื่อ หรือ '+idLbl;
   $('swarns').innerHTML=(res.warnings||[]).map(function(w){return '<div class="warn">'+esc(w)+'</div>';}).join('');

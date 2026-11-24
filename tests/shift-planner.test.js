@@ -89,3 +89,30 @@ test('planner page is linked from the app menu and only writes through admin RPC
   assert.match(sql, /public\.is_admin\(\)/);
   assert.doesNotMatch(sql, /GRANT (INSERT|UPDATE|DELETE|ALL)/i);
 });
+
+// กะ Fleet / กะ Ops read the planner through rosterView. Test fixture only — not real staff.
+test('rosterView: this month + next, resigned people drop out, cells follow shift/RD/comp/overrides', () => {
+  const D = C.migrate({ settings: { station: 'ABBTG-A - บางบัวทอง', rdCode: 'RD' }, employees: [
+    { id: 'a', type: 'driver', wid: '1001', empId: 'E1', name: 'Driver A', func: 'Pickup+Delivery', shift: '0700-1600', offDays: [0], comp: ['2026-11-26'] },
+    { id: 'b', type: 'driver', wid: '1002', name: 'Driver B', shift: '0900-1800', offDays: [6], status: 'resigned', resignDate: '2026-11-25' },
+    { id: 'c', type: 'driver', wid: '1003', name: 'Driver C', shift: '0900-1800', offDays: [6], status: 'resigned', resignDate: '2026-10-15' },
+    { id: 'd', type: 'ops', wid: '915', name: 'Ops D', dept: 'Hub Agent', shift: '0400-1300', offDays: [3] }
+  ], overrides: { 'a|2026-11-27': '0900-1800' } });
+  const v = C.rosterView(D, 'driver', '2026-11', 2);
+  assert.equal(v.dates.length, 30 + 31);
+  assert.equal(v.dates[0], '2026-11-01');
+  assert.equal(v.dates[v.dates.length - 1], '2026-12-31');
+  assert.deepEqual(v.people.map(p => p.id), ['1001', '1002']);              // C resigned before the range
+  const a = v.people[0], at = d => a.shifts[v.dates.indexOf(d)];
+  assert.equal(a.func, 'Pickup+Delivery');
+  assert.equal(at('2026-11-24'), '0700-1600');                              // Tuesday: works
+  assert.equal(at('2026-11-29'), 'RD');                                     // Sunday: weekly off
+  assert.equal(at('2026-11-26'), 'RD');                                     // comp day
+  assert.equal(at('2026-11-27'), '0900-1800');                              // override
+  const b = v.people[1];
+  assert.equal(b.shifts[v.dates.indexOf('2026-11-24')], '0900-1800');
+  assert.equal(b.shifts[v.dates.indexOf('2026-11-25')], '');                // resigned from 25th
+  const o = C.rosterView(D, 'ops', '2026-11', 2);
+  assert.deepEqual(o.people.map(p => [p.id, p.func]), [['Ops915', 'Hub Agent']]);
+  assert.deepEqual(o.cols, { id: 'Ops ID', func: 'Department' });
+});
