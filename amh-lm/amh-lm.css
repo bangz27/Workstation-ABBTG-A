@@ -1,0 +1,98 @@
+/* ภาพรวม Last Mile — page styles. Theme A roles only (see replica/design/tokens.css). */
+body.theme-a .amh{
+  --amh-surface:#F2F3F5;--amh-bd:2px solid var(--a-ink);
+  max-width:1320px;margin:0 auto;padding:18px 28px 48px;color:var(--a-ink)}
+.amh *{box-sizing:border-box}
+.amh [hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.amh .ic{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+.amh-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.amh-date{margin:0;font-size:22px;font-weight:700}
+.amh-date.bad{color:var(--a-bad)}
+.amh-sub{margin:2px 0 0;font-size:13px;color:var(--a-muted)}
+.amh-ref{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;font:600 14px var(--font);cursor:pointer;min-height:40px}
+.amh-ref:focus-visible,.amh button:focus-visible,.amh a:focus-visible,.amh select:focus-visible{outline:3px solid var(--a-ink);outline-offset:2px}
+
+.amh-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.amh-tabs button,.amh-tablink{font:600 14px var(--font);border:var(--amh-bd);border-radius:8px;background:#fff;color:var(--a-ink);padding:8px 14px;min-height:40px;text-decoration:none;display:inline-flex;align-items:center;cursor:pointer}
+.amh-tabs button.on{background:var(--a-signal)}
+.amh-tablink:hover{background:var(--amh-surface)}
+
+.amh-err{border:var(--amh-bd);border-radius:8px;background:var(--a-warn-bg);padding:10px 12px;margin-bottom:14px;font-weight:600;white-space:pre-line}
+
+.amh-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.amh-card{background:#fff;border:var(--amh-bd);border-radius:10px;padding:16px;min-width:0}
+.amh-card.span2{grid-column:span 2}
+.amh-card.span3{grid-column:1/-1}
+.amh-ch{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
+.amh-ch h2{margin:0;font-size:15px;font-weight:700}
+.amh-upd{display:block;font-size:12px;font-weight:500;color:var(--a-muted)}
+.amh-stale{display:flex;align-items:center;gap:6px;margin:0 0 10px;padding:6px 10px;border:var(--amh-bd);border-radius:8px;background:var(--a-warn-bg);font-size:13px;font-weight:600}
+.amh-empty{margin:6px 0;color:var(--a-muted);font-size:14px}
+
+.amh-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:10px}
+.amh-kpis.six{grid-template-columns:repeat(3,minmax(0,1fr))}
+.amh-kpi{display:flex;flex-direction:column;min-width:0}
+.amh-kpi .k{font-size:13px;font-weight:600}
+.amh-kpi .v{font-size:28px;font-weight:700;letter-spacing:-.5px;line-height:1.2;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.amh-kpi .s{font-size:12px;color:var(--a-muted)}
+.amh-kpi.bad .v,.amh-kpi.bad .s{color:var(--a-bad)}
+
+.amh-ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.amh-seg{display:flex;gap:6px;flex-wrap:wrap}
+.amh-seg .chip{padding:5px 12px;min-height:34px;cursor:pointer}
+.amh-sel select{border:var(--amh-bd);border-radius:8px;padding:6px 10px;font:600 13px var(--font);background:#fff;min-height:36px}
+.amh-ctabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.amh-ctabs button{font:600 13px var(--font);border:var(--amh-bd);border-radius:8px;background:#fff;padding:5px 12px;min-height:34px;cursor:pointer;color:var(--a-ink)}
+.amh-ctabs button.on{background:var(--a-signal)}
+
+.amh-tw{overflow-x:auto;border:var(--amh-bd);border-radius:10px}
+.amh-t{width:100%;border-collapse:collapse;font-size:13px}
+.amh-t th,.amh-t td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--a-line);white-space:nowrap;font-weight:500}
+.amh-t thead th{background:var(--amh-surface);font-weight:700;border-bottom:var(--amh-bd)}
+.amh-t tbody th{font-weight:600}
+.amh-t tr:last-child>*{border-bottom:0}
+.amh-t .n{text-align:right;font-variant-numeric:tabular-nums}
+.amh-t .pc{color:var(--a-muted);font-size:12px}
+.amh-t .pc.bad{color:var(--a-bad);font-weight:600}
+.amh-t .pbar{display:block;margin-top:4px}
+.amh-t .pbar .track{display:block;height:5px;background:var(--a-soft);border-radius:4px}
+.amh-t .pbar .fill{display:block;height:5px;background:var(--a-ink);border-radius:4px}
+.amh .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+.amh .badge{display:inline-block;border:1.5px solid var(--a-ink);border-radius:4px;padding:0 6px;font-size:12px;font-weight:600}
+.amh-fun{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.amh-out{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-weight:600;font-size:13px;color:var(--a-ink)}
+
+.amh-bl{display:grid;grid-template-columns:180px minmax(0,1fr);gap:16px;align-items:start}
+.amh-donut{margin:0}
+.amh-donut svg{width:100%;max-width:170px;display:block;margin:0 auto}
+.amh-donut circle{fill:none;stroke-width:16}
+.amh-donut circle.d0{stroke:var(--a-bad)}
+.amh-donut circle.d1{stroke:var(--a-signal)}
+.amh-donut circle.d2{stroke:var(--a-ink)}
+.amh-donut circle.d3{stroke:var(--a-muted)}
+.amh-donut circle.d4{stroke:var(--a-line)}
+.amh-donut circle.dz{stroke:var(--a-soft)}
+.amh-donut text{font:700 18px var(--font);fill:var(--a-ink)}
+.amh-donut figcaption{display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;font-size:12px;margin-top:6px}
+.amh-donut figcaption i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px;border:1px solid var(--a-ink)}
+.amh-donut i.d0{background:var(--a-bad)}.amh-donut i.d1{background:var(--a-signal)}.amh-donut i.d2{background:var(--a-ink)}.amh-donut i.d3{background:var(--a-muted)}.amh-donut i.d4{background:var(--a-line)}
+
+.amh-card.sk{min-height:150px;display:flex;flex-direction:column;gap:12px}
+.amh-card.sk span{display:block;height:14px;border-radius:4px;background:var(--a-soft)}
+.amh-card.sk span:nth-child(2){height:30px;width:60%}
+.amh-card.sk span:nth-child(3){width:40%}
+
+@media (max-width:1180px){
+  .amh-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .amh-card.span2{grid-column:1/-1}
+}
+@media (max-width:767px){
+  body.theme-a .amh{padding:14px 16px 110px}
+  .amh-grid{grid-template-columns:minmax(0,1fr)}
+  .amh-kpis.six{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .amh-fun,.amh-bl{grid-template-columns:minmax(0,1fr)}
+  .amh-date{font-size:18px}
+  .amh-ref span{display:none}
+}
