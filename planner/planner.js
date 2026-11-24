@@ -246,7 +246,7 @@ function readDw(){
   e.shift=$('fShift').value;
   e.pos=$('fPos').value.trim();e.empId=$('fEmp').value.trim();e.func=$('fFunc').value.trim();e.dept=$('fDept').value.trim();
   e.startDate=$('fStart').value;e.status=$('fStatus').value;e.resignDate=e.status==='resigned'?$('fResign').value:'';e.note=$('fNote').value.trim();
-  if(e.type!=='driver'){e.empId='';e.func='';}else e.dept='';
+  if(e.type!=='driver')e.func='';else e.dept='';   // Employee ID is kept for both Driver and Ops
   return e;
 }
 function saveDw(){
