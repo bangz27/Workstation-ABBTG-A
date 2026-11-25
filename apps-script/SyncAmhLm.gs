@@ -27,6 +27,7 @@ var AMH_LM_CONFIG = {
   RPC: 'sync_amh_lm',
   SECRET_PROP: 'SYNC_SECRET',
   SHEET: 'AMH-LM',
+  SHEET_ID: '1H5wADs0RkuBKXgBEjr0aXW8Hz59ZBh9Lygeh178gGyk',   // [ABBTG-A] Dashboard Last Mile
   HUB: 'ABBTG-A',
   TIMER_MINUTES: 15
 };
@@ -200,7 +201,8 @@ var SpxAmhLm_ = (function () {
     try {
       var secret = props.getProperty(AMH_LM_CONFIG.SECRET_PROP);
       if (!secret) throw new Error('ยังไม่ได้ตั้ง SYNC_SECRET ใน Script properties');
-      var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(AMH_LM_CONFIG.SHEET);
+      var ss = SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(AMH_LM_CONFIG.SHEET_ID);   // web-app calls may have no active sheet
+      var sh = ss.getSheetByName(AMH_LM_CONFIG.SHEET);
       if (!sh) throw new Error('ไม่พบแท็บ ' + AMH_LM_CONFIG.SHEET);
       var range = sh.getRange(1, 1, Math.max(1, sh.getLastRow()), 8);
       var p = parse(mergeCells(range.getValues(), range.getDisplayValues()), AMH_LM_CONFIG.HUB);
