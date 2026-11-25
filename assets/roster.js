@@ -331,7 +331,7 @@ function personCard(p,i,dates,title,cls){
   var c=p.cells[i]||parseCell(''),off=offList(p,i,dates);
   return '<div class="pcard'+(c.k==='off'?' rd':'')+'">'+
     '<div class="pc1"><span class="pcn">'+esc(p.name)+'</span></div>'+
-    '<div class="pcd '+(cls||'')+'">'+esc(title)+'</div>'+
+    '<div class="pcd '+(cls||'')+'">'+esc(title)+(p.empId?' · Emp '+esc(p.empId):'')+'</div>'+
     '<div class="pcr"><span class="k">กะเข้างาน</span><span class="v">'+shiftBadge(c)+'</span>'+
     '<span class="k">สถานะ</span><span class="v">'+(c.k==='off'?'<span class="sbdg off">วันหยุด</span>':c.k==='work'?'<span class="sbdg work">ทำงาน</span>':c.lv?'<span class="sbdg other lv-'+c.lv+'">'+esc(c.label)+'</span>':'<span class="sbdg blank">ไม่ระบุ</span>')+'</span></div></div>';
 }
@@ -481,6 +481,7 @@ function rowHTML(st,p,i,dates){
   var c=p.cells[i]||parseCell(''),open=!!st.open[p.key];
   var meta=[];
   if(p.id)meta.push('ID '+esc(p.id));
+  if(p.empId&&st===RS.ops)meta.push('Emp '+esc(p.empId));   // กะ Ops: Employee ID from จัดกะ FMS
   if(p.func)meta.push(esc(p.func));
   var nx='';
   if(c.k==='off'){
